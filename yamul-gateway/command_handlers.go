@@ -36,7 +36,7 @@ func loginRequest(client *ClientConnection, commandCode byte) { // 0x80
 	password := readFixedString(client, 30)
 	nextKey := readByte(client)
 	body := LoginRequestCommand{username: username, password: password, nextkey: nextKey}
-	onLoginRequest(client, body)
+	go onLoginRequest(client, body)
 }
 
 type LoginDeniedReason byte
@@ -57,8 +57,12 @@ type LoginDeniedCommand struct {
 }
 
 func loginDenied(client *ClientConnection, response LoginDeniedCommand) { // 0x82
+	client.outputMutex.Lock()
+	defer client.outputMutex.Unlock()
 	writeByte(client, 0x82)
 	writeByte(client, byte(response.reason))
+	_ = client.sendAnyData()
+	client.shouldCloseConnection = true
 }
 
 type newSeedCommand struct {

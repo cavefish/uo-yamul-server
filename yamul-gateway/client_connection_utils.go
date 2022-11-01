@@ -12,7 +12,7 @@ func readByte(client *ClientConnection) byte {
 }
 
 func writeByte(client *ClientConnection, value byte) {
-	if client.sendData() != nil {
+	if client.sendDataIfAlmostFull(1) != nil {
 		return
 	}
 	client.outputBuffer.decryptedData[client.outputBuffer.length] = value

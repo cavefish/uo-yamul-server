@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"time"
 )
 
 const (
@@ -47,15 +48,27 @@ func clientConnectionLoop(conn net.Conn) {
 	client := createConnectionHandler(conn)
 	defer client.closeConnection()
 
+	go clientOutputBufferWorker(&client)
+	fmt.Printf("Connection open %s\n", conn.RemoteAddr())
+
 	for !client.shouldCloseConnection {
-		fmt.Println("Waiting for data")
+		client.processInputBuffer()
 		err := client.receiveData()
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		client.processInputBuffer()
-		err = client.sendAnyData()
+	}
+
+	fmt.Printf("Connection closed %s\n", conn.RemoteAddr())
+}
+
+func clientOutputBufferWorker(client *ClientConnection) {
+	for !client.shouldCloseConnection {
+		time.Sleep(100 * time.Millisecond)
+		client.outputMutex.Lock()
+		err := client.sendAnyData()
+		client.outputMutex.Unlock()
 		if err != nil {
 			fmt.Println(err)
 			return

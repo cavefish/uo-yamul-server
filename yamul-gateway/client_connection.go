@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"sync"
 )
 
 const BufferSize = 1024
@@ -29,6 +30,7 @@ type ClientConnection struct {
 	shouldCloseConnection    bool `default:"false"`
 	inputBuffer              DataBuffer
 	outputBuffer             DataBuffer
+	outputMutex              sync.Mutex
 	err                      error          `default:"nil"`
 	encryptSeed              newSeedCommand `default:"nil"`
 }
@@ -52,8 +54,8 @@ func (client *ClientConnection) closeConnection() {
 	_ = client.connection.Close()
 }
 
-func (client *ClientConnection) sendData() error {
-	if client.outputBuffer.length < BufferSize {
+func (client *ClientConnection) sendDataIfAlmostFull(requiredSize int) error {
+	if client.outputBuffer.length < BufferSize-requiredSize {
 		return nil
 	}
 	err := client.encrypt()
@@ -100,6 +102,10 @@ func (client *ClientConnection) receiveData() error {
 	}
 	// Read the incoming connection into the buffer.
 	reqLen, err := client.connection.Read(client.inputBuffer.rawData)
+	if client.shouldCloseConnection {
+		client.inputBuffer.length = 0
+		return nil
+	}
 	if err != nil {
 		fmt.Println("Error reading: ", err.Error())
 		client.err = err
