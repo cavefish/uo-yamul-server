@@ -1,4 +1,4 @@
-package main
+package connection
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 
 const BufferSize = 1024
 
-func createConnectionHandler(conn net.Conn) ClientConnection {
+func CreateConnectionHandler(conn net.Conn) ClientConnection {
 	inputBuffer := DataBuffer{
 		rawData:       make([]byte, BufferSize),
 		decryptedData: make([]byte, BufferSize),
@@ -25,14 +25,14 @@ func createConnectionHandler(conn net.Conn) ClientConnection {
 }
 
 type ClientConnection struct {
+	sync.Mutex
 	connection               net.Conn
 	openingHandshakeReceived bool `default:"false"`
-	shouldCloseConnection    bool `default:"false"`
+	ShouldCloseConnection    bool `default:"false"`
 	inputBuffer              DataBuffer
 	outputBuffer             DataBuffer
-	outputMutex              sync.Mutex
-	err                      error          `default:"nil"`
-	encryptSeed              newSeedCommand `default:"nil"`
+	Err                      error            `default:"nil"`
+	EncryptSeed              EncryptionConfig `default:"nil"`
 }
 
 func (client *ClientConnection) decrypt() error {
@@ -50,7 +50,7 @@ func (client *ClientConnection) encrypt() error {
 	return nil
 }
 
-func (client *ClientConnection) closeConnection() {
+func (client *ClientConnection) CloseConnection() {
 	_ = client.connection.Close()
 }
 
@@ -61,13 +61,13 @@ func (client *ClientConnection) sendDataIfAlmostFull(requiredSize int) error {
 	err := client.encrypt()
 	if err != nil {
 		fmt.Println("Error encrypting: ", err.Error())
-		client.err = err
+		client.Err = err
 		return err
 	}
 	buffer := client.outputBuffer
 	sentLength, err := client.connection.Write(buffer.rawData[buffer.offset:buffer.length])
 	if err != nil || sentLength != buffer.length-buffer.offset {
-		client.err = err
+		client.Err = err
 		return err
 	}
 	buffer.offset = 0
@@ -75,20 +75,20 @@ func (client *ClientConnection) sendDataIfAlmostFull(requiredSize int) error {
 	return nil
 }
 
-func (client *ClientConnection) sendAnyData() error {
+func (client *ClientConnection) SendAnyData() error {
 	if client.outputBuffer.length == 0 {
 		return nil
 	}
 	err := client.encrypt()
 	if err != nil {
 		fmt.Println("Error encrypting: ", err.Error())
-		client.err = err
+		client.Err = err
 		return err
 	}
 	buffer := client.outputBuffer
 	sentLength, err := client.connection.Write(buffer.rawData[buffer.offset:buffer.length])
 	if err != nil || sentLength != buffer.length-buffer.offset {
-		client.err = err
+		client.Err = err
 		return err
 	}
 	buffer.offset = 0
@@ -96,19 +96,19 @@ func (client *ClientConnection) sendAnyData() error {
 	return nil
 }
 
-func (client *ClientConnection) receiveData() error {
+func (client *ClientConnection) ReceiveData() error {
 	if client.inputBuffer.offset < client.inputBuffer.length {
 		return nil
 	}
 	// Read the incoming connection into the buffer.
 	reqLen, err := client.connection.Read(client.inputBuffer.rawData)
-	if client.shouldCloseConnection {
+	if client.ShouldCloseConnection {
 		client.inputBuffer.length = 0
 		return nil
 	}
 	if err != nil {
 		fmt.Println("Error reading: ", err.Error())
-		client.err = err
+		client.Err = err
 		return err
 	}
 	client.inputBuffer.length = reqLen
@@ -116,16 +116,49 @@ func (client *ClientConnection) receiveData() error {
 	err = client.decrypt()
 	if err != nil {
 		fmt.Println("Error decrypting: ", err.Error())
-		client.err = err
+		client.Err = err
 		return err
 	}
-	printBuffer(client.inputBuffer)
+	client.inputBuffer.printBuffer()
 	return nil
 }
 
-func (client *ClientConnection) processInputBuffer() {
-	commandCode := readByte(client)
+func (client *ClientConnection) ProcessInputBuffer() {
+	commandCode := client.ReadByte()
 	fmt.Printf("Processing command %X\n", commandCode)
-	handler := clientCommandHandlers[commandCode]
+	handler := ClientCommandHandlers[commandCode]
 	handler(client, commandCode)
+}
+
+func (client *ClientConnection) ReadByte() byte {
+	if client.ReceiveData() != nil {
+		return 0
+	}
+	value := client.inputBuffer.decryptedData[client.inputBuffer.offset]
+	client.inputBuffer.offset++
+	return value
+}
+
+func (client *ClientConnection) WriteByte(value byte) {
+	if client.sendDataIfAlmostFull(1) != nil {
+		return
+	}
+	client.outputBuffer.decryptedData[client.outputBuffer.length] = value
+	client.outputBuffer.length++
+}
+
+func (client *ClientConnection) ReadInt() int32 {
+	value := int32(client.ReadByte())
+	value = value<<8 | int32(client.ReadByte())
+	value = value<<8 | int32(client.ReadByte())
+	value = value<<8 | int32(client.ReadByte())
+	return value
+}
+
+func (client *ClientConnection) ReadFixedString(length int) string {
+	value := make([]byte, length)
+	for i := 0; i < length; i++ {
+		value[i] = client.ReadByte()
+	}
+	return string(value)
 }

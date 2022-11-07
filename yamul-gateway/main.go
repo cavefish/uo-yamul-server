@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"time"
+	"yamul-gateway/internal/transport/multima"
+	"yamul-gateway/internal/transport/multima/commands"
 )
 
 const (
@@ -13,15 +14,8 @@ const (
 	CONN_TYPE = "tcp"
 )
 
-type DataBuffer struct {
-	rawData       []byte
-	decryptedData []byte
-	length        int `default:"0"`
-	offset        int `default:"0"`
-}
-
 func main() {
-	setupCommandHandlers()
+	commands.SetupCommandHandlers()
 	// Listen for incoming connections.
 	l, err := net.Listen(CONN_TYPE, ":"+CONN_PORT)
 	if err != nil {
@@ -39,39 +33,6 @@ func main() {
 			os.Exit(1)
 		}
 		// Handle connections in a new goroutine.
-		go clientConnectionLoop(conn)
-	}
-}
-
-// Handles incoming requests.
-func clientConnectionLoop(conn net.Conn) {
-	client := createConnectionHandler(conn)
-	defer client.closeConnection()
-
-	go clientOutputBufferWorker(&client)
-	fmt.Printf("Connection open %s\n", conn.RemoteAddr())
-
-	for !client.shouldCloseConnection {
-		client.processInputBuffer()
-		err := client.receiveData()
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-	}
-
-	fmt.Printf("Connection closed %s\n", conn.RemoteAddr())
-}
-
-func clientOutputBufferWorker(client *ClientConnection) {
-	for !client.shouldCloseConnection {
-		time.Sleep(100 * time.Millisecond)
-		client.outputMutex.Lock()
-		err := client.sendAnyData()
-		client.outputMutex.Unlock()
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+		go multima.ClientConnectionLoop(conn)
 	}
 }
