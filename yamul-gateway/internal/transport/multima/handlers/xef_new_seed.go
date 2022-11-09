@@ -5,7 +5,7 @@ import (
 	"yamul-gateway/internal/transport/multima/connection"
 )
 
-func NewSeed(client *connection.ClientConnection, commandCode byte) { // 0xef
+func newSeed(client *connection.ClientConnection) { // 0xef
 	seed := client.ReadInt()
 	versionMajor := client.ReadInt()
 	versionMinor := client.ReadInt()

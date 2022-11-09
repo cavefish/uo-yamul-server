@@ -2,6 +2,7 @@ package listeners
 
 import (
 	"yamul-gateway/internal/logging"
+	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/connection"
 )
 
@@ -11,6 +12,10 @@ type CommandEvent[T any] struct {
 }
 
 type CommandListener[T any] func(event CommandEvent[T])
+
+var Listeners = struct {
+	OnLoginRequest CommandListener[commands.LoginRequestCommand]
+}{}
 
 func Build[T any](clientConnection *connection.ClientConnection, command T) CommandEvent[T] {
 	return CommandEvent[T]{
@@ -30,5 +35,4 @@ func Trigger[T any](listener CommandListener[T], event CommandEvent[T]) {
 
 func onMissingListener[T any](event CommandEvent[T]) {
 	logging.Error("Missing listener %T", event.Command)
-	event.Client.ShouldCloseConnection = true
 }

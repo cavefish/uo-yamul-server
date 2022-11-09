@@ -1,4 +1,4 @@
-package messages
+package commands
 
 type LoginDeniedReason byte
 

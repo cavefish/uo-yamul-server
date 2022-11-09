@@ -1,9 +1,9 @@
 package connection
 
 import (
-	"fmt"
 	"net"
 	"sync"
+	"yamul-gateway/internal/logging"
 )
 
 const BufferSize = 1024
@@ -60,7 +60,7 @@ func (client *ClientConnection) sendDataIfAlmostFull(requiredSize int) error {
 	}
 	err := client.encrypt()
 	if err != nil {
-		fmt.Println("Error encrypting: ", err.Error())
+		logging.Error("Error encrypting: ", err.Error())
 		client.Err = err
 		return err
 	}
@@ -81,7 +81,7 @@ func (client *ClientConnection) SendAnyData() error {
 	}
 	err := client.encrypt()
 	if err != nil {
-		fmt.Println("Error encrypting: ", err.Error())
+		logging.Error("Error encrypting: ", err.Error())
 		client.Err = err
 		return err
 	}
@@ -107,7 +107,7 @@ func (client *ClientConnection) ReceiveData() error {
 		return nil
 	}
 	if err != nil {
-		fmt.Println("Error reading: ", err.Error())
+		logging.Error("Error reading: ", err.Error())
 		client.Err = err
 		return err
 	}
@@ -115,7 +115,7 @@ func (client *ClientConnection) ReceiveData() error {
 	client.inputBuffer.offset = 0
 	err = client.decrypt()
 	if err != nil {
-		fmt.Println("Error decrypting: ", err.Error())
+		logging.Error("Error decrypting: ", err.Error())
 		client.Err = err
 		return err
 	}
@@ -125,7 +125,7 @@ func (client *ClientConnection) ReceiveData() error {
 
 func (client *ClientConnection) ProcessInputBuffer() {
 	commandCode := client.ReadByte()
-	fmt.Printf("Processing command %X\n", commandCode)
+	logging.Debug("Processing command %X\n", commandCode)
 	handler := ClientCommandHandlers[commandCode]
 	handler(client, commandCode)
 }

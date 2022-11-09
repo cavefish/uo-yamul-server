@@ -1,4 +1,4 @@
-package messages
+package commands
 
 type NewSeedCommand struct {
 	seed            int32
