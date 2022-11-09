@@ -18,7 +18,7 @@ func CreateConnectionHandler(conn net.Conn) ClientConnection {
 		decryptedData: make([]byte, BufferSize),
 	}
 	return ClientConnection{
-		connection:   conn,
+		Connection:   conn,
 		inputBuffer:  inputBuffer,
 		outputBuffer: outputBuffer,
 	}
@@ -26,7 +26,7 @@ func CreateConnectionHandler(conn net.Conn) ClientConnection {
 
 type ClientConnection struct {
 	sync.Mutex
-	connection               net.Conn
+	Connection               net.Conn
 	openingHandshakeReceived bool `default:"false"`
 	ShouldCloseConnection    bool `default:"false"`
 	inputBuffer              DataBuffer
@@ -51,7 +51,7 @@ func (client *ClientConnection) encrypt() error {
 }
 
 func (client *ClientConnection) CloseConnection() {
-	_ = client.connection.Close()
+	_ = client.Connection.Close()
 }
 
 func (client *ClientConnection) sendDataIfAlmostFull(requiredSize int) error {
@@ -65,7 +65,7 @@ func (client *ClientConnection) sendDataIfAlmostFull(requiredSize int) error {
 		return err
 	}
 	buffer := client.outputBuffer
-	sentLength, err := client.connection.Write(buffer.rawData[buffer.offset:buffer.length])
+	sentLength, err := client.Connection.Write(buffer.rawData[buffer.offset:buffer.length])
 	if err != nil || sentLength != buffer.length-buffer.offset {
 		client.Err = err
 		return err
@@ -86,7 +86,7 @@ func (client *ClientConnection) SendAnyData() error {
 		return err
 	}
 	buffer := client.outputBuffer
-	sentLength, err := client.connection.Write(buffer.rawData[buffer.offset:buffer.length])
+	sentLength, err := client.Connection.Write(buffer.rawData[buffer.offset:buffer.length])
 	if err != nil || sentLength != buffer.length-buffer.offset {
 		client.Err = err
 		return err
@@ -100,8 +100,8 @@ func (client *ClientConnection) ReceiveData() error {
 	if client.inputBuffer.offset < client.inputBuffer.length {
 		return nil
 	}
-	// Read the incoming connection into the buffer.
-	reqLen, err := client.connection.Read(client.inputBuffer.rawData)
+	// Read the incoming Connection into the buffer.
+	reqLen, err := client.Connection.Read(client.inputBuffer.rawData)
 	if client.ShouldCloseConnection {
 		client.inputBuffer.length = 0
 		return nil
