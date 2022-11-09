@@ -15,7 +15,7 @@ func ClientConnectionLoop(conn net.Conn) {
 	go clientOutputBufferWorker(&client)
 	logging.Info("[%s]Connection open\n", conn.RemoteAddr())
 
-	for !client.ShouldCloseConnection {
+	for !client.ShouldCloseConnection && client.Err == nil {
 		client.ProcessInputBuffer()
 		err := client.ReceiveData()
 		if err != nil {
@@ -24,11 +24,14 @@ func ClientConnectionLoop(conn net.Conn) {
 		}
 	}
 
+	if client.Err != nil {
+		logging.Error("[%s] error %v\n", conn.RemoteAddr(), client.Err)
+	}
 	logging.Info("[%s] Connection closed\n", conn.RemoteAddr())
 }
 
 func clientOutputBufferWorker(client *connection.ClientConnection) {
-	for !client.ShouldCloseConnection {
+	for !client.ShouldCloseConnection && client.Err == nil {
 		time.Sleep(100 * time.Millisecond)
 		client.Lock()
 		err := client.SendAnyData()

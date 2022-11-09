@@ -17,7 +17,14 @@ func OnLoginRequest(event listeners.CommandEvent[commands.LoginRequestCommand]) 
 		return
 	}
 
-	handlers.LoginComplete(event.Client, true)
+	server := commands.GameServer{
+		Name:                "This server",
+		AddressIP:           event.Client.Connection.LocalAddr().String(),
+		Timezone:            0x00,
+		PercentageOfPlayers: 0x01,
+	}
+	command := commands.ListGameServers{Flags: 0xff, Servers: []commands.GameServer{server}}
+	handlers.ListGameServers(event.Client, command)
 }
 
 func validateLogin(command commands.LoginRequestCommand) (bool, commands.LoginDeniedReason) {
