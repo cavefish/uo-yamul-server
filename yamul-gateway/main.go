@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"yamul-gateway/internal/autoconfig"
 	"yamul-gateway/internal/transport/multima"
-	"yamul-gateway/internal/transport/multima/commands"
 )
 
 const (
@@ -15,7 +15,7 @@ const (
 )
 
 func main() {
-	commands.SetupCommandHandlers()
+	autoconfig.Setup()
 	// Listen for incoming connections.
 	l, err := net.Listen(CONN_TYPE, ":"+CONN_PORT)
 	if err != nil {

@@ -1,17 +1,9 @@
-package xef_newSeed
+package handlers
 
 import (
 	"fmt"
 	"yamul-gateway/internal/transport/multima/connection"
 )
-
-type NewSeedCommand struct {
-	seed            int32
-	versionMajor    int32
-	versionMinor    int32
-	versionRevision int32
-	versionPatch    int32
-}
 
 func NewSeed(client *connection.ClientConnection, commandCode byte) { // 0xef
 	seed := client.ReadInt()
