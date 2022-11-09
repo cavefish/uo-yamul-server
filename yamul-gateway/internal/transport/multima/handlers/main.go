@@ -12,6 +12,7 @@ func Setup() {
 	}
 	connection.ClientCommandHandlers[0x80] = wrap(loginRequest)
 	connection.ClientCommandHandlers[0x82] = forbiddenClientCommand("Login denied")
+	connection.ClientCommandHandlers[0xa0] = wrap(serverSelected)
 	connection.ClientCommandHandlers[0xef] = wrap(newSeed)
 }
 

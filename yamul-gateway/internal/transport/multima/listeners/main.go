@@ -14,7 +14,8 @@ type CommandEvent[T any] struct {
 type CommandListener[T any] func(event CommandEvent[T])
 
 var Listeners = struct {
-	OnLoginRequest CommandListener[commands.LoginRequestCommand]
+	OnLoginRequest  CommandListener[commands.LoginRequestCommand]
+	OnShardSelected CommandListener[commands.ShardSelected]
 }{}
 
 func Build[T any](clientConnection *connection.ClientConnection, command T) CommandEvent[T] {

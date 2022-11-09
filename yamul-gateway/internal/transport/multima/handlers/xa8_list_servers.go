@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"strconv"
-	"strings"
 	"yamul-gateway/internal/logging"
 	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/connection"
@@ -24,19 +22,9 @@ func ListGameServers(client *connection.ClientConnection, response commands.List
 		client.WriteFixedString(32, server.Name)
 		client.WriteByte(server.PercentageOfPlayers)
 		client.WriteByte(server.Timezone)
-		client.WriteUInt(addressToUInt(server.AddressIP))
+		ip, _ := addressToUInt(server.AddressIP)
+		client.WriteUInt(ip)
 	}
 
 	logging.Debug("Sending server list %+v\n", response)
-}
-
-func addressToUInt(value string) uint32 {
-	ip := strings.Split(value, ":")
-	ipTokens := strings.Split(ip[0], ".")
-	var result uint32 = 0
-	for i := 0; i < 4; i++ {
-		v, _ := strconv.Atoi(ipTokens[3-i])
-		result = result<<8 | uint32(v)
-	}
-	return result
 }

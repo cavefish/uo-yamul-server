@@ -142,6 +142,12 @@ func (client *ClientConnection) WriteByte(value byte) {
 	client.outputBuffer.length++
 }
 
+func (client *ClientConnection) ReadUShort() uint16 {
+	value := uint16(client.ReadByte())
+	value = value<<8 | uint16(client.ReadByte())
+	return value
+}
+
 func (client *ClientConnection) WriteUShort(value uint16) {
 	if client.sendDataIfAlmostFull(2) != nil {
 		return
