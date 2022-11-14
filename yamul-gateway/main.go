@@ -9,7 +9,6 @@ import (
 )
 
 const (
-	CONN_HOST = "192.168.0.60"
 	CONN_PORT = "2593"
 	CONN_TYPE = "tcp"
 )
@@ -24,8 +23,8 @@ func main() {
 	}
 	// Close the listener when the application closes.
 	defer l.Close()
-	logging.Error("Listening on %s:%s\n", CONN_HOST, CONN_PORT)
 	for {
+		logging.Error("Listening on port %s\n", CONN_PORT)
 		// Listen for an incoming connection.
 		conn, err := l.Accept()
 		if err != nil {

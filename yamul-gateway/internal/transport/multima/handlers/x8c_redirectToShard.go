@@ -14,5 +14,5 @@ func RedirectToShard(client *connection.ClientConnection, body commands.Redirect
 	client.WriteByte(0x8C)
 	client.WriteUInt(ip)
 	client.WriteUShort(port)
-	client.WriteUInt(body.EncryptionKey)
+	client.WriteUInt(0x7F000001)
 }
