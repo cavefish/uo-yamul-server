@@ -4,7 +4,7 @@ import (
 	"yamul-gateway/internal/logging"
 	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/connection"
-	"yamul-gateway/internal/utils"
+	"yamul-gateway/utils/numbers"
 )
 
 func ListGameServers(client *connection.ClientConnection, response commands.ListGameServers) { // 0xa8
@@ -24,7 +24,7 @@ func ListGameServers(client *connection.ClientConnection, response commands.List
 		client.WriteByte(server.PercentageOfPlayers)
 		client.WriteByte(server.Timezone)
 		ip, _ := addressToUInt(server.AddressIP)
-		client.WriteUInt(utils.BigEndianUInt32(ip))
+		client.WriteUInt(numbers.BigEndianUInt32(ip))
 	}
 
 	logging.Debug("Sending server list %+v\n", response)

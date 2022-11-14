@@ -1,8 +1,9 @@
-package utils
+package numbers
 
 import (
 	"fmt"
 	"testing"
+	"yamul-gateway/utils/tests/assertions"
 )
 
 func TestBigEndianInt(t *testing.T) {
@@ -18,9 +19,7 @@ func TestBigEndianInt(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(fmt.Sprintf("%x->%x", testCase.input, testCase.output), func(t *testing.T) {
 			result := BigEndianInt(testCase.input)
-			if result != testCase.output {
-				t.Error(fmt.Sprintf("%x is different than expected %x", result, testCase.output))
-			}
+			assertions.For(t).Equals(testCase.output, result)
 		})
 	}
 }
@@ -38,9 +37,7 @@ func TestBigEndianUInt32(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(fmt.Sprintf("%x->%x", testCase.input, testCase.output), func(t *testing.T) {
 			result := BigEndianUInt32(testCase.input)
-			if result != testCase.output {
-				t.Error(fmt.Sprintf("%x is different than expected %x", result, testCase.output))
-			}
+			assertions.For(t).Equals(testCase.output, result)
 		})
 	}
 }
