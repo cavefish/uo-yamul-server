@@ -19,21 +19,23 @@ func CreateConnectionHandler(conn net.Conn) ClientConnection {
 		decryptedData: make([]byte, BufferSize),
 	}
 	return ClientConnection{
-		Connection:   conn,
-		inputBuffer:  inputBuffer,
-		outputBuffer: outputBuffer,
+		Connection:               conn,
+		openingHandshakeReceived: false,
+		ShouldCloseConnection:    false,
+		inputBuffer:              inputBuffer,
+		outputBuffer:             outputBuffer,
 	}
 }
 
 type ClientConnection struct {
 	sync.Mutex
 	Connection               net.Conn
-	openingHandshakeReceived bool `default:"false"`
-	ShouldCloseConnection    bool `default:"false"`
+	openingHandshakeReceived bool
+	ShouldCloseConnection    bool
 	inputBuffer              DataBuffer
 	outputBuffer             DataBuffer
-	Err                      error            `default:"nil"`
-	EncryptSeed              EncryptionConfig `default:"nil"`
+	Err                      error
+	EncryptSeed              EncryptionConfig
 }
 
 func (client *ClientConnection) decrypt() error {

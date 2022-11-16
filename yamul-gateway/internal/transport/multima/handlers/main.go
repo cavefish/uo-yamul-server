@@ -24,6 +24,12 @@ func wrap(delegate func(client *connection.ClientConnection)) connection.Command
 	}
 }
 
+func unimplemented(skip int) connection.CommandHandler {
+	return func(client *connection.ClientConnection, commandCode byte) {
+		client.ReadFixedString(skip)
+	}
+}
+
 func noop(client *connection.ClientConnection, commandCode byte) {
 	client.Err = fmt.Errorf("unknown command %x", commandCode)
 }
