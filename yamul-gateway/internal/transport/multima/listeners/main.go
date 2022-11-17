@@ -13,25 +13,42 @@ type CommandEvent[T any] struct {
 
 type CommandListener[T any] func(event CommandEvent[T])
 
-var Listeners = struct {
-	OnLoginRequest  CommandListener[commands.LoginRequestCommand]
-	OnShardSelected CommandListener[commands.ShardSelected]
-}{}
+type ListenerHandler[T any] struct {
+	listener CommandListener[T]
+}
 
-func Build[T any](clientConnection *connection.ClientConnection, command T) CommandEvent[T] {
-	return CommandEvent[T]{
-		clientConnection,
-		command,
+func createHandler[T any]() *ListenerHandler[T] {
+	return &ListenerHandler[T]{
+		listener: nil,
 	}
 }
 
-func Trigger[T any](listener CommandListener[T], event CommandEvent[T]) {
-	if listener == nil {
+func (handler *ListenerHandler[T]) Trigger(client *connection.ClientConnection, body T) {
+	event := CommandEvent[T]{
+		client,
+		body,
+	}
+
+	if handler.listener == nil {
 		onMissingListener(event)
 		return
 	}
 
-	go listener(event)
+	handler.listener(event)
+}
+
+func (handler *ListenerHandler[T]) SetListener(listener func(event CommandEvent[T])) {
+	handler.listener = listener
+}
+
+var Listeners = struct {
+	OnLoginRequest     *ListenerHandler[commands.LoginRequestCommand]
+	OnShardSelected    *ListenerHandler[commands.ShardSelected]
+	OnGameLoginRequest *ListenerHandler[commands.GameLoginRequest]
+}{
+	OnLoginRequest:     createHandler[commands.LoginRequestCommand](),
+	OnShardSelected:    createHandler[commands.ShardSelected](),
+	OnGameLoginRequest: createHandler[commands.GameLoginRequest](),
 }
 
 func onMissingListener[T any](event CommandEvent[T]) {

@@ -11,6 +11,6 @@ func loginRequest(client *connection.ClientConnection) { // 0x80
 	password := client.ReadFixedString(30)
 	nextKey := client.ReadByte()
 	body := commands.LoginRequestCommand{Username: username, Password: password, Nextkey: nextKey}
-	event := listeners.Build[commands.LoginRequestCommand](client, body)
-	listeners.Trigger(listeners.Listeners.OnLoginRequest, event)
+
+	listeners.Listeners.OnLoginRequest.Trigger(client, body)
 }

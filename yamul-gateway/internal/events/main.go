@@ -7,6 +7,6 @@ import (
 )
 
 func Setup() {
-	listeners.Listeners.OnLoginRequest = onLoginRequest.OnLoginRequest
-	listeners.Listeners.OnShardSelected = onShardSelected.OnShardSelected
+	listeners.Listeners.OnLoginRequest.SetListener(onLoginRequest.OnLoginRequest)
+	listeners.Listeners.OnShardSelected.SetListener(onShardSelected.OnShardSelected)
 }
