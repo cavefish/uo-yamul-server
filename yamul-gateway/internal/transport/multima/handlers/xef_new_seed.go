@@ -11,6 +11,6 @@ func newSeed(client *connection.ClientConnection) { // 0xef
 	versionMinor := client.ReadUInt()
 	versionRevision := client.ReadUInt()
 	versionPatch := client.ReadUInt()
-	client.EncryptSeed = connection.EncryptionConfig{Seed: seed, VersionMajor: versionMajor, VersionMinor: versionMinor, VersionRevision: versionRevision, VersionPatch: versionPatch}
-	logging.Debug("Encryption seed %+v\n", client.EncryptSeed)
+	client.EncryptionState = connection.EncryptionConfig{Seed: seed, VersionMajor: versionMajor, VersionMinor: versionMinor, VersionRevision: versionRevision, VersionPatch: versionPatch}
+	logging.Debug("Encryption seed %+v\n", client.EncryptionState)
 }

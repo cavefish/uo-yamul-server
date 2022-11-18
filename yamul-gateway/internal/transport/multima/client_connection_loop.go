@@ -8,13 +8,13 @@ import (
 )
 
 // Handles incoming requests.
-func ClientConnectionLoop(conn net.Conn, parseEncryptionKey bool) {
-	client := connection.CreateConnectionHandler(conn)
+func ClientConnectionLoop(conn net.Conn, isGameplayServer bool) {
+	client := connection.CreateConnectionHandler(conn, isGameplayServer)
 	defer client.CloseConnection()
 
-	if parseEncryptionKey {
+	if isGameplayServer {
 		// In the second connection of the client, the encryption key is sent to the server first
-		client.ReadUInt()
+		client.EncryptionState.Seed = client.ReadUInt()
 	}
 
 	go clientOutputBufferWorker(&client)

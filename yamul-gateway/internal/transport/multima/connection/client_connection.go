@@ -9,7 +9,7 @@ import (
 
 const BufferSize = 1024
 
-func CreateConnectionHandler(conn net.Conn) ClientConnection {
+func CreateConnectionHandler(conn net.Conn, isGameplayServer bool) ClientConnection {
 	inputBuffer := DataBuffer{
 		rawData:       make([]byte, BufferSize),
 		decryptedData: make([]byte, BufferSize),
@@ -18,12 +18,16 @@ func CreateConnectionHandler(conn net.Conn) ClientConnection {
 		rawData:       make([]byte, BufferSize),
 		decryptedData: make([]byte, BufferSize),
 	}
+	encryptionConfig := EncryptionConfig{
+		GameplayServer: isGameplayServer,
+	}
 	return ClientConnection{
 		Connection:               conn,
 		openingHandshakeReceived: false,
 		ShouldCloseConnection:    false,
 		inputBuffer:              inputBuffer,
 		outputBuffer:             outputBuffer,
+		EncryptionState:          encryptionConfig,
 	}
 }
 
@@ -35,7 +39,7 @@ type ClientConnection struct {
 	inputBuffer              DataBuffer
 	outputBuffer             DataBuffer
 	Err                      error
-	EncryptSeed              EncryptionConfig
+	EncryptionState          EncryptionConfig
 }
 
 func (client *ClientConnection) decrypt() error {
