@@ -2,6 +2,7 @@ package connection
 
 import (
 	"encoding/binary"
+	"fmt"
 	"golang.org/x/crypto/twofish"
 )
 
@@ -11,34 +12,50 @@ const (
 	gameplayEncryption
 )
 
+const TwofishTableSize = 0x100
+
 type EncryptionConfig struct {
-	GameplayServer      bool
-	Seed                uint32
-	loginKey0           uint32
-	loginKey1           uint32
-	loginClientKey0     uint32
-	loginClientKey1     uint32
-	encryptionAlgorithm int
-	twofishCipher       *twofish.Cipher
-	Version             string
+	GameplayServer        bool
+	Seed                  uint32
+	loginKey0             uint32
+	loginKey1             uint32
+	loginClientKey0       uint32
+	loginClientKey1       uint32
+	encryptionAlgorithm   int
+	twofishCipher         *twofish.Cipher
+	twofishResetCountdown int
+	twofishTable          []byte
+	Version               string
 }
 
-func detectEncryptionAlgorithm(buffer *DataBuffer, config *EncryptionConfig) {
+func detectEncryptionAlgorithm(buffer *DataBuffer, config *EncryptionConfig) error {
 	if config.GameplayServer {
 		config.encryptionAlgorithm = gameplayEncryption
-		initializeGameplayEncryption(config)
+		return initializeGameplayEncryption(config)
 	} else if packageIsLoginInClean(buffer) {
 		config.encryptionAlgorithm = noEncryption
 	} else {
 		config.encryptionAlgorithm = loginEncryption
 		initializeLoginEncryption(config)
 	}
+	return nil
 }
 
-func initializeGameplayEncryption(config *EncryptionConfig) {
-	seed := make([]byte, 4)
+func initializeGameplayEncryption(config *EncryptionConfig) error {
+	seed := make([]byte, 32)
 	binary.LittleEndian.PutUint32(seed, config.Seed)
-	config.twofishCipher, _ = twofish.NewCipher(seed)
+	for i := 4; i < 32; i++ {
+		seed[i] = seed[i-4]
+	}
+	cipher, err := twofish.NewCipher(seed)
+	config.twofishCipher = cipher
+	config.twofishResetCountdown = 0
+	config.twofishTable = make([]byte, TwofishTableSize)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
 }
 
 func initializeLoginEncryption(config *EncryptionConfig) {
@@ -89,8 +106,21 @@ func getDecryptionAlgorithm(config *EncryptionConfig) func([]byte, []byte) int {
 		}
 	}
 	return func(in []byte, out []byte) int {
+		for i := 0; i < len(in); i++ {
+			out[i] = gameplayDecryptionAlgorithm(config, in[i])
+		}
 		return len(in)
 	}
+}
+
+func gameplayDecryptionAlgorithm(config *EncryptionConfig, in byte) byte {
+	if config.twofishResetCountdown == 0 {
+		// reset table
+		config.twofishResetCountdown = TwofishTableSize
+	}
+	config.twofishResetCountdown--
+	out := in ^ config.twofishTable[config.twofishResetCountdown]
+	return out
 }
 
 func outputDecryption(buffer *DataBuffer, config *EncryptionConfig) {

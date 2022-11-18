@@ -187,6 +187,10 @@ func (client *ClientConnection) WriteFixedString(length int, value string) {
 
 func (client *ClientConnection) UpdateEncryptionSeed(newSeed uint32) {
 	client.EncryptionState.Seed = newSeed
-	detectEncryptionAlgorithm(&client.inputBuffer, &client.EncryptionState)
-	client.decrypt()
+	err := detectEncryptionAlgorithm(&client.inputBuffer, &client.EncryptionState)
+	if err == nil {
+		client.decrypt()
+	} else {
+		client.Err = err
+	}
 }
