@@ -44,10 +44,12 @@ type ClientConnection struct {
 
 func (client *ClientConnection) decrypt() {
 	inputDecryption(&client.inputBuffer, &client.EncryptionState)
+	client.inputBuffer.printBuffer()
 }
 
 func (client *ClientConnection) encrypt() {
 	outputDecryption(&client.outputBuffer, &client.EncryptionState)
+	client.outputBuffer.printBuffer()
 }
 
 func (client *ClientConnection) CloseConnection() {
@@ -73,7 +75,6 @@ func (client *ClientConnection) sendEverything() error {
 		return nil
 	}
 	client.encrypt()
-	buffer.printBuffer()
 	sentLength, err := client.Connection.Write(buffer.rawData[buffer.offset:buffer.length])
 	if err != nil || sentLength != bytesToSend {
 		client.Err = err
@@ -103,7 +104,6 @@ func (client *ClientConnection) ReceiveData() error {
 	client.inputBuffer.length = reqLen
 	client.inputBuffer.offset = 0
 	client.decrypt()
-	client.inputBuffer.printBuffer()
 	return nil
 }
 

@@ -12,5 +12,8 @@ type DataBuffer struct {
 }
 
 func (buffer DataBuffer) printBuffer() {
-	logging.Debug("Buffer length %d\nraw:\t\t% x\ndecrypted:\t% x\n", buffer.length, buffer.rawData[0:buffer.length], buffer.decryptedData[0:buffer.length])
+	if buffer.offset >= buffer.length {
+		return
+	}
+	logging.Debug("Buffer length %d\nraw:\t\t% x\ndecrypted:\t% x\n", buffer.length-buffer.offset, buffer.rawData[buffer.offset:buffer.length], buffer.decryptedData[buffer.offset:buffer.length])
 }
