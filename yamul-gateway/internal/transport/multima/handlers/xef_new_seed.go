@@ -1,17 +1,20 @@
 package handlers
 
 import (
+	"fmt"
 	"yamul-gateway/internal/logging"
 	"yamul-gateway/internal/transport/multima/connection"
 )
 
 func newSeed(client *connection.ClientConnection) { // 0xef
 	seed := client.ReadUInt()
-	client.EncryptionState.VersionMajor = client.ReadUInt()
-	client.EncryptionState.VersionMinor = client.ReadUInt()
-	client.EncryptionState.VersionRevision = client.ReadUInt()
-	client.EncryptionState.VersionPatch = client.ReadUInt()
+	versionMajor := client.ReadUInt()
+	versionMinor := client.ReadUInt()
+	versionRevision := client.ReadUInt()
+	versionPatch := client.ReadUInt()
 
+	version := fmt.Sprintf("%d.%d.%d.%d.", versionMajor, versionMinor, versionRevision, versionPatch)
+	client.EncryptionState.Version = version
 	client.UpdateEncryptionSeed(seed)
-	logging.Debug("Encryption seed %+v\n", client.EncryptionState)
+	logging.Debug("Encryption reset on login. Version %s\n", version)
 }

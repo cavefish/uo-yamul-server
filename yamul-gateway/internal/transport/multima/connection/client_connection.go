@@ -20,7 +20,7 @@ func CreateConnectionHandler(conn net.Conn, isGameplayServer bool) ClientConnect
 	}
 	encryptionConfig := EncryptionConfig{
 		GameplayServer:      isGameplayServer,
-		seed:                0,
+		Seed:                0,
 		encryptionAlgorithm: noEncryption,
 	}
 	return ClientConnection{
@@ -186,7 +186,7 @@ func (client *ClientConnection) WriteFixedString(length int, value string) {
 }
 
 func (client *ClientConnection) UpdateEncryptionSeed(newSeed uint32) {
-	client.EncryptionState.seed = newSeed
+	client.EncryptionState.Seed = newSeed
 	detectEncryptionAlgorithm(&client.inputBuffer, &client.EncryptionState)
 	client.decrypt()
 }
