@@ -9,7 +9,7 @@ import (
 func OnShardSelected(event listeners.CommandEvent[commands.ShardSelected]) {
 	command := commands.RedirectToShard{
 		AddressIP:     event.Client.Connection.LocalAddr().String(),
-		EncryptionKey: 0, //event.Client.EncryptionState.Seed,
+		EncryptionKey: 0, //event.Client.EncryptionState.seed,
 	}
 	handlers.RedirectToShard(event.Client, command)
 }

@@ -14,7 +14,7 @@ func ClientConnectionLoop(conn net.Conn, isGameplayServer bool) {
 
 	if isGameplayServer {
 		// In the second connection of the client, the encryption key is sent to the server first
-		client.EncryptionState.Seed = client.ReadUInt()
+		client.UpdateEncryptionSeed(client.ReadUInt())
 	}
 
 	go clientOutputBufferWorker(&client)

@@ -19,42 +19,35 @@ func CreateConnectionHandler(conn net.Conn, isGameplayServer bool) ClientConnect
 		decryptedData: make([]byte, BufferSize),
 	}
 	encryptionConfig := EncryptionConfig{
-		GameplayServer: isGameplayServer,
+		GameplayServer:      isGameplayServer,
+		seed:                0,
+		encryptionAlgorithm: noEncryption,
 	}
 	return ClientConnection{
-		Connection:               conn,
-		openingHandshakeReceived: false,
-		ShouldCloseConnection:    false,
-		inputBuffer:              inputBuffer,
-		outputBuffer:             outputBuffer,
-		EncryptionState:          encryptionConfig,
+		Connection:            conn,
+		ShouldCloseConnection: false,
+		inputBuffer:           inputBuffer,
+		outputBuffer:          outputBuffer,
+		EncryptionState:       encryptionConfig,
 	}
 }
 
 type ClientConnection struct {
 	sync.Mutex
-	Connection               net.Conn
-	openingHandshakeReceived bool
-	ShouldCloseConnection    bool
-	inputBuffer              DataBuffer
-	outputBuffer             DataBuffer
-	Err                      error
-	EncryptionState          EncryptionConfig
+	Connection            net.Conn
+	ShouldCloseConnection bool
+	inputBuffer           DataBuffer
+	outputBuffer          DataBuffer
+	Err                   error
+	EncryptionState       EncryptionConfig
 }
 
-func (client *ClientConnection) decrypt() error {
-	// Implementation without encryption
-	if !client.openingHandshakeReceived {
-		client.openingHandshakeReceived = true
-		client.inputBuffer.decryptedData = client.inputBuffer.rawData
-		client.outputBuffer.rawData = client.outputBuffer.decryptedData
-	}
-	return nil
+func (client *ClientConnection) decrypt() {
+	inputDecryption(&client.inputBuffer, &client.EncryptionState)
 }
 
-func (client *ClientConnection) encrypt() error {
-	// Implementation without encryption
-	return nil
+func (client *ClientConnection) encrypt() {
+	outputDecryption(&client.outputBuffer, &client.EncryptionState)
 }
 
 func (client *ClientConnection) CloseConnection() {
@@ -79,12 +72,7 @@ func (client *ClientConnection) sendEverything() error {
 	if bytesToSend == 0 {
 		return nil
 	}
-	err := client.encrypt()
-	if err != nil {
-		logging.Error("Error encrypting: %v\n", err.Error())
-		client.Err = err
-		return err
-	}
+	client.encrypt()
 	buffer.printBuffer()
 	sentLength, err := client.Connection.Write(buffer.rawData[buffer.offset:buffer.length])
 	if err != nil || sentLength != bytesToSend {
@@ -114,12 +102,7 @@ func (client *ClientConnection) ReceiveData() error {
 	}
 	client.inputBuffer.length = reqLen
 	client.inputBuffer.offset = 0
-	err = client.decrypt()
-	if err != nil {
-		logging.Error("Error decrypting: %v\n", err.Error())
-		client.Err = err
-		return err
-	}
+	client.decrypt()
 	client.inputBuffer.printBuffer()
 	return nil
 }
@@ -200,4 +183,10 @@ func (client *ClientConnection) WriteFixedString(length int, value string) {
 	for i := limit; i < length; i++ {
 		client.WriteByte(0x00)
 	}
+}
+
+func (client *ClientConnection) UpdateEncryptionSeed(newSeed uint32) {
+	client.EncryptionState.seed = newSeed
+	detectEncryptionAlgorithm(&client.inputBuffer, &client.EncryptionState)
+	client.decrypt()
 }

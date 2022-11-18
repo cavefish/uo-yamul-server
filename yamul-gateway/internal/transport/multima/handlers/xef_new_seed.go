@@ -7,10 +7,11 @@ import (
 
 func newSeed(client *connection.ClientConnection) { // 0xef
 	seed := client.ReadUInt()
-	versionMajor := client.ReadUInt()
-	versionMinor := client.ReadUInt()
-	versionRevision := client.ReadUInt()
-	versionPatch := client.ReadUInt()
-	client.EncryptionState = connection.EncryptionConfig{Seed: seed, VersionMajor: versionMajor, VersionMinor: versionMinor, VersionRevision: versionRevision, VersionPatch: versionPatch}
+	client.EncryptionState.VersionMajor = client.ReadUInt()
+	client.EncryptionState.VersionMinor = client.ReadUInt()
+	client.EncryptionState.VersionRevision = client.ReadUInt()
+	client.EncryptionState.VersionPatch = client.ReadUInt()
+
+	client.UpdateEncryptionSeed(seed)
 	logging.Debug("Encryption seed %+v\n", client.EncryptionState)
 }
