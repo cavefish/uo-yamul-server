@@ -15,17 +15,17 @@ const (
 const TwofishTableSize = 0x100
 
 type EncryptionConfig struct {
-	GameplayServer        bool
-	Seed                  uint32
-	loginKey0             uint32
-	loginKey1             uint32
-	loginClientKey0       uint32
-	loginClientKey1       uint32
-	encryptionAlgorithm   int
-	twofishCipher         *twofish.Cipher
-	twofishResetCountdown int
-	twofishTable          []byte
-	Version               string
+	GameplayServer      bool
+	Seed                uint32
+	loginKey0           uint32
+	loginKey1           uint32
+	loginClientKey0     uint32
+	loginClientKey1     uint32
+	encryptionAlgorithm int
+	twofishCipher       *twofish.Cipher
+	twofishReset        int
+	twofishTable        []byte
+	Version             string
 }
 
 func detectEncryptionAlgorithm(buffer *DataBuffer, config *EncryptionConfig) error {
@@ -48,13 +48,22 @@ func initializeGameplayEncryption(config *EncryptionConfig) error {
 		seed[i] = seed[i-4]
 	}
 	cipher, err := twofish.NewCipher(seed)
-	config.twofishCipher = cipher
-	config.twofishResetCountdown = 0
-	config.twofishTable = make([]byte, TwofishTableSize)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
+
+	config.twofishCipher = cipher
+	config.twofishReset = 0
+	config.twofishTable = make([]byte, TwofishTableSize)
+	for i := 0; i < TwofishTableSize; i++ {
+		config.twofishTable[i] = byte(i)
+	}
+
+	for i := 0; i < TwofishTableSize; i += 16 {
+		cipher.Encrypt(config.twofishTable[i:], config.twofishTable[i:])
+	}
+
 	return nil
 }
 
@@ -114,12 +123,12 @@ func getDecryptionAlgorithm(config *EncryptionConfig) func([]byte, []byte) int {
 }
 
 func gameplayDecryptionAlgorithm(config *EncryptionConfig, in byte) byte {
-	if config.twofishResetCountdown == 0 {
+	if config.twofishReset == TwofishTableSize {
 		// reset table
-		config.twofishResetCountdown = TwofishTableSize
+		config.twofishReset = TwofishTableSize
 	}
-	config.twofishResetCountdown--
-	out := in ^ config.twofishTable[config.twofishResetCountdown]
+	out := in ^ config.twofishTable[config.twofishReset]
+	config.twofishReset++
 	return out
 }
 

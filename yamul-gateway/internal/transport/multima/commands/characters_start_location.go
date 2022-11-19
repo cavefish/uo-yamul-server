@@ -1,9 +1,10 @@
 package commands
 
 type CharactersStartLocation struct {
-	Characters     []CharacterLogin
-	StartingCities []StartingCity
-	Flags          ClientFeatures
+	Characters         []CharacterLogin
+	LastValidCharacter int
+	StartingCities     []StartingCity
+	Flags              ClientFeatures
 }
 
 type CharacterLogin struct {
@@ -12,6 +13,11 @@ type CharacterLogin struct {
 }
 
 type StartingCity struct {
-	Name   string
-	Tavern string
+	Name              string
+	Tavern            string
+	CoordinateX       uint32
+	CoordinateY       uint32
+	CoordinateZ       uint32
+	CoordinateMap     uint32
+	ClilocDescription uint32
 }
