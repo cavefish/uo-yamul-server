@@ -42,12 +42,17 @@ func detectEncryptionAlgorithm(buffer *DataBuffer, config *EncryptionConfig) err
 }
 
 func initializeGameplayEncryption(config *EncryptionConfig) error {
-	seed := make([]byte, 32)
-	binary.LittleEndian.PutUint32(seed, config.Seed)
-	for i := 4; i < 32; i++ {
-		seed[i] = seed[i-4]
+	seed := make([]uint32, 4)
+	for i := 0; i < len(seed); i++ {
+		seed[i] = config.Seed
 	}
-	cipher, err := twofish.NewCipher(seed)
+
+	seedAsBytes := make([]byte, len(seed)*4)
+	for i := 0; i < len(seed); i++ {
+		binary.BigEndian.PutUint32(seedAsBytes[i*4:], seed[i])
+	}
+
+	cipher, err := twofish.NewCipher(seedAsBytes)
 	if err != nil {
 		fmt.Println(err)
 		return err
