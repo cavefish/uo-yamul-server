@@ -39,7 +39,7 @@ func SendCharactersAndStartingLocations(client *connection.ClientConnection, bod
 		client.WriteUInt(0)
 	}
 
-	client.WriteUInt(convertClientFeaturesToFlags(body.Flags))
+	client.WriteUInt(ConvertClientFeaturesToFlags(body.Flags))
 	client.WriteUShort(uint16(body.LastValidCharacter))
 
 }

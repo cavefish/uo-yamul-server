@@ -22,7 +22,7 @@ func addressToUInt(value string) (uint32, uint16) {
 	return result, uint16(port)
 }
 
-func convertClientFeaturesToFlags(features commands.ClientFeatures) uint32 {
+func ConvertClientFeaturesToFlags(features commands.ClientFeatures) uint32 {
 	var flags uint32 = 0
 	flags |= ifFlagIsSet(0x0001, features.Unknown0001)
 	flags |= ifFlagIsSet(0x0002, features.OverwriteConfigButtons)

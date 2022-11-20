@@ -10,5 +10,5 @@ func SendClientFeatures(client *connection.ClientConnection, features commands.C
 	defer client.Unlock()
 
 	client.WriteByte(0xB9)
-	client.WriteUInt(convertClientFeaturesToFlags(features))
+	client.WriteUInt(ConvertClientFeaturesToFlags(features))
 }

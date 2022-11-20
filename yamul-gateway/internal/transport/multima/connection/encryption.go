@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"crypto/md5"
 	"encoding/binary"
 	"fmt"
 	"golang.org/x/crypto/twofish"
@@ -13,6 +14,7 @@ const (
 )
 
 const TwofishTableSize = 0x100
+const Md5ResetFlag = 0xf
 
 type EncryptionConfig struct {
 	GameplayServer      bool
@@ -25,6 +27,8 @@ type EncryptionConfig struct {
 	twofishCipher       *twofish.Cipher
 	twofishReset        int
 	twofishTable        []byte
+	md5Digest           [16]byte
+	md5Position         int
 	Version             string
 }
 
@@ -69,6 +73,10 @@ func initializeGameplayEncryption(config *EncryptionConfig) error {
 		cipher.Encrypt(config.twofishTable[i:], config.twofishTable[i:])
 	}
 
+	// initialize md5 table
+	config.md5Position = 0
+	config.md5Digest = md5.Sum(config.twofishTable)
+
 	return nil
 }
 
@@ -112,19 +120,9 @@ func getDecryptionAlgorithm(config *EncryptionConfig) func([]byte, []byte) int {
 		return noEncryptionAlgorithm
 	}
 	if config.encryptionAlgorithm == loginEncryption {
-		return func(in []byte, out []byte) int {
-			for i := 0; i < len(in); i++ {
-				out[i] = loginDecryptionAlgorithm(config, in[i])
-			}
-			return len(in)
-		}
+		return decorateCryptologicFunction(config, loginDecryptionAlgorithm)
 	}
-	return func(in []byte, out []byte) int {
-		for i := 0; i < len(in); i++ {
-			out[i] = gameplayDecryptionAlgorithm(config, in[i])
-		}
-		return len(in)
-	}
+	return decorateCryptologicFunction(config, gameplayDecryptionAlgorithm)
 }
 
 func gameplayDecryptionAlgorithm(config *EncryptionConfig, in byte) byte {
@@ -145,7 +143,19 @@ func outputDecryption(buffer *DataBuffer, config *EncryptionConfig) {
 }
 
 func getEncryptionAlgorithm(config *EncryptionConfig) func(in []byte, out []byte) int {
+	if config.encryptionAlgorithm == gameplayEncryption {
+		return decorateCryptologicFunction(config, gameplayEncryptionAlgorithm)
+	}
 	return noEncryptionAlgorithm
+}
+
+func decorateCryptologicFunction(config *EncryptionConfig, algorithm func(config *EncryptionConfig, in byte) byte) func(in []byte, out []byte) int {
+	return func(in []byte, out []byte) int {
+		for i := 0; i < len(in); i++ {
+			out[i] = algorithm(config, in[i])
+		}
+		return len(in)
+	}
 }
 
 func loginDecryptionAlgorithm(config *EncryptionConfig, in byte) byte {
@@ -164,4 +174,11 @@ func noEncryptionAlgorithm(in []byte, out []byte) int {
 		out[i] = in[i]
 	}
 	return len(in)
+}
+
+func gameplayEncryptionAlgorithm(config *EncryptionConfig, in byte) byte {
+	out := in ^ config.md5Digest[config.md5Position]
+	config.md5Position = (config.md5Position + 1) & Md5ResetFlag
+
+	return out
 }
