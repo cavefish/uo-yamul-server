@@ -4,11 +4,22 @@ import (
 	"yamul-gateway/internal/logging"
 )
 
+const BufferSize = 15360
+
+func CreateDataBuffer() DataBuffer {
+	return DataBuffer{
+		rawData:       make([]byte, BufferSize),
+		decryptedData: make([]byte, BufferSize),
+		length:        0,
+		offset:        0,
+	}
+}
+
 type DataBuffer struct {
 	rawData       []byte
 	decryptedData []byte
-	length        int `default:"0"`
-	offset        int `default:"0"`
+	length        int
+	offset        int
 }
 
 func (buffer DataBuffer) printBuffer() {

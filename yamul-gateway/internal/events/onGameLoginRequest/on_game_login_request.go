@@ -31,7 +31,7 @@ func OnLoginRequest(event listeners.CommandEvent[commands.GameLoginRequest]) {
 		Flags:              clientFeatures,
 	}
 	for i := 0; i < len(charactersStartLocation.Characters); i++ {
-		charactersStartLocation.Characters[i].Name = "asdf" //fmt.Sprintf("Username #%d", i+1)
+		charactersStartLocation.Characters[i].Name = "wwwwwwww" //fmt.Sprintf("Username #%d", i+1)
 		charactersStartLocation.Characters[i].Password = ""
 	}
 	for i := 0; i < len(charactersStartLocation.StartingCities); i++ {

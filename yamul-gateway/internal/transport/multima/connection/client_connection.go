@@ -7,17 +7,9 @@ import (
 	"yamul-gateway/internal/logging"
 )
 
-const BufferSize = 1024
-
 func CreateConnectionHandler(conn net.Conn, isGameplayServer bool) ClientConnection {
-	inputBuffer := DataBuffer{
-		rawData:       make([]byte, BufferSize),
-		decryptedData: make([]byte, BufferSize),
-	}
-	outputBuffer := DataBuffer{
-		rawData:       make([]byte, BufferSize),
-		decryptedData: make([]byte, BufferSize),
-	}
+	inputBuffer := CreateDataBuffer()
+	outputBuffer := CreateDataBuffer()
 	encryptionConfig := EncryptionConfig{
 		GameplayServer:      isGameplayServer,
 		Seed:                0,

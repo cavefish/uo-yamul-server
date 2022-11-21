@@ -138,15 +138,28 @@ func gameplayDecryptionAlgorithm(config *EncryptionConfig, in byte) byte {
 func outputDecryption(buffer *DataBuffer, config *EncryptionConfig) {
 	algorithm := getEncryptionAlgorithm(config)
 	for i := buffer.offset; i < buffer.length; {
-		i += algorithm(buffer.decryptedData[i:buffer.length], buffer.rawData[i:buffer.length])
+		i += algorithm(buffer.decryptedData[i:buffer.length], buffer.rawData[i:])
 	}
 }
 
 func getEncryptionAlgorithm(config *EncryptionConfig) func(in []byte, out []byte) int {
 	if config.encryptionAlgorithm == gameplayEncryption {
-		return decorateCryptologicFunction(config, gameplayEncryptionAlgorithm)
+		return applyHuffmanCompression(decorateCryptologicFunction(config, gameplayEncryptionAlgorithm))
 	}
 	return noEncryptionAlgorithm
+}
+
+func applyHuffmanCompression(encoder func(in []byte, out []byte) int) func(in []byte, out []byte) int {
+	return func(in []byte, out []byte) int {
+		buffer := make([]byte, len(out))
+		fmt.Println(len(in))
+		fmt.Println(len(buffer))
+		fmt.Println(len(out))
+
+		huffmannLen := huffManCompress(buffer, in, len(in))
+		bufferLen := encoder(buffer[:huffmannLen], out)
+		return bufferLen
+	}
 }
 
 func decorateCryptologicFunction(config *EncryptionConfig, algorithm func(config *EncryptionConfig, in byte) byte) func(in []byte, out []byte) int {
