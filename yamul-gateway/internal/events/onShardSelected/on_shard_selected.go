@@ -7,7 +7,7 @@ import (
 	"yamul-gateway/internal/transport/multima/listeners"
 )
 
-const redirectToGameServer = false
+const redirectToGameServer = true
 
 func OnShardSelected(event listeners.CommandEvent[commands.ShardSelected]) {
 	if redirectToGameServer {

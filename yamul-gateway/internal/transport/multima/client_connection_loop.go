@@ -7,14 +7,11 @@ import (
 )
 
 // Handles incoming requests.
-func ClientConnectionLoop(conn net.Conn, isGameplayServer bool) {
-	client := connection.CreateConnectionHandler(conn, isGameplayServer)
+func ClientConnectionLoop(conn net.Conn) {
+	client := connection.CreateConnectionHandler(conn)
 	defer client.CloseConnection()
 
-	if isGameplayServer {
-		// In the second connection of the client, the encryption key is sent to the server first
-		client.UpdateEncryptionSeed(client.ReadUInt())
-	}
+	client.CheckEncryptionHandshake()
 
 	logging.Info("[%s %s] Connection open\n", conn.LocalAddr(), conn.RemoteAddr())
 

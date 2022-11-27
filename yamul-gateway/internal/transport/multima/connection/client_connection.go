@@ -7,9 +7,9 @@ import (
 	"yamul-gateway/internal/logging"
 )
 
-func CreateConnectionHandler(conn net.Conn, isGameplayServer bool) ClientConnection {
+func CreateConnectionHandler(conn net.Conn) ClientConnection {
 	encryptionConfig := EncryptionConfig{
-		GameplayServer:      isGameplayServer,
+		GameplayServer:      false,
 		Seed:                0,
 		encryptionAlgorithm: noEncryption,
 	}
@@ -193,4 +193,17 @@ func (client *ClientConnection) StartPacket() {
 func (client *ClientConnection) EndPacket() {
 	_ = client.sendEverything()
 	client.mutex.Unlock()
+}
+
+func (client *ClientConnection) CheckEncryptionHandshake() {
+	_ = client.ReceiveData()
+	firstByte := client.inputBuffer.rawData[0]
+	if firstByte&0xC0 != 0 {
+		logging.Debug("Connecting to login server: %x\n", firstByte)
+		// High byte is unencrypted or basic encryption
+		return
+	}
+	logging.Debug("Connecting to game server\n")
+	client.EncryptionState.GameplayServer = true
+	client.UpdateEncryptionSeed(client.ReadUInt())
 }

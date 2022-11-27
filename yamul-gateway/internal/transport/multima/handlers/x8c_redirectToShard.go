@@ -9,10 +9,10 @@ func RedirectToShard(client *connection.ClientConnection, body commands.Redirect
 	client.StartPacket()
 	defer client.EndPacket()
 
-	ip, _ := addressToUInt(body.AddressIP)
+	ip, port := addressToUInt(body.AddressIP)
 
 	client.WriteByte(0x8C)
 	client.WriteUInt(ip)
-	client.WriteUShort(2594)
-	client.WriteUInt(body.EncryptionKey)
+	client.WriteUShort(port)
+	client.WriteUInt(body.EncryptionKey & 0x3fffffff)
 }

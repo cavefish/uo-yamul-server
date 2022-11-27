@@ -10,9 +10,8 @@ import (
 )
 
 const (
-	SERVER_SELECTION_PORT = "2593"
-	GAME_SERVER_PORT      = "2594"
-	CONN_TYPE             = "tcp"
+	SERVER_PORT = "2593"
+	CONN_TYPE   = "tcp"
 )
 
 var listenerWg sync.WaitGroup
@@ -21,12 +20,11 @@ func main() {
 	autoconfig.Setup()
 	// Listen for incoming connections.
 	listenerWg.Add(1)
-	go listenToIncomingRequests(SERVER_SELECTION_PORT, false)
-	go listenToIncomingRequests(GAME_SERVER_PORT, true)
+	go listenToIncomingRequests(SERVER_PORT)
 	listenerWg.Wait()
 }
 
-func listenToIncomingRequests(port string, parsedUid bool) {
+func listenToIncomingRequests(port string) {
 	defer listenerWg.Done()
 	l, err := net.Listen(CONN_TYPE, ":"+port)
 	if err != nil {
@@ -44,6 +42,6 @@ func listenToIncomingRequests(port string, parsedUid bool) {
 			os.Exit(1)
 		}
 		// Handle connections in a new goroutine.
-		go multima.ClientConnectionLoop(conn, parsedUid)
+		go multima.ClientConnectionLoop(conn)
 	}
 }
