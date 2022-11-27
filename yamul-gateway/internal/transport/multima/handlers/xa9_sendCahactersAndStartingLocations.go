@@ -6,8 +6,11 @@ import (
 )
 
 func SendCharactersAndStartingLocations(client *connection.ClientConnection, body commands.CharactersStartLocation) { // 0xA9
-	client.Lock()
-	defer client.Unlock()
+	client.StartPacket()
+	defer client.EndPacket()
+
+	client.WriteByte(0xB9)
+	client.WriteUInt(ConvertClientFeaturesToFlags(body.Flags))
 
 	size := 4 + 60*len(body.Characters) + 1 + 89*len(body.StartingCities) + 6
 

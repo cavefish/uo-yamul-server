@@ -38,17 +38,17 @@ var sm_xCompress_Base = [COMPRESS_TREE_SIZE]uint16{
 	0x00d4,
 }
 
-func huffManCompress(pbOutput []byte, pbInput []byte, inputLen int) int {
+func HuffManCompress(pbOutput []byte, pbInput []byte, inputLen int) int {
 	bOutVal := byte(0)
 	outputLen := 0
 	wBitIndex := 0
 
 	for i := 0; i <= inputLen; i++ {
-		var idx = COMPRESS_TREE_SIZE - 1
+		var idx = uint16(COMPRESS_TREE_SIZE - 1)
 		if i < inputLen {
-			idx = int(pbInput[i])
+			idx = uint16(pbInput[i])
 		}
-		wValue := sm_xCompress_Base[idx]
+		var wValue uint16 = sm_xCompress_Base[idx]
 		iBits := wValue & 0xF
 		wValue >>= 4
 		for ; iBits > 0; iBits-- {

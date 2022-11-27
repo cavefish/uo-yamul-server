@@ -8,8 +8,8 @@ import (
 )
 
 func ListGameServers(client *connection.ClientConnection, response commands.ListGameServers) { // 0xa8
-	client.Lock()
-	defer client.Unlock()
+	client.StartPacket()
+	defer client.EndPacket()
 
 	packageLength := 6 + 40*len(response.Servers)
 
@@ -19,7 +19,7 @@ func ListGameServers(client *connection.ClientConnection, response commands.List
 	client.WriteUShort(uint16(len(response.Servers)))
 	for i := 0; i < len(response.Servers); i++ {
 		server := response.Servers[i]
-		client.WriteUShort(uint16(i))
+		client.WriteUShort(uint16(i + 1))
 		client.WriteFixedString(32, server.Name)
 		client.WriteByte(server.PercentageOfPlayers)
 		client.WriteByte(server.Timezone)

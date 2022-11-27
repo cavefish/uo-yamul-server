@@ -31,6 +31,15 @@ func ConvertClientFeaturesToFlags(features commands.ClientFeatures) uint32 {
 	flags |= ifFlagIsSet(0x0010, features.LimitCharacterSlots)
 	flags |= ifFlagIsSet(0x0020, features.EnableAOS)
 	flags |= ifFlagIsSet(0x0040, features.SixthSlot)
+	flags |= ifFlagIsSet(0x0080, features.SamuraiNinja)
+	flags |= ifFlagIsSet(0x0100, features.ElvenRace)
+	flags |= ifFlagIsSet(0x0200, features.Unknown0200)
+	flags |= ifFlagIsSet(0x0400, features.UO3D)
+	flags |= ifFlagIsSet(0x0800, features.Unknown0800)
+	flags |= ifFlagIsSet(0x1000, features.SeventhSlot)
+	flags |= ifFlagIsSet(0x2000, features.Unknown2000)
+	flags |= ifFlagIsSet(0x4000, features.NewMovement)
+	flags |= ifFlagIsSet(0x8000, features.UnlockPvPAreas)
 	return flags
 }
 

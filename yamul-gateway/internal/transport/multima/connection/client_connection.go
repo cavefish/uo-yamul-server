@@ -8,8 +8,6 @@ import (
 )
 
 func CreateConnectionHandler(conn net.Conn, isGameplayServer bool) ClientConnection {
-	inputBuffer := CreateDataBuffer()
-	outputBuffer := CreateDataBuffer()
 	encryptionConfig := EncryptionConfig{
 		GameplayServer:      isGameplayServer,
 		Seed:                0,
@@ -18,14 +16,14 @@ func CreateConnectionHandler(conn net.Conn, isGameplayServer bool) ClientConnect
 	return ClientConnection{
 		Connection:            conn,
 		ShouldCloseConnection: false,
-		inputBuffer:           inputBuffer,
-		outputBuffer:          outputBuffer,
+		inputBuffer:           CreateInputDataBuffer(),
+		outputBuffer:          CreateOutputDataBuffer(),
 		EncryptionState:       encryptionConfig,
 	}
 }
 
 type ClientConnection struct {
-	sync.Mutex
+	mutex                 sync.Mutex
 	Connection            net.Conn
 	ShouldCloseConnection bool
 	inputBuffer           DataBuffer
@@ -39,9 +37,10 @@ func (client *ClientConnection) decrypt() {
 	client.inputBuffer.printBuffer()
 }
 
-func (client *ClientConnection) encrypt() {
-	outputDecryption(&client.outputBuffer, &client.EncryptionState)
+func (client *ClientConnection) getOutputSlice() []byte {
+	slice := outputDecryption(&client.outputBuffer, &client.EncryptionState)
 	client.outputBuffer.printBuffer()
+	return slice
 }
 
 func (client *ClientConnection) CloseConnection() {
@@ -66,9 +65,9 @@ func (client *ClientConnection) sendEverything() error {
 	if bytesToSend == 0 {
 		return nil
 	}
-	client.encrypt()
-	sentLength, err := client.Connection.Write(buffer.rawData[buffer.offset:buffer.length])
-	if err != nil || sentLength != bytesToSend {
+	slice := client.getOutputSlice()
+	sentLength, err := client.Connection.Write(slice)
+	if err != nil || sentLength != len(slice) {
 		client.Err = err
 		return err
 	}
@@ -185,4 +184,13 @@ func (client *ClientConnection) UpdateEncryptionSeed(newSeed uint32) {
 	} else {
 		client.Err = err
 	}
+}
+
+func (client *ClientConnection) StartPacket() {
+	client.mutex.Lock()
+}
+
+func (client *ClientConnection) EndPacket() {
+	_ = client.sendEverything()
+	client.mutex.Unlock()
 }

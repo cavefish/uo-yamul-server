@@ -5,7 +5,7 @@ import (
 )
 
 func LoginComplete(client *connection.ClientConnection, nothing any) { // 0x55
-	client.Lock()
-	defer client.Unlock()
+	client.StartPacket()
+	defer client.EndPacket()
 	client.WriteByte(0x55)
 }

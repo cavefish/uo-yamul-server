@@ -6,8 +6,8 @@ import (
 )
 
 func RedirectToShard(client *connection.ClientConnection, body commands.RedirectToShard) { // 0x8C
-	client.Lock()
-	defer client.Unlock()
+	client.StartPacket()
+	defer client.EndPacket()
 
 	ip, _ := addressToUInt(body.AddressIP)
 

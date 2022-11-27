@@ -6,8 +6,8 @@ import (
 )
 
 func SendClientFeatures(client *connection.ClientConnection, features commands.ClientFeatures) { // 0xB9
-	client.Lock()
-	defer client.Unlock()
+	client.StartPacket()
+	defer client.EndPacket()
 
 	client.WriteByte(0xB9)
 	client.WriteUInt(ConvertClientFeaturesToFlags(features))

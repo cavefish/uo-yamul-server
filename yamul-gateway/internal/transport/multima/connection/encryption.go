@@ -76,6 +76,7 @@ func initializeGameplayEncryption(config *EncryptionConfig) error {
 	// initialize md5 table
 	config.md5Position = 0
 	config.md5Digest = md5.Sum(config.twofishTable)
+	fmt.Println(config.md5Digest)
 
 	return nil
 }
@@ -135,31 +136,20 @@ func gameplayDecryptionAlgorithm(config *EncryptionConfig, in byte) byte {
 	return out
 }
 
-func outputDecryption(buffer *DataBuffer, config *EncryptionConfig) {
-	algorithm := getEncryptionAlgorithm(config)
-	for i := buffer.offset; i < buffer.length; {
-		i += algorithm(buffer.decryptedData[i:buffer.length], buffer.rawData[i:])
+func outputDecryption(buffer *DataBuffer, config *EncryptionConfig) []byte {
+	if config.encryptionAlgorithm != gameplayEncryption {
+		return buffer.decryptedData[buffer.offset:buffer.length]
 	}
-}
 
-func getEncryptionAlgorithm(config *EncryptionConfig) func(in []byte, out []byte) int {
-	if config.encryptionAlgorithm == gameplayEncryption {
-		return applyHuffmanCompression(decorateCryptologicFunction(config, gameplayEncryptionAlgorithm))
+	compressedBytes := HuffManCompress(buffer.compressedData, buffer.decryptedData[buffer.offset:], buffer.length-buffer.offset)
+	for i := 0; i < compressedBytes; i++ {
+		in := buffer.compressedData[i]
+		out := in ^ config.md5Digest[config.md5Position]
+		config.md5Position = (config.md5Position + 1) & Md5ResetFlag
+		buffer.rawData[i] = out
 	}
-	return noEncryptionAlgorithm
-}
 
-func applyHuffmanCompression(encoder func(in []byte, out []byte) int) func(in []byte, out []byte) int {
-	return func(in []byte, out []byte) int {
-		buffer := make([]byte, len(out))
-		fmt.Println(len(in))
-		fmt.Println(len(buffer))
-		fmt.Println(len(out))
-
-		huffmannLen := huffManCompress(buffer, in, len(in))
-		bufferLen := encoder(buffer[:huffmannLen], out)
-		return bufferLen
-	}
+	return buffer.rawData[:compressedBytes]
 }
 
 func decorateCryptologicFunction(config *EncryptionConfig, algorithm func(config *EncryptionConfig, in byte) byte) func(in []byte, out []byte) int {
@@ -187,11 +177,4 @@ func noEncryptionAlgorithm(in []byte, out []byte) int {
 		out[i] = in[i]
 	}
 	return len(in)
-}
-
-func gameplayEncryptionAlgorithm(config *EncryptionConfig, in byte) byte {
-	out := in ^ config.md5Digest[config.md5Position]
-	config.md5Position = (config.md5Position + 1) & Md5ResetFlag
-
-	return out
 }

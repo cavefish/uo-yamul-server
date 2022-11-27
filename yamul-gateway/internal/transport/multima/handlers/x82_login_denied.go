@@ -6,8 +6,8 @@ import (
 )
 
 func LoginDenied(client *connection.ClientConnection, response commands.LoginDeniedCommand) { // 0x82
-	client.Lock()
-	defer client.Unlock()
+	client.StartPacket()
+	defer client.EndPacket()
 	client.WriteByte(0x82)
 	client.WriteByte(byte(response.Reason))
 	_ = client.SendAnyData()
