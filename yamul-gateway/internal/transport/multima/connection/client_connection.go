@@ -26,8 +26,8 @@ type ClientConnection struct {
 	mutex                 sync.Mutex
 	Connection            net.Conn
 	ShouldCloseConnection bool
-	inputBuffer           DataBuffer
-	outputBuffer          DataBuffer
+	inputBuffer           InputDataBuffer
+	outputBuffer          OutputDataBuffer
 	Err                   error
 	EncryptionState       EncryptionConfig
 }
@@ -61,8 +61,7 @@ func (client *ClientConnection) SendAnyData() error {
 
 func (client *ClientConnection) sendEverything() error {
 	buffer := &client.outputBuffer
-	bytesToSend := buffer.length - buffer.offset
-	if bytesToSend == 0 {
+	if buffer.length == 0 {
 		return nil
 	}
 	slice := client.getOutputSlice()
@@ -72,7 +71,6 @@ func (client *ClientConnection) sendEverything() error {
 		return err
 	}
 	logging.Debug("Sent %d bytes\n", sentLength)
-	buffer.offset = 0
 	buffer.length = 0
 	return nil
 }
@@ -82,7 +80,7 @@ func (client *ClientConnection) ReceiveData() error {
 		return nil
 	}
 	// Read the incoming Connection into the buffer.
-	reqLen, err := client.Connection.Read(client.inputBuffer.rawData)
+	reqLen, err := client.Connection.Read(client.inputBuffer.incomingTcpData)
 	if client.ShouldCloseConnection {
 		client.inputBuffer.length = 0
 		return nil
@@ -100,7 +98,6 @@ func (client *ClientConnection) ReceiveData() error {
 
 func (client *ClientConnection) ProcessInputBuffer() {
 	commandCode := client.ReadByte()
-	logging.Debug("Processing command %X\n", commandCode)
 	handler := ClientCommandHandlers[commandCode]
 	handler(client, commandCode)
 }
@@ -197,7 +194,7 @@ func (client *ClientConnection) EndPacket() {
 
 func (client *ClientConnection) CheckEncryptionHandshake() {
 	_ = client.ReceiveData()
-	firstByte := client.inputBuffer.rawData[0]
+	firstByte := client.inputBuffer.incomingTcpData[0]
 	if firstByte&0xC0 != 0 {
 		logging.Debug("Connecting to login server: %x\n", firstByte)
 		// High byte is unencrypted or basic encryption

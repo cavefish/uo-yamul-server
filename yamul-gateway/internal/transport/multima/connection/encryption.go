@@ -32,7 +32,7 @@ type EncryptionConfig struct {
 	Version             string
 }
 
-func detectEncryptionAlgorithm(buffer *DataBuffer, config *EncryptionConfig) error {
+func detectEncryptionAlgorithm(buffer *InputDataBuffer, config *EncryptionConfig) error {
 	if config.GameplayServer {
 		config.encryptionAlgorithm = gameplayEncryption
 		return initializeGameplayEncryption(config)
@@ -89,19 +89,19 @@ func initializeLoginEncryption(config *EncryptionConfig) {
 	config.loginClientKey1 = 0xA9F47E7F
 }
 
-func packageIsLoginInClean(buffer *DataBuffer) bool {
-	if buffer.rawData[buffer.offset] != 0x80 {
+func packageIsLoginInClean(buffer *InputDataBuffer) bool {
+	if buffer.incomingTcpData[buffer.offset] != 0x80 {
 		return false
 	}
 
 	for i := 20; i < 31; i++ {
-		if buffer.rawData[buffer.offset+i] != 0 {
+		if buffer.incomingTcpData[buffer.offset+i] != 0 {
 			return false
 		}
 	}
 
 	for i := 40; i < 51; i++ {
-		if buffer.rawData[buffer.offset+i] != 0 {
+		if buffer.incomingTcpData[buffer.offset+i] != 0 {
 			return false
 		}
 	}
@@ -109,10 +109,10 @@ func packageIsLoginInClean(buffer *DataBuffer) bool {
 	return true
 }
 
-func inputDecryption(buffer *DataBuffer, config *EncryptionConfig) {
+func inputDecryption(buffer *InputDataBuffer, config *EncryptionConfig) {
 	algorithm := getDecryptionAlgorithm(config)
 	for i := buffer.offset; i < buffer.length; {
-		i += algorithm(buffer.rawData[i:buffer.length], buffer.decryptedData[i:buffer.length])
+		i += algorithm(buffer.incomingTcpData[i:buffer.length], buffer.decryptedData[i:buffer.length])
 	}
 }
 
@@ -136,20 +136,20 @@ func gameplayDecryptionAlgorithm(config *EncryptionConfig, in byte) byte {
 	return out
 }
 
-func outputDecryption(buffer *DataBuffer, config *EncryptionConfig) []byte {
+func outputDecryption(buffer *OutputDataBuffer, config *EncryptionConfig) []byte {
 	if config.encryptionAlgorithm != gameplayEncryption {
-		return buffer.decryptedData[buffer.offset:buffer.length]
+		return buffer.decryptedData[:buffer.length]
 	}
 
-	compressedBytes := HuffManCompress(buffer.compressedData, buffer.decryptedData[buffer.offset:], buffer.length-buffer.offset)
+	compressedBytes := HuffManCompress(buffer.compressedData, buffer.decryptedData, buffer.length)
 	for i := 0; i < compressedBytes; i++ {
 		in := buffer.compressedData[i]
 		out := in ^ config.md5Digest[config.md5Position]
 		config.md5Position = (config.md5Position + 1) & Md5ResetFlag
-		buffer.rawData[i] = out
+		buffer.outgoingTcpData[i] = out
 	}
 
-	return buffer.rawData[:compressedBytes]
+	return buffer.outgoingTcpData[:compressedBytes]
 }
 
 func decorateCryptologicFunction(config *EncryptionConfig, algorithm func(config *EncryptionConfig, in byte) byte) func(in []byte, out []byte) int {

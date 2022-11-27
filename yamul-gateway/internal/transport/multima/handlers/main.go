@@ -20,7 +20,7 @@ func Setup() {
 
 func wrap(delegate func(client *connection.ClientConnection)) connection.CommandHandler {
 	return func(client *connection.ClientConnection, commandCode byte) {
-		logging.Debug("%x ", commandCode)
+		logging.Debug("Processing command %x\n", commandCode)
 		delegate(client)
 		logging.Debug("\n")
 	}
