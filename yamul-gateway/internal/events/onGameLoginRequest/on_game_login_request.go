@@ -44,7 +44,7 @@ func ShowCharacterSelection(client *connection.ClientConnection) {
 	charactersStartLocation := commands.CharactersStartLocation{
 		Characters:         make([]commands.CharacterLogin, 5),
 		LastValidCharacter: 0,
-		StartingCities:     make([]commands.StartingCity, 0x12),
+		StartingCities:     make([]commands.StartingCity, 1),
 		Flags:              clientFeatures,
 	}
 	for i := 0; i < len(charactersStartLocation.Characters); i++ {
