@@ -69,8 +69,10 @@ func initializeGameplayEncryption(config *EncryptionConfig) error {
 		config.twofishTable[i] = byte(i)
 	}
 
+	cache := make([]byte, 16)
 	for i := 0; i < TwofishTableSize; i += 16 {
-		cipher.Encrypt(config.twofishTable[i:], config.twofishTable[i:])
+		cipher.Encrypt(cache, config.twofishTable[i:])
+		copy(config.twofishTable[i:], cache)
 	}
 
 	// initialize md5 table
