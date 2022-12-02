@@ -9,9 +9,6 @@ func SendCharactersAndStartingLocations(client *connection.ClientConnection, bod
 	client.StartPacket()
 	defer client.EndPacket()
 
-	client.WriteByte(0xB9)
-	client.WriteUInt(ConvertClientFeaturesToFlags(body.Flags))
-
 	size := 4 + 60*len(body.Characters) + 1 + 89*len(body.StartingCities) + 6
 
 	client.WriteByte(0xA9)
@@ -42,7 +39,8 @@ func SendCharactersAndStartingLocations(client *connection.ClientConnection, bod
 		client.WriteUInt(0)
 	}
 
-	client.WriteUInt(ConvertClientFeaturesToFlags(body.Flags))
+	//client.WriteUInt(ConvertClientFeaturesToFlags(body.Flags))
+	client.WriteUInt(0x00002c00)
 	client.WriteUShort(uint16(body.LastValidCharacter))
 
 }

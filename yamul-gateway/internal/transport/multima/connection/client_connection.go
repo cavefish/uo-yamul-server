@@ -195,7 +195,7 @@ func (client *ClientConnection) EndPacket() {
 func (client *ClientConnection) CheckEncryptionHandshake() {
 	_ = client.ReceiveData()
 	firstByte := client.inputBuffer.incomingTcpData[0]
-	if firstByte&0xC0 != 0 {
+	if firstByte&0x80 != 0 {
 		logging.Debug("Connecting to login server: %x\n", firstByte)
 		// High byte is unencrypted or basic encryption
 		return

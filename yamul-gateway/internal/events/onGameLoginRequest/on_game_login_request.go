@@ -1,7 +1,6 @@
 package onGameLoginRequest
 
 import (
-	"fmt"
 	"yamul-gateway/internal/services/login"
 	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/connection"
@@ -36,11 +35,10 @@ func validateLogin(command commands.GameLoginRequest) (bool, commands.LoginDenie
 
 func ShowCharacterSelection(client *connection.ClientConnection) {
 	clientFeatures := commands.ClientFeatures{
-		UO3D:        true,
-		Unknown0800: true,
-		Unknown2000: true,
+		Unknown0001:         true,
+		SingleCharacterSlot: true,
 	}
-	//handlers.SendClientFeatures(event.Client, clientFeatures)
+	handlers.SendClientFeatures(client, clientFeatures)
 	charactersStartLocation := commands.CharactersStartLocation{
 		Characters:         make([]commands.CharacterLogin, 5),
 		LastValidCharacter: 0,
@@ -48,17 +46,17 @@ func ShowCharacterSelection(client *connection.ClientConnection) {
 		Flags:              clientFeatures,
 	}
 	for i := 0; i < len(charactersStartLocation.Characters); i++ {
-		charactersStartLocation.Characters[i].Name = fmt.Sprintf("Username #%d", i+1)
+		charactersStartLocation.Characters[i].Name = "asdf" //fmt.Sprintf("Username%d", i+1)
 		charactersStartLocation.Characters[i].Password = ""
 	}
 	for i := 0; i < len(charactersStartLocation.StartingCities); i++ {
-		charactersStartLocation.StartingCities[i].Name = fmt.Sprintf("City #%d", i+1)
-		charactersStartLocation.StartingCities[i].Tavern = fmt.Sprintf("Tavern #%d", i+1)
-		charactersStartLocation.StartingCities[i].CoordinateX = 1496
-		charactersStartLocation.StartingCities[i].CoordinateY = 1628
-		charactersStartLocation.StartingCities[i].CoordinateZ = 10
+		charactersStartLocation.StartingCities[i].Name = "Yew"                //fmt.Sprintf("City%d", i+1)
+		charactersStartLocation.StartingCities[i].Tavern = "The Empath Abbey" //fmt.Sprintf("Tavern%d", i+1)
+		charactersStartLocation.StartingCities[i].CoordinateX = 633
+		charactersStartLocation.StartingCities[i].CoordinateY = 858
+		charactersStartLocation.StartingCities[i].CoordinateZ = 0
 		charactersStartLocation.StartingCities[i].CoordinateMap = 0
-		charactersStartLocation.StartingCities[i].ClilocDescription = 1075074
+		charactersStartLocation.StartingCities[i].ClilocDescription = 1075072
 
 	}
 	handlers.SendCharactersAndStartingLocations(client, charactersStartLocation)

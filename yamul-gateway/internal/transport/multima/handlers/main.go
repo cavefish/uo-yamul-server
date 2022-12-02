@@ -10,6 +10,7 @@ func Setup() {
 	for i := 0; i < 256; i++ {
 		connection.ClientCommandHandlers[i] = noop
 	}
+	connection.ClientCommandHandlers[0x5d] = wrap(preLogin)
 	connection.ClientCommandHandlers[0x73] = wrap(ping)
 	connection.ClientCommandHandlers[0x80] = wrap(loginRequest)
 	connection.ClientCommandHandlers[0x82] = forbiddenClientCommand("Login denied")

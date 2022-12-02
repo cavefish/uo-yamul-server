@@ -45,10 +45,12 @@ var Listeners = struct {
 	OnLoginRequest     *ListenerHandler[commands.LoginRequestCommand]
 	OnShardSelected    *ListenerHandler[commands.ShardSelected]
 	OnGameLoginRequest *ListenerHandler[commands.GameLoginRequest]
+	OnPreLogin         *ListenerHandler[commands.PreLogin]
 }{
 	OnLoginRequest:     createHandler[commands.LoginRequestCommand](),
 	OnShardSelected:    createHandler[commands.ShardSelected](),
 	OnGameLoginRequest: createHandler[commands.GameLoginRequest](),
+	OnPreLogin:         createHandler[commands.PreLogin](),
 }
 
 func onMissingListener[T any](event CommandEvent[T]) {

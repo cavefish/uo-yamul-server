@@ -13,7 +13,7 @@ func OnShardSelected(event listeners.CommandEvent[commands.ShardSelected]) {
 	if redirectToGameServer {
 		command := commands.RedirectToShard{
 			AddressIP:     event.Client.Connection.LocalAddr().String(),
-			EncryptionKey: event.Client.EncryptionState.Seed,
+			EncryptionKey: 0x5f11d4f0, //event.Client.EncryptionState.Seed,
 		}
 		handlers.RedirectToShard(event.Client, command)
 		return

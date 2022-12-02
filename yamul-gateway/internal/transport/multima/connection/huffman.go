@@ -44,14 +44,14 @@ func HuffManCompress(pbOutput []byte, pbInput []byte, inputLen int) int {
 	wBitIndex := 0
 
 	for i := 0; i <= inputLen; i++ {
-		var idx = uint16(COMPRESS_TREE_SIZE - 1)
+		var wValue uint16 = sm_xCompress_Base[256]
 		if i < inputLen {
-			idx = uint16(pbInput[i])
+			wValue = sm_xCompress_Base[pbInput[i]]
 		}
-		var wValue uint16 = sm_xCompress_Base[idx]
 		iBits := wValue & 0xF
 		wValue >>= 4
-		for ; iBits > 0; iBits-- {
+		for iBits > 0 {
+			iBits--
 			bOutVal <<= 1
 			bOutVal |= byte((wValue >> iBits) & 0x1)
 			wBitIndex++
