@@ -22,6 +22,7 @@ func CreateConnectionHandler(conn net.Conn) *ClientConnection {
 	connection.Logger = &logger{
 		client:   connection,
 		name:     "clientConnection",
+		prefix:   "",
 		logLevel: LogLevelDebug,
 	}
 	return connection

@@ -1,6 +1,9 @@
 package connection
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 const (
 	LogLevelError = iota
@@ -13,6 +16,7 @@ type logger struct {
 	Logger
 	client   *ClientConnection
 	name     string
+	prefix   string
 	logLevel int
 }
 
@@ -21,6 +25,7 @@ type Logger interface {
 	Warning(format string, vars ...any)
 	Info(format string, vars ...any)
 	Debug(format string, vars ...any)
+	SetPrefix(prefix string)
 }
 
 func (logger *logger) Error(format string, vars ...any) {
@@ -39,6 +44,10 @@ func (logger *logger) Debug(format string, vars ...any) {
 	logger.log(LogLevelDebug, format, vars)
 }
 
+func (logger *logger) SetPrefix(prefix string) {
+	logger.prefix = prefix
+}
+
 func (logger *logger) log(level int, format string, vars []any) {
 	if level > logger.logLevel {
 		return
@@ -52,7 +61,9 @@ func (logger *logger) log(level int, format string, vars []any) {
 	clientPrefix := logger.getClientPrefix()
 	levelPrefix := logger.getLogLevelPrefix()
 
-	fmt.Printf("[%s] %s\t%s\n", levelPrefix, clientPrefix, output)
+	time := time.Now().Format(time.Stamp)
+
+	fmt.Printf("%s\t[%s]%s%s\t%s\n", time, levelPrefix, clientPrefix, logger.prefix, output)
 }
 
 func (logger *logger) getClientPrefix() string {
@@ -60,7 +71,7 @@ func (logger *logger) getClientPrefix() string {
 		return logger.name
 	}
 
-	return fmt.Sprintf("[server=%s, client=%s]", logger.client.Connection.LocalAddr(), logger.client.Connection.RemoteAddr())
+	return fmt.Sprintf("[%s]", logger.client.Connection.RemoteAddr())
 }
 
 func (logger *logger) getLogLevelPrefix() string {
