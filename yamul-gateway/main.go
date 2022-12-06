@@ -31,17 +31,17 @@ func listenToIncomingRequests(port string) {
 
 	l, err := net.Listen(CONN_TYPE, ":"+port)
 	if err != nil {
-		logger.Error("Error listening: %s\n", err.Error())
+		logger.Error("Error listening: %s", err.Error())
 		os.Exit(1)
 	}
 	// Close the listener when the application closes.
 	defer l.Close()
 	for {
-		logger.Info("Listening on port %s\n", port)
+		logger.Info("Listening on port %s", port)
 		// Listen for an incoming connection.
 		conn, err := l.Accept()
 		if err != nil {
-			logger.Error("Error accepting connection %s\n", err.Error())
+			logger.Error("Error accepting connection %s", err.Error())
 			os.Exit(1)
 		}
 		// Handle connections in a new goroutine.

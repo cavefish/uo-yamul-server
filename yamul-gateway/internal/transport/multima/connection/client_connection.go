@@ -76,7 +76,7 @@ func (client *ClientConnection) sendEverything() error {
 		client.Err = err
 		return err
 	}
-	client.Logger.Debug("Sent %d bytes\n", sentLength)
+	client.Logger.Debug("Sent %d bytes", sentLength)
 	buffer.length = 0
 	return nil
 }
@@ -92,7 +92,7 @@ func (client *ClientConnection) ReceiveData() error {
 		return nil
 	}
 	if err != nil {
-		client.Logger.Error("Error reading: %v\n", err.Error())
+		client.Logger.Error("Error reading: %v", err.Error())
 		client.Err = err
 		return err
 	}
@@ -202,11 +202,11 @@ func (client *ClientConnection) CheckEncryptionHandshake() {
 	_ = client.ReceiveData()
 	firstByte := client.inputBuffer.incomingTcpData[0]
 	if firstByte&0x80 != 0 {
-		client.Logger.Info("Connecting to login server: %x\n", firstByte)
+		client.Logger.Info("Connecting to login server: %x", firstByte)
 		// High byte is unencrypted or basic encryption
 		return
 	}
-	client.Logger.Info("Connecting to game server\n")
+	client.Logger.Info("Connecting to game server")
 	client.EncryptionState.GameplayServer = true
 	client.UpdateEncryptionSeed(client.ReadUInt())
 }

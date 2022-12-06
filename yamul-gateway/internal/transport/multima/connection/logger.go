@@ -39,14 +39,14 @@ func (logger *logger) Debug(format string, vars ...any) {
 	logger.log(LogLevelDebug, format, vars)
 }
 
-func (logger *logger) log(level int, format string, vars ...any) {
+func (logger *logger) log(level int, format string, vars []any) {
 	if level > logger.logLevel {
 		return
 	}
 
 	output := format
 	if len(vars) > 0 {
-		output = fmt.Sprintf(format, vars)
+		output = fmt.Sprintf(format, vars...)
 	}
 
 	clientPrefix := logger.getClientPrefix()
