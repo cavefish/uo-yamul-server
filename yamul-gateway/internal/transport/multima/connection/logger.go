@@ -3,10 +3,10 @@ package connection
 import "fmt"
 
 const (
-	LOG_LEVEL_ERROR = iota
-	LOG_LEVEL_WARNING
-	LOG_LEVEL_INFO
-	LOG_LEVEL_DEBUG
+	LogLevelError = iota
+	LogLevelWarning
+	LogLevelInfo
+	LogLevelDebug
 )
 
 type logger struct {
@@ -24,19 +24,19 @@ type Logger interface {
 }
 
 func (logger *logger) Error(format string, vars ...any) {
-	logger.log(LOG_LEVEL_ERROR, format, vars)
+	logger.log(LogLevelError, format, vars)
 }
 
 func (logger *logger) Warning(format string, vars ...any) {
-	logger.log(LOG_LEVEL_WARNING, format, vars)
+	logger.log(LogLevelWarning, format, vars)
 }
 
 func (logger *logger) Info(format string, vars ...any) {
-	logger.log(LOG_LEVEL_INFO, format, vars)
+	logger.log(LogLevelInfo, format, vars)
 }
 
 func (logger *logger) Debug(format string, vars ...any) {
-	logger.log(LOG_LEVEL_DEBUG, format, vars)
+	logger.log(LogLevelDebug, format, vars)
 }
 
 func (logger *logger) log(level int, format string, vars ...any) {
@@ -65,13 +65,13 @@ func (logger *logger) getClientPrefix() string {
 
 func (logger *logger) getLogLevelPrefix() string {
 	switch logger.logLevel {
-	case LOG_LEVEL_ERROR:
+	case LogLevelError:
 		return "ERROR"
-	case LOG_LEVEL_WARNING:
+	case LogLevelWarning:
 		return "WARNING"
-	case LOG_LEVEL_INFO:
+	case LogLevelInfo:
 		return "INFO"
-	case LOG_LEVEL_DEBUG:
+	case LogLevelDebug:
 		return "DEBUG"
 	default:
 		return fmt.Sprintf("ERROR-UNKNOWN-LEVEL-%d", logger.logLevel)
@@ -82,6 +82,6 @@ func LoggerFor(name string) Logger {
 	return &logger{
 		client:   nil,
 		name:     name,
-		logLevel: LOG_LEVEL_DEBUG,
+		logLevel: LogLevelDebug,
 	}
 }
