@@ -15,14 +15,14 @@ func Setup() {
 	connection.ClientCommandHandlers[0x82] = forbiddenClientCommand("Login denied")
 	connection.ClientCommandHandlers[0x91] = wrap(gameServerLogin)
 	connection.ClientCommandHandlers[0xa0] = wrap(serverSelected)
+	connection.ClientCommandHandlers[0xbf] = wrap(genericCommand)
 	connection.ClientCommandHandlers[0xef] = wrap(newSeed)
 }
 
 func wrap(delegate func(client *connection.ClientConnection)) connection.CommandHandler {
 	return func(client *connection.ClientConnection, commandCode byte) {
-		client.Logger.Debug("> Processing command %x", commandCode)
+		client.Logger.Debug("Processing command %x", commandCode)
 		delegate(client)
-		client.Logger.Debug("< Finished command %x", commandCode)
 	}
 }
 

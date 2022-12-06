@@ -156,11 +156,15 @@ func (client *ClientConnection) WriteUInt(value uint32) {
 }
 
 func (client *ClientConnection) ReadFixedString(length int) string {
+	return string(client.ReadFixedBytes(length))
+}
+
+func (client *ClientConnection) ReadFixedBytes(length int) []byte {
 	value := make([]byte, length)
 	for i := 0; i < length; i++ {
 		value[i] = client.ReadByte()
 	}
-	return string(value)
+	return value
 }
 
 func (client *ClientConnection) WriteFixedString(length int, value string) {
