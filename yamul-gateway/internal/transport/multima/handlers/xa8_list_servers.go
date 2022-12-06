@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"yamul-gateway/internal/logging"
 	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/connection"
 	"yamul-gateway/utils/numbers"
@@ -27,5 +26,5 @@ func ListGameServers(client *connection.ClientConnection, response commands.List
 		client.WriteUInt(numbers.BigEndianUInt32(ip))
 	}
 
-	logging.Debug("Sending server list %+v\n", response)
+	client.Logger.Debug("Sending server list %+v", response)
 }

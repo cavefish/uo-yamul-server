@@ -4,22 +4,27 @@ import (
 	"encoding/binary"
 	"net"
 	"sync"
-	"yamul-gateway/internal/logging"
 )
 
-func CreateConnectionHandler(conn net.Conn) ClientConnection {
+func CreateConnectionHandler(conn net.Conn) *ClientConnection {
 	encryptionConfig := EncryptionConfig{
 		GameplayServer:      false,
 		Seed:                0,
 		encryptionAlgorithm: noEncryption,
 	}
-	return ClientConnection{
+	connection := &ClientConnection{
 		Connection:            conn,
 		ShouldCloseConnection: false,
 		inputBuffer:           CreateInputDataBuffer(),
 		outputBuffer:          CreateOutputDataBuffer(),
 		EncryptionState:       encryptionConfig,
 	}
+	connection.Logger = &logger{
+		client:   connection,
+		name:     "clientConnection",
+		logLevel: LOG_LEVEL_DEBUG,
+	}
+	return connection
 }
 
 type ClientConnection struct {
@@ -30,16 +35,17 @@ type ClientConnection struct {
 	outputBuffer          OutputDataBuffer
 	Err                   error
 	EncryptionState       EncryptionConfig
+	Logger                Logger
 }
 
 func (client *ClientConnection) decrypt() {
 	inputDecryption(&client.inputBuffer, &client.EncryptionState)
-	client.inputBuffer.printBuffer()
+	client.Logger.Debug(client.inputBuffer.printBuffer())
 }
 
 func (client *ClientConnection) getOutputSlice() []byte {
 	slice := outputDecryption(&client.outputBuffer, &client.EncryptionState)
-	client.outputBuffer.printBuffer()
+	client.Logger.Debug(client.outputBuffer.printBuffer())
 	return slice
 }
 
@@ -70,7 +76,7 @@ func (client *ClientConnection) sendEverything() error {
 		client.Err = err
 		return err
 	}
-	logging.Debug("Sent %d bytes\n", sentLength)
+	client.Logger.Debug("Sent %d bytes\n", sentLength)
 	buffer.length = 0
 	return nil
 }
@@ -86,7 +92,7 @@ func (client *ClientConnection) ReceiveData() error {
 		return nil
 	}
 	if err != nil {
-		logging.Error("Error reading: %v\n", err.Error())
+		client.Logger.Error("Error reading: %v\n", err.Error())
 		client.Err = err
 		return err
 	}
@@ -196,11 +202,11 @@ func (client *ClientConnection) CheckEncryptionHandshake() {
 	_ = client.ReceiveData()
 	firstByte := client.inputBuffer.incomingTcpData[0]
 	if firstByte&0x80 != 0 {
-		logging.Debug("Connecting to login server: %x\n", firstByte)
+		client.Logger.Info("Connecting to login server: %x\n", firstByte)
 		// High byte is unencrypted or basic encryption
 		return
 	}
-	logging.Debug("Connecting to game server\n")
+	client.Logger.Info("Connecting to game server\n")
 	client.EncryptionState.GameplayServer = true
 	client.UpdateEncryptionSeed(client.ReadUInt())
 }

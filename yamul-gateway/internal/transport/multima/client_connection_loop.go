@@ -2,7 +2,6 @@ package multima
 
 import (
 	"net"
-	"yamul-gateway/internal/logging"
 	"yamul-gateway/internal/transport/multima/connection"
 )
 
@@ -13,19 +12,19 @@ func ClientConnectionLoop(conn net.Conn) {
 
 	client.CheckEncryptionHandshake()
 
-	logging.Info("[%s %s] Connection open\n", conn.LocalAddr(), conn.RemoteAddr())
+	client.Logger.Info("Connection open\n")
 
 	for !client.ShouldCloseConnection && client.Err == nil {
 		client.ProcessInputBuffer()
 		err := client.ReceiveData()
 		if err != nil {
-			logging.Error("[%s %s] Error on connection loop %v\n", conn.LocalAddr(), conn.RemoteAddr(), err)
+			client.Logger.Error("Error on connection loop %v\n", err)
 			return
 		}
 	}
 
 	if client.Err != nil {
-		logging.Error("[%s %s] error %v\n", conn.LocalAddr(), conn.RemoteAddr(), client.Err)
+		client.Logger.Error("error %v\n", client.Err)
 	}
-	logging.Info("[%s %s] Connection closed\n", conn.LocalAddr(), conn.RemoteAddr())
+	client.Logger.Info("Connection closed\n")
 }

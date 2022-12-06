@@ -1,8 +1,6 @@
 package connection
 
-import (
-	"yamul-gateway/internal/logging"
-)
+import "fmt"
 
 const BufferSize = 15360
 
@@ -38,13 +36,13 @@ type InputDataBuffer struct {
 	offset          int
 }
 
-func (buffer InputDataBuffer) printBuffer() {
+func (buffer InputDataBuffer) printBuffer() string {
 	if buffer.offset >= buffer.length {
-		return
+		return "Empty buffer"
 	}
-	logging.Debug("Input Buffer length %d\nraw:\t\t% x\n", buffer.length-buffer.offset, buffer.decryptedData[buffer.offset:buffer.length])
+	return fmt.Sprintf("Input Buffer length %d\nraw:\t\t% x", buffer.length-buffer.offset, buffer.decryptedData[buffer.offset:buffer.length])
 }
 
-func (buffer OutputDataBuffer) printBuffer() {
-	logging.Debug("Output Buffer length %d\nraw:\t\t% x\n", buffer.length, buffer.decryptedData[:buffer.length])
+func (buffer OutputDataBuffer) printBuffer() string {
+	return fmt.Sprintf("Output Buffer length %d\nraw:\t\t% x", buffer.length, buffer.decryptedData[:buffer.length])
 }

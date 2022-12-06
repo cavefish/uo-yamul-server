@@ -5,8 +5,8 @@ import (
 	"os"
 	"sync"
 	"yamul-gateway/internal/autoconfig"
-	"yamul-gateway/internal/logging"
 	"yamul-gateway/internal/transport/multima"
+	"yamul-gateway/internal/transport/multima/connection"
 )
 
 const (
@@ -26,19 +26,22 @@ func main() {
 
 func listenToIncomingRequests(port string) {
 	defer listenerWg.Done()
+
+	logger := connection.LoggerFor("main")
+
 	l, err := net.Listen(CONN_TYPE, ":"+port)
 	if err != nil {
-		logging.Error("Error listening: %s\n", err.Error())
+		logger.Error("Error listening: %s\n", err.Error())
 		os.Exit(1)
 	}
 	// Close the listener when the application closes.
 	defer l.Close()
 	for {
-		logging.Debug("Listening on port %s\n", port)
+		logger.Info("Listening on port %s\n", port)
 		// Listen for an incoming connection.
 		conn, err := l.Accept()
 		if err != nil {
-			logging.Error("Error accepting connection %s\n", err.Error())
+			logger.Error("Error accepting connection %s\n", err.Error())
 			os.Exit(1)
 		}
 		// Handle connections in a new goroutine.

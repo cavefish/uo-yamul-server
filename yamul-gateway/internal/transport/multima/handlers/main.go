@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"yamul-gateway/internal/logging"
 	"yamul-gateway/internal/transport/multima/connection"
 )
 
@@ -21,9 +20,9 @@ func Setup() {
 
 func wrap(delegate func(client *connection.ClientConnection)) connection.CommandHandler {
 	return func(client *connection.ClientConnection, commandCode byte) {
-		logging.Debug("Processing command %x\n", commandCode)
+		client.Logger.Debug("> Processing command %x", commandCode)
 		delegate(client)
-		logging.Debug("\n")
+		client.Logger.Debug("< Finished command %x", commandCode)
 	}
 }
 
