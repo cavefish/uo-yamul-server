@@ -11,14 +11,18 @@ func Setup() {
 	for i := 0; i < 256; i++ {
 		connection.ClientCommandHandlers[i] = noop
 	}
+	setHandler(0x09, unimplemented(4))  // Single click on event id http://www.hoogi.de/wolfpack/wiki/doku.php?id=uo_protocol_0x09
+	setHandler(0x34, unimplemented(10)) // Get player status http://www.hoogi.de/wolfpack/wiki/doku.php?id=uo_protocol_0x34
 	setHandler(0x5d, preLogin)
 	setHandler(0x73, ping)
 	setHandler(0x80, loginRequest)
 	forbiddenClientCommand(0x82, "Login denied")
 	setHandler(0x91, gameServerLogin)
 	setHandler(0xa0, serverSelected)
+	setHandler(0xbd, receiveClientVersion)
 	setHandler(0xbf, genericCommand)
 	setHandler(0xef, newSeed)
+	setHandler(0xfb, useMultiSight)
 }
 
 func setHandler(command byte, delegate func(client *connection.ClientConnection)) {
@@ -32,8 +36,8 @@ func setHandler(command byte, delegate func(client *connection.ClientConnection)
 	connection.ClientCommandHandlers[command] = handler
 }
 
-func unimplemented(skip int) connection.CommandHandler {
-	return func(client *connection.ClientConnection, commandCode byte) {
+func unimplemented(skip int) func(client *connection.ClientConnection) {
+	return func(client *connection.ClientConnection) {
 		client.ReadFixedString(skip)
 	}
 }

@@ -18,6 +18,7 @@ func CreateConnectionHandler(conn net.Conn) *ClientConnection {
 		inputBuffer:           CreateInputDataBuffer(),
 		outputBuffer:          CreateOutputDataBuffer(),
 		EncryptionState:       encryptionConfig,
+		Status:                ClientConnectionStatus{},
 	}
 	connection.Logger = &logger{
 		client:   connection,
@@ -37,6 +38,11 @@ type ClientConnection struct {
 	Err                   error
 	EncryptionState       EncryptionConfig
 	Logger                Logger
+	Status                ClientConnectionStatus
+}
+
+type ClientConnectionStatus struct {
+	UseMultiSight bool
 }
 
 func (client *ClientConnection) decrypt() {
