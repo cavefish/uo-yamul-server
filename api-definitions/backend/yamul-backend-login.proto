@@ -1,0 +1,26 @@
+syntax = "proto3";
+package services.login;
+
+option go_package = "./backend/services/login";
+option java_package = "dev.cavefish.yamul.backend.login.api";
+option java_multiple_files = true;
+option java_generic_services = true;
+option java_generate_equals_and_hash = true;
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  enum LoginResponseValue {
+    undefined = 0 ;
+    valid = 1;
+    invalid = 2;
+  }
+  LoginResponseValue value = 1;
+}
+
+service LoginService {
+  rpc validateLogin (LoginRequest) returns (LoginResponse);
+}

@@ -3,14 +3,14 @@ package commands
 type LoginDeniedReason byte
 
 const (
-	IncorrectUsernamePassword LoginDeniedReason = iota
-	AccountAlreadyInUse
-	AccountBlocked
-	BadPassword
-	CommunicationProblem
-	IgrConcurrencyLimit
-	IgrTimeLimit
-	IgrGeneralFailure
+	LoginDeniedReason_IncorrectUsernamePassword LoginDeniedReason = iota
+	LoginDeniedReason_AccountAlreadyInUse
+	LoginDeniedReason_AccountBlocked
+	LoginDeniedReason_BadPassword
+	LoginDeniedReason_CommunicationProblem
+	LoginDeniedReason_IgrConcurrencyLimit
+	LoginDeniedReason_IgrTimeLimit
+	LoginDeniedReason_IgrGeneralFailure
 )
 
 type LoginDeniedCommand struct {

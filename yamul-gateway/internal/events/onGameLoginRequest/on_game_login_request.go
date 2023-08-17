@@ -9,8 +9,8 @@ import (
 )
 
 func OnLoginRequest(event listeners.CommandEvent[commands.GameLoginRequest]) {
-	loginError, deniedReason := validateLogin(event.Command)
-	if loginError {
+	success, deniedReason := validateLogin(event.Command)
+	if !success {
 		response := commands.LoginDeniedCommand{
 			Reason: deniedReason,
 		}
@@ -22,15 +22,7 @@ func OnLoginRequest(event listeners.CommandEvent[commands.GameLoginRequest]) {
 }
 
 func validateLogin(command commands.GameLoginRequest) (bool, commands.LoginDeniedReason) {
-	ok, err := login.CheckUserCredentials(command.Username, command.Password)
-	if err == login.INVALID_USER {
-		return ok, commands.AccountBlocked
-	}
-	if err == login.INVALID_CREDENTIALS {
-		return ok, commands.IncorrectUsernamePassword
-	}
-	return ok, 0
-
+	return login.CheckUserCredentials(command.Username, command.Password)
 }
 
 func ShowCharacterSelection(client *connection.ClientConnection) {

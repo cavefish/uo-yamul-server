@@ -8,8 +8,8 @@ import (
 )
 
 func OnLoginRequest(event listeners.CommandEvent[commands.LoginRequestCommand]) {
-	loginError, deniedReason := validateLogin(event.Command)
-	if loginError {
+	loginSuccess, deniedReason := validateLogin(event.Command)
+	if !loginSuccess {
 		response := commands.LoginDeniedCommand{
 			Reason: deniedReason,
 		}
@@ -28,13 +28,5 @@ func OnLoginRequest(event listeners.CommandEvent[commands.LoginRequestCommand]) 
 }
 
 func validateLogin(command commands.LoginRequestCommand) (bool, commands.LoginDeniedReason) {
-	ok, err := login.CheckUserCredentials(command.Username, command.Password)
-	if err == login.INVALID_USER {
-		return ok, commands.AccountBlocked
-	}
-	if err == login.INVALID_CREDENTIALS {
-		return ok, commands.IncorrectUsernamePassword
-	}
-	return ok, 0
-
+	return login.CheckUserCredentials(command.Username, command.Password)
 }

@@ -20,7 +20,7 @@ func Setup() {
 	setHandler(0x91, gameServerLogin)
 	setHandler(0xa0, serverSelected)
 	setHandler(0xbd, receiveClientVersion)
-	setHandler(0xbf, genericCommand)
+	setHandler(0xbf, receiveGenericCommand)
 	setHandler(0xef, newSeed)
 	setHandler(0xfb, useMultiSight)
 }
