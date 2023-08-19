@@ -22,7 +22,7 @@ func OnLoginRequest(event listeners.CommandEvent[commands.GameLoginRequest]) {
 }
 
 func validateLogin(command commands.GameLoginRequest) (bool, commands.LoginDeniedReason) {
-	return login.CheckUserCredentials(command.Username, command.Password)
+	return login.Service.CheckUserCredentials(command.Username, command.Password)
 }
 
 func ShowCharacterSelection(client *connection.ClientConnection) {

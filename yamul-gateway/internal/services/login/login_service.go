@@ -8,22 +8,45 @@ import (
 	"yamul-gateway/internal/transport/multima/commands"
 )
 
-const (
-	OK int = iota
-	INVALID_USER
-	INVALID_CREDENTIALS
-)
+type LoginService struct {
+	dial   *grpc.ClientConn
+	client backendLogin.LoginServiceClient
+}
 
-func CheckUserCredentials(username string, password string) (bool, commands.LoginDeniedReason) {
+var Service *LoginService
+
+func Setup() error {
+	service, err := newLoginService()
+	Service = service
+	return err
+}
+
+func Close() {
+	Service.close()
+}
+
+func newLoginService() (*LoginService, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	dial, err := grpc.Dial("localhost:8087", opts...)
 	if err != nil {
-		return false, commands.LoginDeniedReason_CommunicationProblem
+		return nil, err
 	}
-	defer dial.Close()
-	client := backendLogin.NewLoginServiceClient(dial)
-	response, err := client.ValidateLogin(context.Background(), &backendLogin.LoginRequest{
+	return &LoginService{
+		dial:   dial,
+		client: backendLogin.NewLoginServiceClient(dial),
+	}, nil
+}
+
+func (s LoginService) close() {
+	err := s.dial.Close()
+	if err != nil {
+		return
+	}
+}
+
+func (s LoginService) CheckUserCredentials(username string, password string) (bool, commands.LoginDeniedReason) {
+	response, err := s.client.ValidateLogin(context.Background(), &backendLogin.LoginRequest{
 		Username: username,
 		Password: password,
 	})

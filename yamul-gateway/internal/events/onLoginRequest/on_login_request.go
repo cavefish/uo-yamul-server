@@ -28,5 +28,5 @@ func OnLoginRequest(event listeners.CommandEvent[commands.LoginRequestCommand]) 
 }
 
 func validateLogin(command commands.LoginRequestCommand) (bool, commands.LoginDeniedReason) {
-	return login.CheckUserCredentials(command.Username, command.Password)
+	return login.Service.CheckUserCredentials(command.Username, command.Password)
 }

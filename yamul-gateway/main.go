@@ -18,6 +18,7 @@ var listenerWg sync.WaitGroup
 
 func main() {
 	autoconfig.Setup()
+	defer autoconfig.Close()
 	// Listen for incoming connections.
 	listenerWg.Add(1)
 	go listenToIncomingRequests(SERVER_PORT)
