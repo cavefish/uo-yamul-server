@@ -1,7 +1,11 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
+
 plugins {
     kotlin("jvm") version "1.9.0"
     id("com.google.protobuf") version "0.9.4"
-    // id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
+    id("com.github.sherter.google-java-format") version "0.9"
+    id("io.gitlab.arturbosch.detekt") version "1.23.1"
     application
 }
 
@@ -66,8 +70,39 @@ java.sourceSets["main"].proto {
     srcDirs("../api-definitions/backend/")
 }
 
+kotlin.sourceSets["main"].kotlin {
+    srcDirs("src/main/kotlin")
+}
+
 tasks.register<JavaExec>("RunLoginService") {
     dependsOn("classes")
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("dev.cavefish.yamul.backend.login.controller.LoginServiceMain")
+}
+
+tasks["build"].dependsOn(tasks["googleJavaFormat"])
+tasks["verifyGoogleJavaFormat"].mustRunAfter(tasks["googleJavaFormat"])
+
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    config.setFrom("$projectDir/config/detekt.yml")
+    baseline = file("$projectDir/config/baseline.xml")
+}
+
+tasks.withType<Detekt>().configureEach {
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+        txt.required.set(true)
+        sarif.required.set(true)
+        md.required.set(true)
+    }
+}
+
+tasks.withType<Detekt>().configureEach {
+    jvmTarget = "19"
+}
+tasks.withType<DetektCreateBaselineTask>().configureEach {
+    jvmTarget = "19"
 }
