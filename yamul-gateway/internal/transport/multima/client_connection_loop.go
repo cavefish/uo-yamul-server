@@ -8,7 +8,7 @@ import (
 // Handles incoming requests.
 func ClientConnectionLoop(conn net.Conn) {
 	client := connection.CreateConnectionHandler(conn)
-	defer client.CloseConnection()
+	defer client.Close()
 
 	client.CheckEncryptionHandshake()
 

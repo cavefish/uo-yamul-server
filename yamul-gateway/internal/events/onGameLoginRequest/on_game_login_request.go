@@ -10,15 +10,17 @@ import (
 
 func OnLoginRequest(event listeners.CommandEvent[commands.GameLoginRequest]) {
 	success, deniedReason := validateLogin(event.Command)
-	if !success {
-		response := commands.LoginDeniedCommand{
-			Reason: deniedReason,
-		}
-		handlers.LoginDenied(event.Client, response)
+	if success {
+		ShowCharacterSelection(event.Client)
 		return
 	}
 
-	ShowCharacterSelection(event.Client)
+	response := commands.LoginDeniedCommand{
+		Reason: deniedReason,
+	}
+	handlers.LoginDenied(event.Client, response)
+	return
+
 }
 
 func validateLogin(command commands.GameLoginRequest) (bool, commands.LoginDeniedReason) {

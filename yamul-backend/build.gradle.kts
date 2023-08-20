@@ -74,10 +74,10 @@ kotlin.sourceSets["main"].kotlin {
     srcDirs("src/main/kotlin")
 }
 
-tasks.register<JavaExec>("RunLoginService") {
+tasks.register<JavaExec>("runService") {
     dependsOn("classes")
     classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("dev.cavefish.yamul.backend.login.controller.LoginServiceMain")
+    mainClass.set("dev.cavefish.yamul.backend.common.controller.ServiceMain")
 }
 
 tasks["build"].dependsOn(tasks["googleJavaFormat"])

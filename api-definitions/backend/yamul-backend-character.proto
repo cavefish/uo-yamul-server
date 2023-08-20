@@ -1,0 +1,18 @@
+syntax = "proto3";
+package character;
+import "common.proto";
+import "yamul-backend-login.proto";
+
+option go_package = "./backend/services/character";
+option java_package = "dev.cavefish.yamul.backend.character.api";
+option java_multiple_files = true;
+option java_generic_services = true;
+option java_generate_equals_and_hash = true;
+
+message CharacterListResponse {
+  repeated login.LoginRequest characterLogins = 1;
+}
+
+service CharacterService {
+  rpc getCharacterList (common.Empty) returns (CharacterListResponse);
+}

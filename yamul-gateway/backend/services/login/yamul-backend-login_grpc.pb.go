@@ -35,7 +35,7 @@ func NewLoginServiceClient(cc grpc.ClientConnInterface) LoginServiceClient {
 
 func (c *loginServiceClient) ValidateLogin(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
 	out := new(LoginResponse)
-	err := c.cc.Invoke(ctx, "/services.login.LoginService/validateLogin", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/login.LoginService/validateLogin", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func _LoginService_ValidateLogin_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.login.LoginService/validateLogin",
+		FullMethod: "/login.LoginService/validateLogin",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(LoginServiceServer).ValidateLogin(ctx, req.(*LoginRequest))
@@ -92,7 +92,7 @@ func _LoginService_ValidateLogin_Handler(srv interface{}, ctx context.Context, d
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var LoginService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "services.login.LoginService",
+	ServiceName: "login.LoginService",
 	HandlerType: (*LoginServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

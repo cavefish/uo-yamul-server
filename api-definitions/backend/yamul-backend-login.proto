@@ -1,5 +1,5 @@
 syntax = "proto3";
-package services.login;
+package login;
 
 option go_package = "./backend/services/login";
 option java_package = "dev.cavefish.yamul.backend.login.api";

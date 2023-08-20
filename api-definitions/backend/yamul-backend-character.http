@@ -1,0 +1,2 @@
+GRPC {{characterServer}}/character.CharacterService/getCharacterList
+x-auth-key: {{username}} {{password}}

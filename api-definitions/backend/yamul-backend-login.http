@@ -1,0 +1,6 @@
+GRPC {{loginServer}}/login.LoginService/validateLogin
+
+{
+  "username": "admin",
+  "password": "admin"
+}

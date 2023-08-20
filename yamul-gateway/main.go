@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"os"
 	"sync"
@@ -17,7 +18,11 @@ const (
 var listenerWg sync.WaitGroup
 
 func main() {
-	autoconfig.Setup()
+	err := autoconfig.Setup()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	defer autoconfig.Close()
 	// Listen for incoming connections.
 	listenerWg.Add(1)

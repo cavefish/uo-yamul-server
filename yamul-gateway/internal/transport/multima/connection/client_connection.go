@@ -56,7 +56,7 @@ func (client *ClientConnection) getOutputSlice() []byte {
 	return slice
 }
 
-func (client *ClientConnection) CloseConnection() {
+func (client *ClientConnection) Close() {
 	_ = client.Connection.Close()
 }
 
