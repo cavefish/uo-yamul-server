@@ -7,7 +7,7 @@ import io.grpc.stub.StreamObserver
 import org.springframework.stereotype.Component
 
 @Component
-class CharacterServiceController:CharacterServiceImplBase() {
+class CharacterServiceController : CharacterServiceImplBase() {
     override fun getCharacterList(request: Empty?, responseObserver: StreamObserver<CharacterListResponse>?) {
         responseObserver?.onNext(CharacterListResponse.getDefaultInstance())
         responseObserver?.onCompleted()

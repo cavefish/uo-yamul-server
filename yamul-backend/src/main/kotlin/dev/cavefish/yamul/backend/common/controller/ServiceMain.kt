@@ -22,7 +22,7 @@ class ServiceMain @Autowired constructor(
     val loginServiceController: LoginServiceController,
     val characterServiceController: CharacterServiceController,
     val basicAuthInterceptor: BasicAuthInterceptor
-    ) {
+) {
 
     @PostConstruct
     fun runServices() {
