@@ -6,7 +6,9 @@ import dev.cavefish.yamul.backend.login.api.LoginResponse
 import dev.cavefish.yamul.backend.login.api.LoginServiceGrpc
 import dev.cavefish.yamul.backend.utils.StringUtils
 import io.grpc.stub.StreamObserver
+import org.springframework.stereotype.Component
 
+@Component
 class LoginServiceController : LoginServiceGrpc.LoginServiceImplBase() {
 
     override fun validateLogin(request: LoginRequest?, responseObserver: StreamObserver<LoginResponse>?) {
@@ -21,4 +23,5 @@ class LoginServiceController : LoginServiceGrpc.LoginServiceImplBase() {
         responseObserver?.onNext(LoginResponse.newBuilder().setValue(result).build())
         responseObserver?.onCompleted()
     }
+
 }

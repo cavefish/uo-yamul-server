@@ -8,8 +8,10 @@ import io.grpc.ServerCallHandler
 import io.grpc.ServerInterceptor
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
+import org.springframework.stereotype.Component
 import java.util.*
 
+@Component
 class BasicAuthInterceptor : ServerInterceptor {
 
     private val authorizationHeaderKey: Metadata.Key<String> by lazy {

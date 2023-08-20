@@ -1,11 +1,15 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.9.0"
     id("com.google.protobuf") version "0.9.4"
     id("com.github.sherter.google-java-format") version "0.9"
     id("io.gitlab.arturbosch.detekt") version "1.23.1"
+    id("org.springframework.boot") version "3.1.2"
+    id("io.spring.dependency-management") version "1.1.2"
+    kotlin("plugin.spring") version "1.9.0"
     application
 }
 
@@ -22,10 +26,14 @@ repositories {
 }
 
 dependencies {
-    runtimeOnly("io.grpc:grpc-netty:$grpcVersion")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.springframework.boot:spring-boot-starter")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    runtimeOnly("org.springframework.boot:spring-boot-devtools")
 
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
+    runtimeOnly("io.grpc:grpc-netty:$grpcVersion")
     api("io.grpc:grpc-protobuf:$grpcVersion")
     api("com.google.protobuf:protobuf-kotlin:$protobufVersion")
     api("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
@@ -38,7 +46,11 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(19)
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_19
 }
 
 protobuf {
@@ -74,12 +86,6 @@ kotlin.sourceSets["main"].kotlin {
     srcDirs("src/main/kotlin")
 }
 
-tasks.register<JavaExec>("runService") {
-    dependsOn("classes")
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("dev.cavefish.yamul.backend.common.controller.ServiceMain")
-}
-
 tasks["build"].dependsOn(tasks["googleJavaFormat"])
 tasks["verifyGoogleJavaFormat"].mustRunAfter(tasks["googleJavaFormat"])
 
@@ -105,4 +111,10 @@ tasks.withType<Detekt>().configureEach {
 }
 tasks.withType<DetektCreateBaselineTask>().configureEach {
     jvmTarget = "19"
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xjsr305=strict"
+    }
 }
