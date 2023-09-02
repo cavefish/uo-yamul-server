@@ -1,6 +1,7 @@
 package onGameLoginRequest
 
 import (
+	"yamul-gateway/internal/services/character"
 	"yamul-gateway/internal/services/login"
 	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/connection"
@@ -10,38 +11,55 @@ import (
 
 func OnLoginRequest(event listeners.CommandEvent[commands.GameLoginRequest]) {
 	success, deniedReason := validateLogin(event.Command)
-	if success {
-		ShowCharacterSelection(event.Client)
+	if !success {
+		denyLogin(event, deniedReason)
+		return
+	}
+	event.Client.SetLogin(event.Command.Username, event.Command.Password)
+
+	service, err := character.NewCharacterService(event.Client)
+	if err != nil {
+		denyLogin(event, commands.LoginDeniedReason_CommunicationProblem)
+		return
+	}
+	defer service.Close()
+
+	err = ShowCharacterSelection(event.Client, service)
+	if err != nil {
+		denyLogin(event, commands.LoginDeniedReason_CommunicationProblem)
 		return
 	}
 
+	return
+
+}
+
+func denyLogin(event listeners.CommandEvent[commands.GameLoginRequest], deniedReason commands.LoginDeniedReason) {
 	response := commands.LoginDeniedCommand{
 		Reason: deniedReason,
 	}
 	handlers.LoginDenied(event.Client, response)
-	return
-
 }
 
 func validateLogin(command commands.GameLoginRequest) (bool, commands.LoginDeniedReason) {
 	return login.Service.CheckUserCredentials(command.Username, command.Password)
 }
 
-func ShowCharacterSelection(client *connection.ClientConnection) {
+func ShowCharacterSelection(client *connection.ClientConnection, service *character.CharacterService) error {
 	clientFeatures := commands.ClientFeatures{
 		Unknown0001:         true,
 		SingleCharacterSlot: true,
 	}
 	handlers.SendClientFeatures(client, clientFeatures)
+	characters, lastValidCharacter, err := service.GetCharacters()
+	if err != nil {
+		return err
+	}
 	charactersStartLocation := commands.CharactersStartLocation{
-		Characters:         make([]commands.CharacterLogin, 5),
-		LastValidCharacter: 0,
+		Characters:         characters,
+		LastValidCharacter: lastValidCharacter,
 		StartingCities:     make([]commands.StartingCity, 1),
 		Flags:              clientFeatures,
-	}
-	for i := 0; i < len(charactersStartLocation.Characters); i++ {
-		charactersStartLocation.Characters[i].Name = "asdf" //fmt.Sprintf("Username%d", i+1)
-		charactersStartLocation.Characters[i].Password = ""
 	}
 	for i := 0; i < len(charactersStartLocation.StartingCities); i++ {
 		charactersStartLocation.StartingCities[i].Name = "Yew"                //fmt.Sprintf("City%d", i+1)
@@ -54,4 +72,5 @@ func ShowCharacterSelection(client *connection.ClientConnection) {
 
 	}
 	handlers.SendCharactersAndStartingLocations(client, charactersStartLocation)
+	return nil
 }

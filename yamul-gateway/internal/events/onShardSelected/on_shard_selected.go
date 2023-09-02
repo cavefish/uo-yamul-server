@@ -19,5 +19,5 @@ func OnShardSelected(event listeners.CommandEvent[commands.ShardSelected]) {
 		return
 	}
 
-	onGameLoginRequest.ShowCharacterSelection(event.Client)
+	onGameLoginRequest.ShowCharacterSelection(event.Client, nil)
 }

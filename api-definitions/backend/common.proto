@@ -1,7 +1,7 @@
 syntax = "proto3";
 package common;
 
-option go_package = "./backend/services/common";
+option go_package = "./backend/services";
 option java_package = "dev.cavefish.yamul.backend.common.api";
 option java_multiple_files = true;
 option java_generic_services = true;

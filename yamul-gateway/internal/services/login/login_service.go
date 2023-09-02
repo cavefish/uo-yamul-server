@@ -4,13 +4,13 @@ import (
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	backendLogin "yamul-gateway/backend/services/login"
+	backendServices "yamul-gateway/backend/services"
 	"yamul-gateway/internal/transport/multima/commands"
 )
 
 type LoginService struct {
 	dial   *grpc.ClientConn
-	client backendLogin.LoginServiceClient
+	client backendServices.LoginServiceClient
 }
 
 var Service *LoginService
@@ -34,26 +34,23 @@ func newLoginService() (*LoginService, error) {
 	}
 	return &LoginService{
 		dial:   dial,
-		client: backendLogin.NewLoginServiceClient(dial),
+		client: backendServices.NewLoginServiceClient(dial),
 	}, nil
 }
 
 func (s LoginService) close() {
-	err := s.dial.Close()
-	if err != nil {
-		return
-	}
+	_ = s.dial.Close()
 }
 
 func (s LoginService) CheckUserCredentials(username string, password string) (bool, commands.LoginDeniedReason) {
-	response, err := s.client.ValidateLogin(context.Background(), &backendLogin.LoginRequest{
+	response, err := s.client.ValidateLogin(context.Background(), &backendServices.LoginRequest{
 		Username: username,
 		Password: password,
 	})
 	if err != nil {
 		return false, commands.LoginDeniedReason_CommunicationProblem
 	}
-	if response.Value == backendLogin.LoginResponse_valid {
+	if response.Value == backendServices.LoginResponse_valid {
 		return true, 0
 	}
 	return false, commands.LoginDeniedReason_IncorrectUsernamePassword

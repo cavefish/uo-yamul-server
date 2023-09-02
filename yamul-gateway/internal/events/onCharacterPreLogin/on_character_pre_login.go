@@ -7,6 +7,7 @@ import (
 )
 
 func OnCharacterPreLogin(event listeners.CommandEvent[commands.PreLogin]) {
+	event.Client.LoginDetails.CharacterSlot = event.Command.Slot
 	command := commands.PlayerStartConfirmation{
 		CharacterID:       1,
 		CharacterBodyType: 0x0190,

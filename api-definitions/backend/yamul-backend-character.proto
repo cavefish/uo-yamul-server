@@ -3,7 +3,7 @@ package character;
 import "common.proto";
 import "yamul-backend-login.proto";
 
-option go_package = "./backend/services/character";
+option go_package = "./backend/services";
 option java_package = "dev.cavefish.yamul.backend.character.api";
 option java_multiple_files = true;
 option java_generic_services = true;

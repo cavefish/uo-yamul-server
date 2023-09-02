@@ -4,10 +4,9 @@
 // - protoc             v3.15.8
 // source: yamul-backend-character.proto
 
-package character
+package services
 
 import (
-	common "./backend/services/common"
 	context "context"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -23,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CharacterServiceClient interface {
-	GetCharacterList(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*CharacterListResponse, error)
+	GetCharacterList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*CharacterListResponse, error)
 }
 
 type characterServiceClient struct {
@@ -34,7 +33,7 @@ func NewCharacterServiceClient(cc grpc.ClientConnInterface) CharacterServiceClie
 	return &characterServiceClient{cc}
 }
 
-func (c *characterServiceClient) GetCharacterList(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*CharacterListResponse, error) {
+func (c *characterServiceClient) GetCharacterList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*CharacterListResponse, error) {
 	out := new(CharacterListResponse)
 	err := c.cc.Invoke(ctx, "/character.CharacterService/getCharacterList", in, out, opts...)
 	if err != nil {
@@ -47,7 +46,7 @@ func (c *characterServiceClient) GetCharacterList(ctx context.Context, in *commo
 // All implementations must embed UnimplementedCharacterServiceServer
 // for forward compatibility
 type CharacterServiceServer interface {
-	GetCharacterList(context.Context, *common.Empty) (*CharacterListResponse, error)
+	GetCharacterList(context.Context, *Empty) (*CharacterListResponse, error)
 	mustEmbedUnimplementedCharacterServiceServer()
 }
 
@@ -55,7 +54,7 @@ type CharacterServiceServer interface {
 type UnimplementedCharacterServiceServer struct {
 }
 
-func (UnimplementedCharacterServiceServer) GetCharacterList(context.Context, *common.Empty) (*CharacterListResponse, error) {
+func (UnimplementedCharacterServiceServer) GetCharacterList(context.Context, *Empty) (*CharacterListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCharacterList not implemented")
 }
 func (UnimplementedCharacterServiceServer) mustEmbedUnimplementedCharacterServiceServer() {}
@@ -72,7 +71,7 @@ func RegisterCharacterServiceServer(s grpc.ServiceRegistrar, srv CharacterServic
 }
 
 func _CharacterService_GetCharacterList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(common.Empty)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -84,7 +83,7 @@ func _CharacterService_GetCharacterList_Handler(srv interface{}, ctx context.Con
 		FullMethod: "/character.CharacterService/getCharacterList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CharacterServiceServer).GetCharacterList(ctx, req.(*common.Empty))
+		return srv.(CharacterServiceServer).GetCharacterList(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

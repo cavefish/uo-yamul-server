@@ -4,7 +4,7 @@
 // - protoc             v3.15.8
 // source: yamul-backend-login.proto
 
-package login
+package services
 
 import (
 	context "context"

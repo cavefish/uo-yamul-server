@@ -39,6 +39,13 @@ type ClientConnection struct {
 	EncryptionState       EncryptionConfig
 	Logger                Logger
 	Status                ClientConnectionStatus
+	LoginDetails          LoginDetails
+}
+
+type LoginDetails struct {
+	Username      string
+	Password      string
+	CharacterSlot uint32
 }
 
 type ClientConnectionStatus struct {
@@ -163,7 +170,14 @@ func (client *ClientConnection) WriteUInt(value uint32) {
 }
 
 func (client *ClientConnection) ReadFixedString(length int) string {
-	return string(client.ReadFixedBytes(length))
+	values := string(client.ReadFixedBytes(length))
+	i := len(values) - 1
+	for ; i > 0; i-- {
+		if values[i] != 0 {
+			break
+		}
+	}
+	return values[:i+1]
 }
 
 func (client *ClientConnection) ReadFixedBytes(length int) []byte {
@@ -220,4 +234,12 @@ func (client *ClientConnection) CheckEncryptionHandshake() {
 	client.Logger.Info("Connecting to game server")
 	client.EncryptionState.GameplayServer = true
 	client.UpdateEncryptionSeed(client.ReadUInt())
+}
+
+func (client *ClientConnection) SetLogin(username string, password string) {
+	client.LoginDetails = LoginDetails{
+		Username:      username,
+		Password:      password,
+		CharacterSlot: 0,
+	}
 }
