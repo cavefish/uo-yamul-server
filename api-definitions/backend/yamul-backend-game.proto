@@ -1,0 +1,58 @@
+syntax = "proto3";
+package game;
+import "common.proto";
+
+option go_package = "./backend/services";
+option java_package = "dev.cavefish.yamul.backend.game.api";
+option java_multiple_files = true;
+option java_generic_services = true;
+option java_generate_equals_and_hash = true;
+
+message ApplyWorldPatches {
+  int32 mapCount = 1;
+  // TODO add missing fields
+}
+
+message CreateCharacter {
+  common.ObjectId id = 1;
+  // TODO add missing fields
+}
+
+message HealthBar {
+  common.ObjectId id = 1;
+  repeated Values values = 2;
+  message Values {
+    enum Type {
+      GREEN = 0;
+      YELLOW = 1;
+    }
+    Type type = 1;
+    bool enabled = 2;
+  }
+}
+
+message MapChange {
+  int32 mapId = 1;
+}
+
+message PlayMusic {
+  int32 musicId = 1;
+}
+
+message StreamInput {
+
+}
+
+message StreamOutput {
+  oneof msg {
+    HealthBar healthBar = 0x1700;
+    PlayMusic playMusic = 0x6D00;
+    CreateCharacter createCharacter = 0x7800;
+    MapChange mapChange = 0xBF08;
+    ApplyWorldPatches applyWorldPatches = 0xBF18;
+  }
+}
+
+service GameService {
+  rpc openGameStream (stream StreamInput) returns (stream StreamOutput);
+}

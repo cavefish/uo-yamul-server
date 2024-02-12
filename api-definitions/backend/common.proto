@@ -8,3 +8,11 @@ option java_generic_services = true;
 option java_generate_equals_and_hash = true;
 
 message Empty {}
+
+message UUID {
+  string value = 1;
+}
+
+message ObjectId {
+  uint32 value = 1;
+}
