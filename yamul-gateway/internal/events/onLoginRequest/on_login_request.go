@@ -8,7 +8,7 @@ import (
 )
 
 func OnLoginRequest(event listeners.CommandEvent[commands.LoginRequestCommand]) {
-	loginSuccess, deniedReason := validateLogin(event.Command)
+	loginSuccess, deniedReason := login.ValidateLogin(event.Command.Username, event.Command.Password)
 	if !loginSuccess {
 		response := commands.LoginDeniedCommand{
 			Reason: deniedReason,
@@ -25,8 +25,4 @@ func OnLoginRequest(event listeners.CommandEvent[commands.LoginRequestCommand]) 
 	}
 	command := commands.ListGameServers{Flags: 0xff, Servers: []commands.GameServer{server}}
 	handlers.ListGameServers(event.Client, command)
-}
-
-func validateLogin(command commands.LoginRequestCommand) (bool, commands.LoginDeniedReason) {
-	return login.Service.CheckUserCredentials(command.Username, command.Password)
 }

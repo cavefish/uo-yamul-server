@@ -1,12 +1,19 @@
 package onCharacterPreLogin
 
 import (
+	"yamul-gateway/internal/services/login"
 	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/handlers"
 	"yamul-gateway/internal/transport/multima/listeners"
 )
 
 func OnCharacterPreLogin(event listeners.CommandEvent[commands.PreLogin]) {
+	success, deniedReason := login.ValidateLogin(event.Client.LoginDetails.Username, event.Command.Password)
+	if !success {
+		login.DenyLogin(event.Client, deniedReason)
+		return
+	}
+
 	event.Client.LoginDetails.CharacterSlot = event.Command.Slot
 	command := commands.PlayerStartConfirmation{
 		CharacterID:       1,

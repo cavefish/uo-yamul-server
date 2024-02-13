@@ -13,16 +13,16 @@ type LoginService struct {
 	client backendServices.LoginServiceClient
 }
 
-var Service *LoginService
+var service *LoginService
 
 func Setup() error {
-	service, err := newLoginService()
-	Service = service
+	var err error
+	service, err = newLoginService()
 	return err
 }
 
 func Close() {
-	Service.close()
+	service.close()
 }
 
 func newLoginService() (*LoginService, error) {
