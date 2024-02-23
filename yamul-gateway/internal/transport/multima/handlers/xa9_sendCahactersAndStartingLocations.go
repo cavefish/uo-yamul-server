@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/interfaces"
-	"yamul-gateway/internal/transport/multima/commands"
 )
 
 func SendCharactersAndStartingLocations(client interfaces.ClientConnection, body commands.CharactersStartLocation) { // 0xA9

@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/interfaces"
-	"yamul-gateway/internal/transport/multima/commands"
 )
 
 func RedirectToShard(client interfaces.ClientConnection, body commands.RedirectToShard) { // 0x8C

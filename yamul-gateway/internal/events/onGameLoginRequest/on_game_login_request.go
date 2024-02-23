@@ -1,10 +1,10 @@
 package onGameLoginRequest
 
 import (
+	"yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/interfaces"
 	"yamul-gateway/internal/services/character"
 	"yamul-gateway/internal/services/login"
-	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/handlers"
 	"yamul-gateway/internal/transport/multima/listeners"
 )

@@ -5,9 +5,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	backendServices "yamul-gateway/backend/services"
+	"yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/interfaces"
 	servicesCommon "yamul-gateway/internal/services/common"
-	"yamul-gateway/internal/transport/multima/commands"
 )
 
 type CharacterService struct {

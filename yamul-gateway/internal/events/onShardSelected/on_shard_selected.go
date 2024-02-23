@@ -1,8 +1,8 @@
 package onShardSelected
 
 import (
+	"yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/events/onGameLoginRequest"
-	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/handlers"
 	"yamul-gateway/internal/transport/multima/listeners"
 )

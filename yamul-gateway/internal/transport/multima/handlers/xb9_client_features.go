@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/interfaces"
-	"yamul-gateway/internal/transport/multima/commands"
 )
 
 func SendClientFeatures(client interfaces.ClientConnection, features commands.ClientFeatures) { // 0xB9

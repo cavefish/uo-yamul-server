@@ -1,8 +1,8 @@
 package listeners
 
 import (
+	commands2 "yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/interfaces"
-	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/connection"
 )
 
@@ -42,15 +42,15 @@ func (handler *ListenerHandler[T]) SetListener(listener func(event CommandEvent[
 }
 
 var Listeners = struct {
-	OnLoginRequest     *ListenerHandler[commands.LoginRequestCommand]
-	OnShardSelected    *ListenerHandler[commands.ShardSelected]
-	OnGameLoginRequest *ListenerHandler[commands.GameLoginRequest]
-	OnPreLogin         *ListenerHandler[commands.PreLogin]
+	OnLoginRequest     *ListenerHandler[commands2.LoginRequestCommand]
+	OnShardSelected    *ListenerHandler[commands2.ShardSelected]
+	OnGameLoginRequest *ListenerHandler[commands2.GameLoginRequest]
+	OnPreLogin         *ListenerHandler[commands2.PreLogin]
 }{
-	OnLoginRequest:     createHandler[commands.LoginRequestCommand](),
-	OnShardSelected:    createHandler[commands.ShardSelected](),
-	OnGameLoginRequest: createHandler[commands.GameLoginRequest](),
-	OnPreLogin:         createHandler[commands.PreLogin](),
+	OnLoginRequest:     createHandler[commands2.LoginRequestCommand](),
+	OnShardSelected:    createHandler[commands2.ShardSelected](),
+	OnGameLoginRequest: createHandler[commands2.GameLoginRequest](),
+	OnPreLogin:         createHandler[commands2.PreLogin](),
 }
 
 func onMissingListener[T any](event CommandEvent[T]) {

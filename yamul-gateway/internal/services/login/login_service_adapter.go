@@ -1,8 +1,8 @@
 package login
 
 import (
+	"yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/interfaces"
-	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/handlers"
 )
 

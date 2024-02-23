@@ -3,7 +3,7 @@ package handlers
 import (
 	"fmt"
 	"testing"
-	"yamul-gateway/internal/transport/multima/commands"
+	"yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/utils/tests/assertions"
 )
 

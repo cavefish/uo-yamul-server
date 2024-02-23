@@ -5,7 +5,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	backendServices "yamul-gateway/backend/services"
-	"yamul-gateway/internal/transport/multima/commands"
+	"yamul-gateway/internal/dtos/commands"
 )
 
 type LoginService struct {

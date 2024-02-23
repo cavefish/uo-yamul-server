@@ -3,7 +3,7 @@ package handlers
 import (
 	"strconv"
 	"strings"
-	"yamul-gateway/internal/transport/multima/commands"
+	"yamul-gateway/internal/dtos/commands"
 )
 
 /*

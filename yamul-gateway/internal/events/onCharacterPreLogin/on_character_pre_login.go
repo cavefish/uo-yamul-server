@@ -1,8 +1,8 @@
 package onCharacterPreLogin
 
 import (
+	"yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/services/login"
-	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/handlers"
 	"yamul-gateway/internal/transport/multima/listeners"
 )
