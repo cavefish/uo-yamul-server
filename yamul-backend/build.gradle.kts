@@ -37,8 +37,12 @@ dependencies {
     api("io.grpc:grpc-protobuf:$grpcVersion")
     api("com.google.protobuf:protobuf-kotlin:$protobufVersion")
     api("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
 
     testImplementation(kotlin("test"))
+
+    implementation("org.tinylog:tinylog-api:2.4.1")
+    runtimeOnly("org.tinylog:tinylog-impl:2.4.1")
 }
 
 tasks.test {

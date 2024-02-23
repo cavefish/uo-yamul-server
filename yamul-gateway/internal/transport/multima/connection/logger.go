@@ -3,6 +3,7 @@ package connection
 import (
 	"fmt"
 	"time"
+	"yamul-gateway/internal/interfaces"
 )
 
 const (
@@ -13,19 +14,11 @@ const (
 )
 
 type logger struct {
-	Logger
-	client   *ClientConnection
+	interfaces.Logger
+	client   *clientConnection
 	name     string
 	prefix   string
 	logLevel int
-}
-
-type Logger interface {
-	Error(format string, vars ...any)
-	Warning(format string, vars ...any)
-	Info(format string, vars ...any)
-	Debug(format string, vars ...any)
-	SetPrefix(prefix string)
 }
 
 func (logger *logger) Error(format string, vars ...any) {
@@ -71,7 +64,7 @@ func (logger *logger) getClientPrefix() string {
 		return logger.name
 	}
 
-	return fmt.Sprintf("[%s]", logger.client.Connection.RemoteAddr())
+	return fmt.Sprintf("[%s]", logger.client.connection.RemoteAddr())
 }
 
 func (logger *logger) getLogLevelPrefix() string {
@@ -89,7 +82,7 @@ func (logger *logger) getLogLevelPrefix() string {
 	}
 }
 
-func LoggerFor(name string) Logger {
+func LoggerFor(name string) interfaces.Logger {
 	return &logger{
 		client:   nil,
 		name:     name,

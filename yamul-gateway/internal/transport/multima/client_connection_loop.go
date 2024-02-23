@@ -12,19 +12,16 @@ func ClientConnectionLoop(conn net.Conn) {
 
 	client.CheckEncryptionHandshake()
 
-	client.Logger.Info("Connection open")
+	client.GetLogger().Info("connection open")
 
-	for !client.ShouldCloseConnection && client.Err == nil {
+	for client.IsConnectionHealthy() {
 		client.ProcessInputBuffer()
 		err := client.ReceiveData()
 		if err != nil {
-			client.Logger.Error("Error on connection loop %v", err)
+			client.GetLogger().Error("Error on connection loop %v", err)
 			return
 		}
 	}
 
-	if client.Err != nil {
-		client.Logger.Error("error %v", client.Err)
-	}
-	client.Logger.Info("Connection closed")
+	client.GetLogger().Info("connection closed")
 }

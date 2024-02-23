@@ -1,12 +1,12 @@
 package handlers
 
 import (
+	"yamul-gateway/internal/interfaces"
 	"yamul-gateway/internal/transport/multima/commands"
-	"yamul-gateway/internal/transport/multima/connection"
 	"yamul-gateway/internal/transport/multima/listeners"
 )
 
-func preLogin(client *connection.ClientConnection) { // 0x5d
+func preLogin(client interfaces.ClientConnection) { // 0x5d
 	_ = client.ReadUInt()
 	charName := client.ReadFixedString(30)
 	charPassword := client.ReadFixedString(30)

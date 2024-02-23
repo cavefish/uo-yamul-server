@@ -19,7 +19,7 @@ func OnLoginRequest(event listeners.CommandEvent[commands.LoginRequestCommand]) 
 
 	server := commands.GameServer{
 		Name:                "This server",
-		AddressIP:           event.Client.Connection.LocalAddr().String(),
+		AddressIP:           event.Client.GetConnection().LocalAddr().String(),
 		Timezone:            0x00,
 		PercentageOfPlayers: 0x00,
 	}

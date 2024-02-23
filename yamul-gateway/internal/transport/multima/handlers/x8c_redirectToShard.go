@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"yamul-gateway/internal/interfaces"
 	"yamul-gateway/internal/transport/multima/commands"
-	"yamul-gateway/internal/transport/multima/connection"
 )
 
-func RedirectToShard(client *connection.ClientConnection, body commands.RedirectToShard) { // 0x8C
+func RedirectToShard(client interfaces.ClientConnection, body commands.RedirectToShard) { // 0x8C
 	client.StartPacket()
 	defer client.EndPacket()
 

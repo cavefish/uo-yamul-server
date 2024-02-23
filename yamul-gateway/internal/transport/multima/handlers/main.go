@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"runtime"
+	"yamul-gateway/internal/interfaces"
 	"yamul-gateway/internal/transport/multima/connection"
 )
 
@@ -25,30 +26,30 @@ func Setup() {
 	setHandler(0xfb, useMultiSight)
 }
 
-func setHandler(command byte, delegate func(client *connection.ClientConnection)) {
+func setHandler(command byte, delegate func(client interfaces.ClientConnection)) {
 	handlerName := runtime.FuncForPC(reflect.ValueOf(delegate).Pointer()).Name()
 	loggerPrefix := fmt.Sprintf("[%x, %s]", command, handlerName)
-	handler := func(client *connection.ClientConnection, commandCode byte) {
-		client.Logger.SetPrefix(loggerPrefix)
+	handler := func(client interfaces.ClientConnection, commandCode byte) {
+		client.GetLogger().SetPrefix(loggerPrefix)
 		delegate(client)
-		client.Logger.SetPrefix("")
+		client.GetLogger().SetPrefix("")
 	}
 	connection.ClientCommandHandlers[command] = handler
 }
 
-func unimplemented(skip int) func(client *connection.ClientConnection) {
-	return func(client *connection.ClientConnection) {
+func unimplemented(skip int) func(client interfaces.ClientConnection) {
+	return func(client interfaces.ClientConnection) {
 		client.ReadFixedString(skip)
 	}
 }
 
-func noop(client *connection.ClientConnection, commandCode byte) {
-	client.Err = fmt.Errorf("unknown command %x", commandCode)
+func noop(client interfaces.ClientConnection, commandCode byte) {
+	client.KillConnection(fmt.Errorf("unknown command %x", commandCode))
 }
 
 func forbiddenClientCommand(command byte, description string) {
-	handler := func(client *connection.ClientConnection, commandCode byte) {
-		client.Err = fmt.Errorf("forbidden command %x %s", commandCode, description)
+	handler := func(client interfaces.ClientConnection, commandCode byte) {
+		client.KillConnection(fmt.Errorf("forbidden command %x %s", commandCode, description))
 	}
 	connection.ClientCommandHandlers[command] = handler
 }

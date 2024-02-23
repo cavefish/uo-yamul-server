@@ -8,17 +8,22 @@ option java_multiple_files = true;
 option java_generic_services = true;
 option java_generate_equals_and_hash = true;
 
-message ApplyWorldPatches {
+message MsgApplyWorldPatches {
   int32 mapCount = 1;
   // TODO add missing fields
 }
 
-message CreateCharacter {
+message MsgCharacterSelection {
+  string username = 1;
+  int32 slot = 3;
+}
+
+message MsgCreateCharacter {
   common.ObjectId id = 1;
   // TODO add missing fields
 }
 
-message HealthBar {
+message MsgHealthBar {
   common.ObjectId id = 1;
   repeated Values values = 2;
   message Values {
@@ -31,28 +36,40 @@ message HealthBar {
   }
 }
 
-message MapChange {
+message MsgMapChange {
   int32 mapId = 1;
 }
 
-message PlayMusic {
+message MsgPlayMusic {
   int32 musicId = 1;
 }
 
-message StreamInput {
-
+enum MsgType {
+  TypeUndefined = 0; // TODO this is a valid value on UO packet ids
+  TypeHealthBar = 0x1700;
+  TypeCharacterSelection = 0x5d00;
+  TypePlayMusic = 0x6D00;
+  TypeCreateCharacter = 0x7800;
+  TypeMapChange = 0xBF08;
+  TypeApplyWorldPatches = 0xBF18;
 }
 
-message StreamOutput {
+message Message {
   oneof msg {
-    HealthBar healthBar = 0x1700;
-    PlayMusic playMusic = 0x6D00;
-    CreateCharacter createCharacter = 0x7800;
-    MapChange mapChange = 0xBF08;
-    ApplyWorldPatches applyWorldPatches = 0xBF18;
+    MsgHealthBar healthBar = 0x1700;
+    MsgCharacterSelection characterSelection = 0x5d00;
+    MsgPlayMusic playMusic = 0x6D00;
+    MsgCreateCharacter createCharacter = 0x7800;
+    MsgMapChange mapChange = 0xBF08;
+    MsgApplyWorldPatches applyWorldPatches = 0xBF18;
   }
 }
 
+message StreamPackage {
+  MsgType type = 1;
+  Message body = 2;
+}
+
 service GameService {
-  rpc openGameStream (stream StreamInput) returns (stream StreamOutput);
+  rpc openGameStream (stream StreamPackage) returns (stream StreamPackage);
 }

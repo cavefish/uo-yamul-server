@@ -1,12 +1,12 @@
 package handlers
 
 import (
+	"yamul-gateway/internal/interfaces"
 	"yamul-gateway/internal/transport/multima/commands"
-	"yamul-gateway/internal/transport/multima/connection"
 	"yamul-gateway/utils/numbers"
 )
 
-func ListGameServers(client *connection.ClientConnection, response commands.ListGameServers) { // 0xa8
+func ListGameServers(client interfaces.ClientConnection, response commands.ListGameServers) { // 0xa8
 	client.StartPacket()
 	defer client.EndPacket()
 
@@ -26,5 +26,5 @@ func ListGameServers(client *connection.ClientConnection, response commands.List
 		client.WriteUInt(numbers.BigEndianUInt32(ip))
 	}
 
-	client.Logger.Debug("Sending server list %+v", response)
+	client.GetLogger().Debug("Sending server list %+v", response)
 }

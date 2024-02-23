@@ -1,5 +1,7 @@
 package connection
 
-type CommandHandler func(client *ClientConnection, commandCode byte)
+import "yamul-gateway/internal/interfaces"
+
+type CommandHandler func(client interfaces.ClientConnection, commandCode byte)
 
 var ClientCommandHandlers = make([]CommandHandler, 256)

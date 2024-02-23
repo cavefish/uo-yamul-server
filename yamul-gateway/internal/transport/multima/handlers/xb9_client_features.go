@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"yamul-gateway/internal/interfaces"
 	"yamul-gateway/internal/transport/multima/commands"
-	"yamul-gateway/internal/transport/multima/connection"
 )
 
-func SendClientFeatures(client *connection.ClientConnection, features commands.ClientFeatures) { // 0xB9
+func SendClientFeatures(client interfaces.ClientConnection, features commands.ClientFeatures) { // 0xB9
 	client.StartPacket()
 	defer client.EndPacket()
 

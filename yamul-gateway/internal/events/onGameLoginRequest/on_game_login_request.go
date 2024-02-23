@@ -1,10 +1,10 @@
 package onGameLoginRequest
 
 import (
+	"yamul-gateway/internal/interfaces"
 	"yamul-gateway/internal/services/character"
 	"yamul-gateway/internal/services/login"
 	"yamul-gateway/internal/transport/multima/commands"
-	"yamul-gateway/internal/transport/multima/connection"
 	"yamul-gateway/internal/transport/multima/handlers"
 	"yamul-gateway/internal/transport/multima/listeners"
 )
@@ -34,7 +34,7 @@ func OnLoginRequest(event listeners.CommandEvent[commands.GameLoginRequest]) {
 
 }
 
-func ShowCharacterSelection(client *connection.ClientConnection, service *character.CharacterService) error {
+func ShowCharacterSelection(client interfaces.ClientConnection, service *character.CharacterService) error {
 	clientFeatures := commands.ClientFeatures{
 		Unknown0001:         true,
 		SingleCharacterSlot: true,

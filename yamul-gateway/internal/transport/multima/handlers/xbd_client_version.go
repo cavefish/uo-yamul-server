@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"yamul-gateway/internal/transport/multima/connection"
+	"yamul-gateway/internal/interfaces"
 )
 
-func receiveClientVersion(client *connection.ClientConnection) { // 0xBD
+func receiveClientVersion(client interfaces.ClientConnection) { // 0xBD
 	size := client.ReadUShort() - 3
 	body := client.ReadFixedBytes(int(size))
-	client.Logger.Debug("User logged with version %s", body)
+	client.GetLogger().Debug("User logged with version %s", body)
 }

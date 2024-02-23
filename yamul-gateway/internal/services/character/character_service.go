@@ -5,15 +5,15 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	backendServices "yamul-gateway/backend/services"
+	"yamul-gateway/internal/interfaces"
 	servicesCommon "yamul-gateway/internal/services/common"
 	"yamul-gateway/internal/transport/multima/commands"
-	"yamul-gateway/internal/transport/multima/connection"
 )
 
 type CharacterService struct {
 	dial       *grpc.ClientConn
 	client     backendServices.CharacterServiceClient
-	connection *connection.ClientConnection
+	connection interfaces.ClientConnection
 }
 
 func (s CharacterService) Close() {
@@ -21,7 +21,7 @@ func (s CharacterService) Close() {
 }
 
 func (s CharacterService) GetCharacters() ([]commands.CharacterLogin, int, error) {
-	ctx := servicesCommon.GetAuthenticatedContext(context.Background(), s.connection.LoginDetails)
+	ctx := servicesCommon.GetAuthenticatedContext(context.Background(), s.connection.GetLoginDetails())
 	response, err := s.client.GetCharacterList(ctx, &backendServices.Empty{})
 	if err != nil {
 		return nil, 0, err
@@ -41,7 +41,7 @@ func (s CharacterService) GetCharacters() ([]commands.CharacterLogin, int, error
 	return result, lastValidCharacter, nil
 }
 
-func NewCharacterService(connection *connection.ClientConnection) (*CharacterService, error) {
+func NewCharacterService(connection interfaces.ClientConnection) (*CharacterService, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	dial, err := grpc.Dial("localhost:8088", opts...)

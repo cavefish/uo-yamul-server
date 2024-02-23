@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"yamul-gateway/internal/interfaces"
 	"yamul-gateway/internal/transport/multima/commands"
-	"yamul-gateway/internal/transport/multima/connection"
 )
 
-func PlayerStartConfirmation(client *connection.ClientConnection, body commands.PlayerStartConfirmation) { // 0x1B
+func PlayerStartConfirmation(client interfaces.ClientConnection, body commands.PlayerStartConfirmation) { // 0x1B
 	client.StartPacket()
 	defer client.EndPacket()
 

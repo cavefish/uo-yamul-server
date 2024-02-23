@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"yamul-gateway/internal/interfaces"
 	"yamul-gateway/internal/transport/multima/commands"
-	"yamul-gateway/internal/transport/multima/connection"
 )
 
-func SendCharactersAndStartingLocations(client *connection.ClientConnection, body commands.CharactersStartLocation) { // 0xA9
+func SendCharactersAndStartingLocations(client interfaces.ClientConnection, body commands.CharactersStartLocation) { // 0xA9
 	client.StartPacket()
 	defer client.EndPacket()
 

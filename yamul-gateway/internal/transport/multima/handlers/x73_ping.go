@@ -1,8 +1,10 @@
 package handlers
 
-import "yamul-gateway/internal/transport/multima/connection"
+import (
+	"yamul-gateway/internal/interfaces"
+)
 
-func ping(client *connection.ClientConnection) { // 0x73
+func ping(client interfaces.ClientConnection) { // 0x73
 	ack := client.ReadByte()
 
 	client.StartPacket()

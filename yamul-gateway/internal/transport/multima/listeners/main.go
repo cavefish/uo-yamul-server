@@ -1,12 +1,13 @@
 package listeners
 
 import (
+	"yamul-gateway/internal/interfaces"
 	"yamul-gateway/internal/transport/multima/commands"
 	"yamul-gateway/internal/transport/multima/connection"
 )
 
 type CommandEvent[T any] struct {
-	Client  *connection.ClientConnection
+	Client  interfaces.ClientConnection
 	Command T
 }
 
@@ -22,7 +23,7 @@ func createHandler[T any]() *ListenerHandler[T] {
 	}
 }
 
-func (handler *ListenerHandler[T]) Trigger(client *connection.ClientConnection, body T) {
+func (handler *ListenerHandler[T]) Trigger(client interfaces.ClientConnection, body T) {
 	event := CommandEvent[T]{
 		client,
 		body,

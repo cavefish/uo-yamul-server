@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"yamul-gateway/internal/transport/multima/connection"
+	"yamul-gateway/internal/interfaces"
 )
 
-func useMultiSight(client *connection.ClientConnection) { // 0xBD
+func useMultiSight(client interfaces.ClientConnection) { // 0xFB
 	value := client.ReadByte()
-	client.Status.UseMultiSight = value > 0
+	client.GetStatus().UseMultiSight = value > 0
 }

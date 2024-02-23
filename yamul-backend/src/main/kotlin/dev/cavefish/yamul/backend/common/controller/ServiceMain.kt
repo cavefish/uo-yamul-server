@@ -2,6 +2,7 @@ package dev.cavefish.yamul.backend.common.controller
 
 import dev.cavefish.yamul.backend.auth.controller.BasicAuthInterceptor
 import dev.cavefish.yamul.backend.character.controller.CharacterServiceController
+import dev.cavefish.yamul.backend.game.controller.GameServiceController
 import dev.cavefish.yamul.backend.login.controller.LoginServiceController
 import io.grpc.ServerBuilder
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,17 +11,19 @@ import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.ComponentScan
+import org.tinylog.Logger
 import javax.annotation.PostConstruct
 
 const val LOGIN_SERVICE_PORT = 8087
-
 const val CHARACTER_SERVICE_PORT = 8088
+const val GAME_SERVICE_PORT = 8089
 
 @SpringBootApplication
 @ComponentScan(basePackages = ["dev.cavefish.yamul.backend"])
 class ServiceMain @Autowired constructor(
     val loginServiceController: LoginServiceController,
     val characterServiceController: CharacterServiceController,
+    val gameServiceController: GameServiceController,
     val basicAuthInterceptor: BasicAuthInterceptor
 ) {
 
@@ -28,16 +31,23 @@ class ServiceMain @Autowired constructor(
     fun runServices() {
         val loginServer = ServerBuilder.forPort(LOGIN_SERVICE_PORT).addService(loginServiceController).build()
         loginServer.start()
-        println("Running Login server on port $LOGIN_SERVICE_PORT")
+        Logger.info("Running Login server on port {0}", LOGIN_SERVICE_PORT)
 
         val characterServer = ServerBuilder.forPort(CHARACTER_SERVICE_PORT).intercept(basicAuthInterceptor)
             .addService(characterServiceController).build()
         characterServer.start()
-        println("Running Character server on port $CHARACTER_SERVICE_PORT")
+        Logger.info("Running Character server on port {0}", CHARACTER_SERVICE_PORT)
 
-        println("Running ...")
+        val gameServer =
+            ServerBuilder.forPort(GAME_SERVICE_PORT).intercept(basicAuthInterceptor).addService(gameServiceController)
+                .build()
+        gameServer.start()
+        Logger.info("Running Game server on port {0}", GAME_SERVICE_PORT)
+
+        Logger.info("Running ...", null)
         loginServer.awaitTermination()
         characterServer.awaitTermination()
+        gameServer.awaitTermination()
     }
 
 }

@@ -8,13 +8,20 @@ import (
 )
 
 func OnCharacterPreLogin(event listeners.CommandEvent[commands.PreLogin]) {
-	success, deniedReason := login.ValidateLogin(event.Client.LoginDetails.Username, event.Command.Password)
+	success, deniedReason := login.ValidateLogin(event.Client.GetLoginDetails().Username, event.Command.Password)
 	if !success {
 		login.DenyLogin(event.Client, deniedReason)
 		return
 	}
 
-	event.Client.LoginDetails.CharacterSlot = event.Command.Slot
+	event.Client.GetLoginDetails().CharacterSlot = event.Command.Slot
+
+	err := event.Client.CreateGameConnection()
+	if err != nil {
+		event.Client.KillConnection(err)
+		return
+	}
+
 	command := commands.PlayerStartConfirmation{
 		CharacterID:       1,
 		CharacterBodyType: 0x0190,
