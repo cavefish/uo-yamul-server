@@ -43,7 +43,11 @@ type clientConnection struct {
 	logger                interfaces.Logger
 	status                dtos.ClientConnectionStatus
 	loginDetails          dtos.LoginDetails
-	gameService           *internalServices.GameService
+	gameService           interfaces.GameService
+}
+
+func (client *clientConnection) GetGameService() interfaces.GameService {
+	return client.gameService
 }
 
 func (client *clientConnection) GetStatus() *dtos.ClientConnectionStatus {
@@ -259,7 +263,7 @@ func (client *clientConnection) SetLogin(username string, password string) {
 }
 
 func (client *clientConnection) CreateGameConnection() error {
-	ser, err := internalServices.NewGameService(client)
+	ser, err := internalServices.CreateGameService(client)
 	if err != nil {
 		client.KillConnection(err)
 		return err

@@ -11,7 +11,35 @@ import (
 	"yamul-gateway/internal/services/game/messages"
 )
 
-type GameService struct {
+func CreateGameService(connection interfaces.ClientConnection) (interfaces.GameService, error) {
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	dial, err := grpc.Dial("localhost:8089", opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	client := backendServices.NewGameServiceClient(dial)
+	ctx := servicesCommon.GetAuthenticatedContext(context.Background(), connection.GetLoginDetails())
+	stream, err := client.OpenGameStream(ctx)
+	if err != nil {
+		_ = dial.Close()
+		return nil, err
+	}
+	result := &gameService{
+		dial:              dial,
+		client:            client,
+		stream:            stream,
+		clientConnection:  connection,
+		streamLoopEnabled: true,
+	}
+
+	go result.streamLoop()
+
+	return result, nil
+}
+
+type gameService struct {
 	dial              *grpc.ClientConn
 	client            backendServices.GameServiceClient
 	stream            backendServices.GameService_OpenGameStreamClient
@@ -19,11 +47,22 @@ type GameService struct {
 	streamLoopEnabled bool
 }
 
-func (s GameService) Close() {
+func (s gameService) Send(_type backendServices.MsgType, message *backendServices.Message) {
+	err := s.stream.Send(&backendServices.StreamPackage{
+		Type: _type,
+		Body: message,
+	})
+	if err != nil {
+		s.clientConnection.KillConnection(err)
+		return
+	}
+}
+
+func (s gameService) Close() {
 	s.streamLoopEnabled = false
 }
 
-func (s GameService) streamLoop() {
+func (s gameService) streamLoop() {
 	defer s.cleanResources()
 	for s.streamLoopEnabled {
 		msg, err := s.stream.Recv()
@@ -39,34 +78,6 @@ func (s GameService) streamLoop() {
 	}
 }
 
-func (s GameService) cleanResources() {
+func (s gameService) cleanResources() {
 	_ = s.dial.Close()
-}
-
-func NewGameService(connection interfaces.ClientConnection) (*GameService, error) {
-	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	dial, err := grpc.Dial("localhost:8088", opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	client := backendServices.NewGameServiceClient(dial)
-	ctx := servicesCommon.GetAuthenticatedContext(context.Background(), connection.GetLoginDetails())
-	stream, err := client.OpenGameStream(ctx)
-	if err != nil {
-		_ = dial.Close()
-		return nil, err
-	}
-	result := &GameService{
-		dial:              dial,
-		client:            client,
-		stream:            stream,
-		clientConnection:  connection,
-		streamLoopEnabled: true,
-	}
-
-	go result.streamLoop()
-
-	return result, nil
 }

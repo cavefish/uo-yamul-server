@@ -32,4 +32,5 @@ type ClientConnection interface {
 	GetEncryptionState() *dtos.EncryptionConfig
 	GetLoginDetails() *dtos.LoginDetails
 	GetConnection() net.Conn
+	GetGameService() GameService
 }

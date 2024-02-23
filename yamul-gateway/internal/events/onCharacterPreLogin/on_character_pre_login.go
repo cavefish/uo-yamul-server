@@ -1,6 +1,7 @@
 package onCharacterPreLogin
 
 import (
+	"yamul-gateway/backend/services"
 	"yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/services/login"
 	"yamul-gateway/internal/transport/multima/handlers"
@@ -21,6 +22,12 @@ func OnCharacterPreLogin(event listeners.CommandEvent[commands.PreLogin]) {
 		event.Client.KillConnection(err)
 		return
 	}
+	body := services.MsgCharacterSelection{
+		Username: event.Client.GetLoginDetails().Username,
+		Slot:     int32(event.Command.Slot),
+	}
+	selection := services.Message_CharacterSelection{CharacterSelection: &body}
+	event.Client.GetGameService().Send(services.MsgType_TypeCharacterSelection, &services.Message{Msg: &selection})
 
 	command := commands.PlayerStartConfirmation{
 		CharacterID:       1,
