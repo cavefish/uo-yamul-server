@@ -7,5 +7,5 @@ import (
 func receiveClientVersion(client interfaces.ClientConnection) { // 0xBD
 	size := client.ReadUShort() - 3
 	body := client.ReadFixedBytes(int(size))
-	client.GetLogger().Debug("User logged with version %s", body)
+	client.GetLogger().Debugf("User logged with version %s", body)
 }

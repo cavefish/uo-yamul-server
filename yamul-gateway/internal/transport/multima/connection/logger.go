@@ -1,91 +1,79 @@
 package connection
 
 import (
-	"fmt"
-	"time"
+	log "github.com/sirupsen/logrus"
 	"yamul-gateway/internal/interfaces"
-)
-
-const (
-	LogLevelError = iota
-	LogLevelWarning
-	LogLevelInfo
-	LogLevelDebug
 )
 
 type logger struct {
 	interfaces.Logger
-	client   *clientConnection
-	name     string
-	prefix   string
-	logLevel int
+	fields log.Fields
 }
 
-func (logger *logger) Error(format string, vars ...any) {
-	logger.log(LogLevelError, format, vars)
-}
-
-func (logger *logger) Warning(format string, vars ...any) {
-	logger.log(LogLevelWarning, format, vars)
-}
-
-func (logger *logger) Info(format string, vars ...any) {
-	logger.log(LogLevelInfo, format, vars)
-}
-
-func (logger *logger) Debug(format string, vars ...any) {
-	logger.log(LogLevelDebug, format, vars)
-}
-
-func (logger *logger) SetPrefix(prefix string) {
-	logger.prefix = prefix
-}
-
-func (logger *logger) log(level int, format string, vars []any) {
-	if level > logger.logLevel {
+func (logger *logger) Errorf(format string, vars ...any) {
+	if len(vars) == 0 {
+		logger.Error(format)
 		return
 	}
-
-	output := format
-	if len(vars) > 0 {
-		output = fmt.Sprintf(format, vars...)
-	}
-
-	clientPrefix := logger.getClientPrefix()
-	levelPrefix := logger.getLogLevelPrefix()
-
-	time := time.Now().Format(time.Stamp)
-
-	fmt.Printf("%s\t[%s]%s%s\t%s\n", time, levelPrefix, clientPrefix, logger.prefix, output)
+	log.WithFields(logger.fields).Errorf(format, vars)
 }
 
-func (logger *logger) getClientPrefix() string {
-	if logger.client == nil {
-		return logger.name
-	}
-
-	return fmt.Sprintf("[%s]", logger.client.connection.RemoteAddr())
+func (logger *logger) Error(value ...any) {
+	log.WithFields(logger.fields).Error(value)
 }
 
-func (logger *logger) getLogLevelPrefix() string {
-	switch logger.logLevel {
-	case LogLevelError:
-		return "ERROR"
-	case LogLevelWarning:
-		return "WARNING"
-	case LogLevelInfo:
-		return "INFO"
-	case LogLevelDebug:
-		return "DEBUG"
-	default:
-		return fmt.Sprintf("ERROR-UNKNOWN-LEVEL-%d", logger.logLevel)
+func (logger *logger) Warningf(format string, vars ...any) {
+	if len(vars) == 0 {
+		logger.Warning(format)
+		return
 	}
+	log.WithFields(logger.fields).Warnf(format, vars)
 }
 
-func LoggerFor(name string) interfaces.Logger {
-	return &logger{
-		client:   nil,
-		name:     name,
-		logLevel: LogLevelDebug,
+func (logger *logger) Warning(value ...any) {
+	log.WithFields(logger.fields).Warn(value)
+}
+
+func (logger *logger) Infof(format string, vars ...any) {
+	if len(vars) == 0 {
+		logger.Info(format)
+		return
 	}
+	log.WithFields(logger.fields).Infof(format, vars)
+}
+
+func (logger *logger) Info(value ...any) {
+	log.WithFields(logger.fields).Info(value)
+}
+
+func (logger *logger) Debugf(format string, vars ...any) {
+	if len(vars) == 0 {
+		logger.Debug(format)
+		return
+	}
+	log.WithFields(logger.fields).Debugf(format, vars)
+}
+
+func (logger *logger) Debug(value ...any) {
+	log.WithFields(logger.fields).Debug(value)
+}
+
+func (logger *logger) SetLogField(field string, value any) {
+	logger.fields[field] = value
+}
+
+func (logger *logger) ClearLogField(field string) {
+	delete(logger.fields, field)
+}
+
+func CreateAnonymousLogger(name string) interfaces.Logger {
+	l := &logger{fields: map[string]interface{}{}}
+	l.SetLogField("name", name)
+	return l
+}
+
+func CreateConnectionLogger(name string, connection *clientConnection) interfaces.Logger {
+	l := CreateAnonymousLogger(name)
+	l.SetLogField("remote-address", connection.connection.RemoteAddr())
+	return l
 }

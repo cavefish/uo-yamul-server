@@ -28,11 +28,13 @@ func Setup() {
 
 func setHandler(command byte, delegate func(client interfaces.ClientConnection)) {
 	handlerName := runtime.FuncForPC(reflect.ValueOf(delegate).Pointer()).Name()
-	loggerPrefix := fmt.Sprintf("[%x, %s]", command, handlerName)
 	handler := func(client interfaces.ClientConnection, commandCode byte) {
-		client.GetLogger().SetPrefix(loggerPrefix)
+		logger := client.GetLogger()
+		logger.SetLogField("command", command)
+		defer logger.ClearLogField("command")
+		logger.SetLogField("handler", handlerName)
+		defer logger.ClearLogField("handler")
 		delegate(client)
-		client.GetLogger().SetPrefix("")
 	}
 	connection.ClientCommandHandlers[command] = handler
 }

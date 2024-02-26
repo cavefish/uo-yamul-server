@@ -26,5 +26,5 @@ func ListGameServers(client interfaces.ClientConnection, response commands.ListG
 		client.WriteUInt(numbers.BigEndianUInt32(ip))
 	}
 
-	client.GetLogger().Debug("Sending server list %+v", response)
+	client.GetLogger().Debugf("Sending server list %+v", response)
 }

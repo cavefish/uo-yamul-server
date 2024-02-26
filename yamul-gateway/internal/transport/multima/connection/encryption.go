@@ -3,7 +3,6 @@ package connection
 import (
 	"crypto/md5"
 	"encoding/binary"
-	"fmt"
 	"golang.org/x/crypto/twofish"
 	"yamul-gateway/internal/dtos"
 )
@@ -43,7 +42,7 @@ func initializeGameplayEncryption(config *dtos.EncryptionConfig) error {
 
 	cipher, err := twofish.NewCipher(seedAsBytes)
 	if err != nil {
-		fmt.Println(err)
+		CreateAnonymousLogger("encryption").Error(err)
 		return err
 	}
 
@@ -63,7 +62,6 @@ func initializeGameplayEncryption(config *dtos.EncryptionConfig) error {
 	// initialize md5 table
 	config.Md5Position = 0
 	config.Md5Digest = md5.Sum(config.TwofishTable)
-	fmt.Println(config.Md5Digest)
 
 	return nil
 }

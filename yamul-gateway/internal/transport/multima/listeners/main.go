@@ -3,7 +3,6 @@ package listeners
 import (
 	commands2 "yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/interfaces"
-	"yamul-gateway/internal/transport/multima/connection"
 )
 
 type CommandEvent[T any] struct {
@@ -54,5 +53,5 @@ var Listeners = struct {
 }
 
 func onMissingListener[T any](event CommandEvent[T]) {
-	connection.LoggerFor("listeners").Error("Missing listener %T", event.Command)
+	event.Client.GetLogger().Errorf("Missing listener %T", event.Command)
 }

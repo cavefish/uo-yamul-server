@@ -2,6 +2,8 @@ package connection
 
 import (
 	"encoding/binary"
+	"fmt"
+	"github.com/google/uuid"
 	"net"
 	"sync"
 	"yamul-gateway/internal/dtos"
@@ -22,13 +24,10 @@ func CreateConnectionHandler(conn net.Conn) interfaces.ClientConnection {
 		outputBuffer:          CreateOutputDataBuffer(),
 		encryptionState:       encryptionConfig,
 		status:                dtos.ClientConnectionStatus{},
+		uuid:                  uuid.New().String(),
 	}
-	connection.logger = &logger{
-		client:   connection,
-		name:     "clientConnection",
-		prefix:   "",
-		logLevel: LogLevelDebug,
-	}
+	connection.logger = CreateConnectionLogger(fmt.Sprintf("clientConnection-%s", connection.uuid), connection)
+	connection.logger.Debug("Connection started")
 	return connection
 }
 
@@ -44,6 +43,7 @@ type clientConnection struct {
 	status                dtos.ClientConnectionStatus
 	loginDetails          dtos.LoginDetails
 	gameService           interfaces.GameService
+	uuid                  string
 }
 
 func (client *clientConnection) GetGameService() interfaces.GameService {
@@ -108,7 +108,7 @@ func (client *clientConnection) sendEverything() error {
 		client.err = err
 		return err
 	}
-	client.logger.Debug("Sent %d bytes", sentLength)
+	client.logger.Debugf("Sent %d bytes", sentLength)
 	buffer.length = 0
 	return nil
 }
@@ -124,7 +124,7 @@ func (client *clientConnection) ReceiveData() error {
 		return nil
 	}
 	if err != nil {
-		client.logger.Error("Error reading: %v", err.Error())
+		client.logger.Errorf("Error reading: %v", err.Error())
 		client.err = err
 		return err
 	}
@@ -245,7 +245,7 @@ func (client *clientConnection) CheckEncryptionHandshake() {
 	_ = client.ReceiveData()
 	firstByte := client.inputBuffer.incomingTcpData[0]
 	if firstByte&0x80 != 0 {
-		client.logger.Info("Connecting to login server: %x", firstByte)
+		client.logger.Infof("Connecting to login server: %x", firstByte)
 		// High byte is unencrypted or basic encryption
 		return
 	}
@@ -273,12 +273,16 @@ func (client *clientConnection) CreateGameConnection() error {
 }
 
 func (client *clientConnection) KillConnection(err error) {
+	if client.shouldCloseConnection == true {
+		return
+	}
+	client.logger.SetLogField("fatal-error", err)
+	client.err = err
+	client.shouldCloseConnection = true
+	client.logger.Error("Fatal error. Closing client connection.")
 	if client.gameService != nil {
 		client.gameService.Close()
 	}
-	client.err = err
-	client.shouldCloseConnection = true
-	client.logger.Error("error %v", client.err)
 }
 
 func (client *clientConnection) IsConnectionHealthy() bool {

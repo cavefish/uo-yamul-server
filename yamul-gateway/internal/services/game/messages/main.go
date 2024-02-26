@@ -10,7 +10,7 @@ type MessageProcessor struct {
 }
 
 func (p MessageProcessor) Accept(connection interfaces.ClientConnection, msg *gameService.StreamPackage) {
-	connection.GetLogger().Info("Processing message %s", msg.String())
+	connection.GetLogger().Infof("Processing message %s", msg.String())
 }
 
 var Processors = make(map[gameService.MsgType]MessageProcessor)

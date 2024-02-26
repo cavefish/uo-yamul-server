@@ -33,21 +33,21 @@ func main() {
 func listenToIncomingRequests(port string) {
 	defer listenerWg.Done()
 
-	logger := connection.LoggerFor("main")
+	logger := connection.CreateAnonymousLogger("main")
 
 	l, err := net.Listen(CONN_TYPE, ":"+port)
 	if err != nil {
-		logger.Error("Error listening: %s", err.Error())
+		logger.Errorf("Error listening: %s", err.Error())
 		os.Exit(1)
 	}
 	// Close the listener when the application closes.
 	defer l.Close()
 	for {
-		logger.Info("Listening on port %s", port)
+		logger.Infof("Listening on port %s", port)
 		// Listen for an incoming connection.
 		conn, err := l.Accept()
 		if err != nil {
-			logger.Error("Error accepting connection %s", err.Error())
+			logger.Errorf("Error accepting connection %s", err.Error())
 			os.Exit(1)
 		}
 		// Handle connections in a new goroutine.
