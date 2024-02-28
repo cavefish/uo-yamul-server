@@ -2,8 +2,8 @@ package numbers
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"testing"
-	"yamul-gateway/utils/tests/assertions"
 )
 
 func TestBigEndianInt(t *testing.T) {
@@ -19,7 +19,7 @@ func TestBigEndianInt(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(fmt.Sprintf("%x->%x", testCase.input, testCase.output), func(t *testing.T) {
 			result := BigEndianInt(testCase.input)
-			assertions.For(t).Equals(testCase.output, result)
+			assert.New(t).Equal(testCase.output, result)
 		})
 	}
 }
@@ -37,7 +37,7 @@ func TestBigEndianUInt32(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(fmt.Sprintf("%x->%x", testCase.input, testCase.output), func(t *testing.T) {
 			result := BigEndianUInt32(testCase.input)
-			assertions.For(t).Equals(testCase.output, result)
+			assert.New(t).Equal(testCase.output, result)
 		})
 	}
 }

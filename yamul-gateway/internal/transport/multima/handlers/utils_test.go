@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"yamul-gateway/internal/dtos/commands"
-	"yamul-gateway/utils/tests/assertions"
 )
 
 func TestConvertClientFeaturesToFlags(t *testing.T) {
@@ -28,7 +28,7 @@ func TestConvertClientFeaturesToFlags(t *testing.T) {
 	for idx, testCase := range cases {
 		t.Run(fmt.Sprintf("case %d", idx), func(t *testing.T) {
 			result := ConvertClientFeaturesToFlags(testCase.input)
-			assertions.For(t).Equals(testCase.expected, result)
+			assert.New(t).Equal(testCase.expected, result)
 		})
 	}
 }

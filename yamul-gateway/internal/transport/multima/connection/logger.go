@@ -15,11 +15,11 @@ func (logger *logger) Errorf(format string, vars ...any) {
 		logger.Error(format)
 		return
 	}
-	log.WithFields(logger.fields).Errorf(format, vars)
+	log.WithFields(logger.fields).Errorf(format, vars...)
 }
 
 func (logger *logger) Error(value ...any) {
-	log.WithFields(logger.fields).Error(value)
+	log.WithFields(logger.fields).Error(value...)
 }
 
 func (logger *logger) Warningf(format string, vars ...any) {
@@ -27,11 +27,11 @@ func (logger *logger) Warningf(format string, vars ...any) {
 		logger.Warning(format)
 		return
 	}
-	log.WithFields(logger.fields).Warnf(format, vars)
+	log.WithFields(logger.fields).Warnf(format, vars...)
 }
 
 func (logger *logger) Warning(value ...any) {
-	log.WithFields(logger.fields).Warn(value)
+	log.WithFields(logger.fields).Warn(value...)
 }
 
 func (logger *logger) Infof(format string, vars ...any) {
@@ -39,11 +39,11 @@ func (logger *logger) Infof(format string, vars ...any) {
 		logger.Info(format)
 		return
 	}
-	log.WithFields(logger.fields).Infof(format, vars)
+	log.WithFields(logger.fields).Infof(format, vars...)
 }
 
 func (logger *logger) Info(value ...any) {
-	log.WithFields(logger.fields).Info(value)
+	log.WithFields(logger.fields).Info(value...)
 }
 
 func (logger *logger) Debugf(format string, vars ...any) {
@@ -51,11 +51,11 @@ func (logger *logger) Debugf(format string, vars ...any) {
 		logger.Debug(format)
 		return
 	}
-	log.WithFields(logger.fields).Debugf(format, vars)
+	log.WithFields(logger.fields).Debugf(format, vars...)
 }
 
 func (logger *logger) Debug(value ...any) {
-	log.WithFields(logger.fields).Debug(value)
+	log.WithFields(logger.fields).Debug(value...)
 }
 
 func (logger *logger) SetLogField(field string, value any) {

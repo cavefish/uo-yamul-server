@@ -1,8 +1,8 @@
 package connection
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
-	"yamul-gateway/utils/tests/assertions"
 )
 
 func TestHuffManCompress(t *testing.T) {
@@ -26,9 +26,9 @@ func TestHuffManCompress(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			result := make([]byte, len(testCase.expected))
 			outputLen := HuffManCompress(result, testCase.input, len(testCase.input))
-			assert := assertions.For(t)
-			assert.Equals(len(testCase.expected), outputLen)
-			assert.EqualList(testCase.expected, result)
+			assertions := assert.New(t)
+			assertions.Equal(len(testCase.expected), outputLen)
+			assertions.EqualValues(testCase.expected, result)
 		})
 	}
 }

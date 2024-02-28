@@ -1,9 +1,9 @@
 package connection
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"yamul-gateway/internal/dtos"
-	"yamul-gateway/utils/tests/assertions"
 )
 
 func TestClientConnectionInterface(t *testing.T) {
@@ -15,7 +15,7 @@ func TestClientConnectionInterface(t *testing.T) {
 				CharacterSlot: 0,
 			},
 		}
-		assert := assertions.For(t)
-		assert.Equals(&sut.loginDetails, sut.GetLoginDetails())
+		assertions := assert.New(t)
+		assertions.Equal(&sut.loginDetails, sut.GetLoginDetails())
 	})
 }
