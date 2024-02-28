@@ -12,7 +12,7 @@ func Setup() error {
 
 	handlers.Setup()
 	events.Setup()
-	err := login.Setup()
+	err := login.Module.Setup()
 	if err != nil {
 		return err
 	}
@@ -20,5 +20,5 @@ func Setup() error {
 }
 
 func Close() {
-	login.Close()
+	login.Module.Close()
 }

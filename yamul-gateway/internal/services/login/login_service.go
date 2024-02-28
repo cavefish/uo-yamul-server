@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	backendServices "yamul-gateway/backend/services"
 	"yamul-gateway/internal/dtos/commands"
+	"yamul-gateway/internal/interfaces"
 )
 
 type LoginService struct {
@@ -15,13 +16,17 @@ type LoginService struct {
 
 var service *LoginService
 
-func Setup() error {
+var Module interfaces.Module = module{}
+
+type module struct{}
+
+func (m module) Setup() error {
 	var err error
 	service, err = newLoginService()
 	return err
 }
 
-func Close() {
+func (m module) Close() {
 	service.close()
 }
 
