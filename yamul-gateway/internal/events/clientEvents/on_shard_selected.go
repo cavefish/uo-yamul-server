@@ -1,8 +1,7 @@
-package onShardSelected
+package clientEvents
 
 import (
 	"yamul-gateway/internal/dtos/commands"
-	"yamul-gateway/internal/events/onGameLoginRequest"
 	"yamul-gateway/internal/transport/multima/handlers"
 	"yamul-gateway/internal/transport/multima/listeners"
 )
@@ -19,7 +18,7 @@ func OnShardSelected(event listeners.CommandEvent[commands.ShardSelected]) {
 		return
 	}
 
-	err := onGameLoginRequest.ShowCharacterSelection(event.Client, nil)
+	err := ShowCharacterSelection(event.Client, nil)
 	if err != nil {
 		event.Client.KillConnection(err)
 	}

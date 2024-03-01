@@ -1,4 +1,4 @@
-package onLoginRequest
+package clientEvents
 
 import (
 	"yamul-gateway/internal/dtos/commands"

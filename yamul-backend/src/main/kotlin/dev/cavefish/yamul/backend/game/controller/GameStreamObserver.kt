@@ -1,12 +1,14 @@
 package dev.cavefish.yamul.backend.game.controller
 
 
+import dev.cavefish.yamul.backend.common.api.ObjectId
 import dev.cavefish.yamul.backend.game.api.Message
 import dev.cavefish.yamul.backend.game.api.MsgApplyWorldPatches
 import dev.cavefish.yamul.backend.game.api.MsgCharacterSelection
 import dev.cavefish.yamul.backend.game.api.MsgHealthBar
 import dev.cavefish.yamul.backend.game.api.MsgMapChange
 import dev.cavefish.yamul.backend.game.api.MsgPlayMusic
+import dev.cavefish.yamul.backend.game.api.MsgTeleportPlayer
 import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.api.StreamPackage
 import io.grpc.stub.StreamObserver
@@ -48,8 +50,13 @@ class GameStreamObserver(
         send(MsgType.TypePlayMusic) {it.setPlayMusic(MsgPlayMusic.getDefaultInstance())}
         send(MsgType.TypeMapChange) {it.setMapChange(MsgMapChange.getDefaultInstance())}
         send(MsgType.TypeHealthBar) {it.setHealthBar(MsgHealthBar.getDefaultInstance())}
-
+        send(MsgType.TypeTeleportPlayer) {it.setTeleportPlayer(createTeleportPlayer())}
     }
+
+    private fun createTeleportPlayer(): MsgTeleportPlayer.Builder =
+        MsgTeleportPlayer.newBuilder()
+            .setId(ObjectId.getDefaultInstance())
+
     private fun send(msgType: MsgType, f: (Message.Builder) -> Unit) {
         outputStream.onNext(StreamPackage.newBuilder().setType(msgType).setBody(Message.newBuilder().apply(f)).build())
     }

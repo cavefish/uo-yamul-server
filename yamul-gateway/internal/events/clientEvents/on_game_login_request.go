@@ -1,4 +1,4 @@
-package onGameLoginRequest
+package clientEvents
 
 import (
 	"yamul-gateway/internal/dtos/commands"
@@ -9,7 +9,7 @@ import (
 	"yamul-gateway/internal/transport/multima/listeners"
 )
 
-func OnLoginRequest(event listeners.CommandEvent[commands.GameLoginRequest]) {
+func OnGameLoginRequest(event listeners.CommandEvent[commands.GameLoginRequest]) {
 	success, deniedReason := login.ValidateLogin(event.Command.Username, event.Command.Password)
 	if !success {
 		login.DenyLogin(event.Client, deniedReason)

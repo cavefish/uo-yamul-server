@@ -44,9 +44,28 @@ message MsgPlayMusic {
   int32 musicId = 1;
 }
 
+message MsgTeleportPlayer {
+  common.ObjectId id = 1;
+  repeated MsgTeleportPlayer_PlayerStatus status = 4;
+  uint32 xLoc = 5;
+  uint32 yLoc = 6;
+  common.ObjectDirection direction = 8;
+  int32 zLoc = 9;
+}
+
+enum MsgTeleportPlayer_PlayerStatus {
+  normal = 0x00;
+  canAlterPaperDoll = 0x02;
+  poisoned = 0x04;
+  goldenHealth = 0x08;
+  warMode = 0x40;
+  hidden = 0x80;
+}
+
 enum MsgType {
   TypeUndefined = 0; // TODO this is a valid value on UO packet ids
   TypeHealthBar = 0x1700;
+  TypeTeleportPlayer = 0x2000;
   TypeCharacterSelection = 0x5d00;
   TypePlayMusic = 0x6D00;
   TypeCreateCharacter = 0x7800;
@@ -57,6 +76,7 @@ enum MsgType {
 message Message {
   oneof msg {
     MsgHealthBar healthBar = 0x1700;
+    MsgTeleportPlayer teleportPlayer = 0x2000;
     MsgCharacterSelection characterSelection = 0x5d00;
     MsgPlayMusic playMusic = 0x6D00;
     MsgCreateCharacter createCharacter = 0x7800;

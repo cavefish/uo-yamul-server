@@ -16,3 +16,17 @@ message UUID {
 message ObjectId {
   uint32 value = 1;
 }
+
+enum ObjectDirection {
+  north = 0x00;
+  right = 0x01;
+  east = 0x02;
+  down = 0x03;
+  south = 0x04;
+  left = 0x05;
+  west = 0x06;
+  up = 0x07;
+  mask = 0x70;
+  running = 0x80;
+  none = 0xED;
+}

@@ -1,4 +1,4 @@
-package onCharacterPreLogin
+package clientEvents
 
 import (
 	"yamul-gateway/backend/services"
