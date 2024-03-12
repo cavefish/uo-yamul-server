@@ -48,7 +48,7 @@ class GameStreamObserver(
     private fun onCharacterSelected(ignored: MsgCharacterSelection) {
         send(MsgType.TypeApplyWorldPatches) {it.setApplyWorldPatches(MsgApplyWorldPatches.getDefaultInstance())}
         send(MsgType.TypePlayMusic) {it.setPlayMusic(MsgPlayMusic.getDefaultInstance())}
-        send(MsgType.TypeMapChange) {it.setMapChange(MsgMapChange.getDefaultInstance())}
+        send(MsgType.TypeMapChange) {it.setMapChange(MsgMapChange.newBuilder().setMapId(3))}
         send(MsgType.TypeHealthBar) {it.setHealthBar(MsgHealthBar.getDefaultInstance())}
         send(MsgType.TypeTeleportPlayer) {it.setTeleportPlayer(createTeleportPlayer())}
     }

@@ -8,7 +8,9 @@ import (
 )
 
 func Setup() error {
-	log.SetFormatter(&log.JSONFormatter{})
+	formatter := &log.TextFormatter{}
+	formatter.ForceColors = true
+	log.SetFormatter(formatter)
 
 	handlers.Setup()
 	events.Setup()

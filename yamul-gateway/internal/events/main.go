@@ -20,7 +20,7 @@ func Setup() {
 	messages.RegisterProcessor(services.MsgType_TypeCharacterSelection, messages.UnimplementedProcessor)
 	messages.RegisterProcessor(services.MsgType_TypeCreateCharacter, messages.UnimplementedProcessor)
 	messages.RegisterProcessor(services.MsgType_TypeHealthBar, messages.UnimplementedProcessor)
-	messages.RegisterProcessor(services.MsgType_TypeMapChange, messages.UnimplementedProcessor)
+	messages.RegisterProcessor(services.MsgType_TypeMapChange, gameEvents.OnMapChange)
 	messages.RegisterProcessor(services.MsgType_TypePlayMusic, gameEvents.OnPlayMusic)
 	messages.RegisterProcessor(services.MsgType_TypeTeleportPlayer, gameEvents.OnTeleportPlayer)
 }
