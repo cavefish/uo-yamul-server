@@ -5,9 +5,11 @@ import (
 	"yamul-gateway/internal/interfaces"
 )
 
-func MapChange(client interfaces.ClientConnection, command commands.MapChange) { // 0x6D
+func MapChange(client interfaces.ClientConnection, command commands.MapChange) { // 0xbf08
 	client.StartPacket()
 	defer client.EndPacket()
 
+	client.WriteUShort(0x06)
+	client.WriteUShort(0x0008)
 	client.WriteByte(command.MapId)
 }

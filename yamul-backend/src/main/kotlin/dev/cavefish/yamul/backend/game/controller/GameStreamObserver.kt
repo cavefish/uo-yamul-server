@@ -49,13 +49,21 @@ class GameStreamObserver(
         send(MsgType.TypeApplyWorldPatches) {it.setApplyWorldPatches(MsgApplyWorldPatches.getDefaultInstance())}
         send(MsgType.TypePlayMusic) {it.setPlayMusic(MsgPlayMusic.getDefaultInstance())}
         send(MsgType.TypeMapChange) {it.setMapChange(MsgMapChange.newBuilder().setMapId(3))}
-        send(MsgType.TypeHealthBar) {it.setHealthBar(MsgHealthBar.getDefaultInstance())}
+        send(MsgType.TypeHealthBar) {it.setHealthBar(createHealthBar())}
         send(MsgType.TypeTeleportPlayer) {it.setTeleportPlayer(createTeleportPlayer())}
     }
 
+    private fun createHealthBar(): MsgHealthBar.Builder = MsgHealthBar.newBuilder()
+        .setId(createPlayerObjectId())
+        .addValues(MsgHealthBar.Values.newBuilder().setTypeValue(MsgHealthBar.Values.Type.GREEN_VALUE).setEnabled(true))
+        .addValues(MsgHealthBar.Values.newBuilder().setTypeValue(MsgHealthBar.Values.Type.YELLOW_VALUE).setEnabled(false))
+
+
     private fun createTeleportPlayer(): MsgTeleportPlayer.Builder =
         MsgTeleportPlayer.newBuilder()
-            .setId(ObjectId.getDefaultInstance())
+            .setId(createPlayerObjectId())
+
+    private fun createPlayerObjectId(): ObjectId? = ObjectId.getDefaultInstance()
 
     private fun send(msgType: MsgType, f: (Message.Builder) -> Unit) {
         outputStream.onNext(StreamPackage.newBuilder().setType(msgType).setBody(Message.newBuilder().apply(f)).build())
