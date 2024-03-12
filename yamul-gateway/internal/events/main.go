@@ -16,7 +16,7 @@ func Setup() {
 
 	messages.RegisterProcessor(services.MsgType_TypeUndefined, messages.UnimplementedProcessor)
 
-	messages.RegisterProcessor(services.MsgType_TypeApplyWorldPatches, messages.UnimplementedProcessor)
+	messages.RegisterProcessor(services.MsgType_TypeApplyWorldPatches, gameEvents.ApplyWorldPatches)
 	messages.RegisterProcessor(services.MsgType_TypeCharacterSelection, messages.UnimplementedProcessor)
 	messages.RegisterProcessor(services.MsgType_TypeCreateCharacter, messages.UnimplementedProcessor)
 	messages.RegisterProcessor(services.MsgType_TypeHealthBar, gameEvents.OnHealthBarUpdate)
