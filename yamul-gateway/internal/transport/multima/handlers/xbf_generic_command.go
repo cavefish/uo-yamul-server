@@ -9,8 +9,10 @@ func receiveGenericCommand(client interfaces.ClientConnection) { // 0xBF
 	subCommand := client.ReadUShort()
 	body := client.ReadFixedBytes(int(size))
 
-	client.GetLogger().Infof("Received subcommand request %x", subCommand)
+	client.GetLogger().Infof("Received subcommand request 0x%02x", subCommand)
 	client.GetLogger().Debugf("size=%d [% x]", size, body)
+
+	client.GetLogger().Errorf("Unimplemented subcommand processor 0x%02x", subCommand)
 }
 
 func sendGenericCommand_changeWorldMap(client interfaces.ClientConnection, worldMapId byte) {

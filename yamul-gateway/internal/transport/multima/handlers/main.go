@@ -12,8 +12,8 @@ func Setup() {
 	for i := 0; i < 256; i++ {
 		connection.ClientCommandHandlers[i] = noop
 	}
-	setHandler(0x09, unimplemented(4))  // Single click on event id http://www.hoogi.de/wolfpack/wiki/doku.php?id=uo_protocol_0x09
-	setHandler(0x34, unimplemented(10)) // Get player status http://www.hoogi.de/wolfpack/wiki/doku.php?id=uo_protocol_0x34
+	setHandler(0x09, unimplemented(4)) // Single click on event id http://www.hoogi.de/wolfpack/wiki/doku.php?id=uo_protocol_0x09
+	setHandler(0x34, unimplemented(9)) // Get player status http://www.hoogi.de/wolfpack/wiki/doku.php?id=uo_protocol_0x34
 	setHandler(0x5d, preLogin)
 	setHandler(0x73, ping)
 	setHandler(0x80, loginRequest)
@@ -28,9 +28,10 @@ func Setup() {
 
 func setHandler(command byte, delegate func(client interfaces.ClientConnection)) {
 	handlerName := runtime.FuncForPC(reflect.ValueOf(delegate).Pointer()).Name()
+	commandAsText := fmt.Sprintf("0x%02x", command)
 	handler := func(client interfaces.ClientConnection, commandCode byte) {
 		logger := client.GetLogger()
-		logger.SetLogField("command", command)
+		logger.SetLogField("command", commandAsText)
 		defer logger.ClearLogField("command")
 		logger.SetLogField("handler", handlerName)
 		defer logger.ClearLogField("handler")
@@ -41,6 +42,7 @@ func setHandler(command byte, delegate func(client interfaces.ClientConnection))
 
 func unimplemented(skip int) func(client interfaces.ClientConnection) {
 	return func(client interfaces.ClientConnection) {
+		client.GetLogger().Infof("Unimplemented command, skipping %d bytes.", skip)
 		client.ReadFixedString(skip)
 	}
 }
