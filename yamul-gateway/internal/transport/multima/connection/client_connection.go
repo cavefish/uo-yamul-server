@@ -108,7 +108,7 @@ func (client *clientConnection) sendEverything() error {
 		client.err = err
 		return err
 	}
-	client.logger.Debugf("Sent %d bytes", sentLength)
+	client.logger.Debugf("Sent %d encrypted bytes: %x", sentLength, slice)
 	buffer.length = 0
 	return nil
 }

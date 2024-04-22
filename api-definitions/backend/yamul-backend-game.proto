@@ -18,7 +18,7 @@ message MsgCharacterSelection {
   int32 slot = 3;
 }
 
-message MsgCreateCharacter {
+message MsgUpdateObject {
   common.ObjectId id = 1;
   // TODO add missing fields
 }
@@ -68,7 +68,7 @@ enum MsgType {
   TypeTeleportPlayer = 0x2000;
   TypeCharacterSelection = 0x5d00;
   TypePlayMusic = 0x6D00;
-  TypeCreateCharacter = 0x7800;
+  TypeUpdateObject = 0x7800;
   TypeMapChange = 0xBF08;
   TypeApplyWorldPatches = 0xBF18;
 }
@@ -79,7 +79,7 @@ message Message {
     MsgTeleportPlayer teleportPlayer = 0x2000;
     MsgCharacterSelection characterSelection = 0x5d00;
     MsgPlayMusic playMusic = 0x6D00;
-    MsgCreateCharacter createCharacter = 0x7800;
+    MsgUpdateObject updateObject = 0x7800;
     MsgMapChange mapChange = 0xBF08;
     MsgApplyWorldPatches applyWorldPatches = 0xBF18;
   }
