@@ -1,6 +1,7 @@
 package dev.cavefish.yamul.backend.game.controller
 
 
+import dev.cavefish.yamul.backend.common.api.Coordinate
 import dev.cavefish.yamul.backend.common.api.ObjectId
 import dev.cavefish.yamul.backend.game.api.Message
 import dev.cavefish.yamul.backend.game.api.MsgApplyWorldPatches
@@ -8,6 +9,7 @@ import dev.cavefish.yamul.backend.game.api.MsgCharacterSelection
 import dev.cavefish.yamul.backend.game.api.MsgHealthBar
 import dev.cavefish.yamul.backend.game.api.MsgMapChange
 import dev.cavefish.yamul.backend.game.api.MsgPlayMusic
+import dev.cavefish.yamul.backend.game.api.MsgPlayerStartConfirmation
 import dev.cavefish.yamul.backend.game.api.MsgTeleportPlayer
 import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.api.MsgUpdateObject
@@ -47,13 +49,26 @@ class GameStreamObserver(
     }
 
     private fun onCharacterSelected(ignored: MsgCharacterSelection) {
+        send(MsgType.TypePlayerStartConfirmation) {
+            it.setPlayerStartConfirmation(
+                MsgPlayerStartConfirmation.newBuilder().setId(createPlayerObjectId())
+                    .setCoordinates(createPlayerObjectCoordinates())
+            )
+        }
         send(MsgType.TypeApplyWorldPatches) { it.setApplyWorldPatches(MsgApplyWorldPatches.getDefaultInstance()) }
         send(MsgType.TypePlayMusic) { it.setPlayMusic(MsgPlayMusic.newBuilder().setMusicId(0x1E)) }
         send(MsgType.TypeMapChange) { it.setMapChange(MsgMapChange.newBuilder().setMapId(3)) }
-        send(MsgType.TypeUpdateObject) {it.setUpdateObject(MsgUpdateObject.newBuilder().setId(createPlayerObjectId()))}
+        send(MsgType.TypeUpdateObject) {
+            it.setUpdateObject(
+                MsgUpdateObject.newBuilder().setId(createPlayerObjectId())
+            )
+        }
         send(MsgType.TypeHealthBar) { it.setHealthBar(createHealthBar()) }
         send(MsgType.TypeTeleportPlayer) { it.setTeleportPlayer(createTeleportPlayer()) }
     }
+
+    private fun createPlayerObjectCoordinates(): Coordinate.Builder =
+        Coordinate.newBuilder().setXLoc(0).setYLoc(0).setZLoc(0)
 
     private fun createHealthBar(): MsgHealthBar.Builder = MsgHealthBar.newBuilder()
         .setId(createPlayerObjectId())
@@ -66,8 +81,9 @@ class GameStreamObserver(
     private fun createTeleportPlayer(): MsgTeleportPlayer.Builder =
         MsgTeleportPlayer.newBuilder()
             .setId(createPlayerObjectId())
+            .setCoordinates(createPlayerObjectCoordinates())
 
-    private fun createPlayerObjectId(): ObjectId? = ObjectId.getDefaultInstance()
+    private fun createPlayerObjectId(): ObjectId.Builder = ObjectId.newBuilder().setValue(1)
 
     private fun send(msgType: MsgType, f: (Message.Builder) -> Unit) {
         outputStream.onNext(StreamPackage.newBuilder().setType(msgType).setBody(Message.newBuilder().apply(f)).build())

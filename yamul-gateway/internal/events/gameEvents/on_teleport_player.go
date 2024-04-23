@@ -20,9 +20,9 @@ func toCommandTeleportPlayer(player *services.MsgTeleportPlayer) commands.Telepo
 	return commands.TeleportPlayer{
 		Serial:    player.Id.Value,
 		Status:    status,
-		XLoc:      uint16(player.XLoc),
-		YLoc:      uint16(player.YLoc),
+		XLoc:      uint16(player.Coordinates.XLoc),
+		YLoc:      uint16(player.Coordinates.YLoc),
 		Direction: byte(player.Direction.Number()),
-		ZLoc:      int8(player.ZLoc),
+		ZLoc:      int8(player.Coordinates.ZLoc),
 	}
 }

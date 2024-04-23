@@ -40,6 +40,12 @@ message MsgMapChange {
   int32 mapId = 1;
 }
 
+message MsgPlayerStartConfirmation {
+  common.ObjectId id = 1;
+  common.Coordinate coordinates = 2;
+  common.ObjectDirection direction = 3;
+}
+
 message MsgPlayMusic {
   int32 musicId = 1;
 }
@@ -47,10 +53,8 @@ message MsgPlayMusic {
 message MsgTeleportPlayer {
   common.ObjectId id = 1;
   repeated MsgTeleportPlayer_PlayerStatus status = 4;
-  uint32 xLoc = 5;
-  uint32 yLoc = 6;
+  common.Coordinate coordinates = 5;
   common.ObjectDirection direction = 8;
-  int32 zLoc = 9;
 }
 
 enum MsgTeleportPlayer_PlayerStatus {
@@ -65,6 +69,7 @@ enum MsgTeleportPlayer_PlayerStatus {
 enum MsgType {
   TypeUndefined = 0; // TODO this is a valid value on UO packet ids
   TypeHealthBar = 0x1700;
+  TypePlayerStartConfirmation = 0x1b00;
   TypeTeleportPlayer = 0x2000;
   TypeCharacterSelection = 0x5d00;
   TypePlayMusic = 0x6D00;
@@ -76,6 +81,7 @@ enum MsgType {
 message Message {
   oneof msg {
     MsgHealthBar healthBar = 0x1700;
+    MsgPlayerStartConfirmation playerStartConfirmation = 0x1b00;
     MsgTeleportPlayer teleportPlayer = 0x2000;
     MsgCharacterSelection characterSelection = 0x5d00;
     MsgPlayMusic playMusic = 0x6D00;

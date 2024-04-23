@@ -20,12 +20,14 @@ func Test_toCommandTeleportPlayer(t *testing.T) {
 		{
 			name: "base case",
 			args: args{player: &services.MsgTeleportPlayer{
-				Id:        &services.ObjectId{Value: 0},
-				Status:    []services.MsgTeleportPlayer_PlayerStatus{},
-				XLoc:      0,
-				YLoc:      0,
+				Id:     &services.ObjectId{Value: 0},
+				Status: []services.MsgTeleportPlayer_PlayerStatus{},
+				Coordinates: &services.Coordinate{
+					XLoc: 0,
+					YLoc: 0,
+					ZLoc: 0,
+				},
 				Direction: 0,
-				ZLoc:      0,
 			}},
 			want: commands.TeleportPlayer{
 				Serial:    0,
@@ -43,10 +45,12 @@ func Test_toCommandTeleportPlayer(t *testing.T) {
 				Status: []services.MsgTeleportPlayer_PlayerStatus{
 					services.MsgTeleportPlayer_PlayerStatus_normal,
 				},
-				XLoc:      2,
-				YLoc:      3,
+				Coordinates: &services.Coordinate{
+					XLoc: 2,
+					YLoc: 3,
+					ZLoc: 6,
+				},
 				Direction: services.ObjectDirection_left,
-				ZLoc:      6,
 			}},
 			want: commands.TeleportPlayer{
 				Serial:    1,
@@ -67,10 +71,12 @@ func Test_toCommandTeleportPlayer(t *testing.T) {
 					services.MsgTeleportPlayer_PlayerStatus_warMode,
 					services.MsgTeleportPlayer_PlayerStatus_canAlterPaperDoll,
 				},
-				XLoc:      math.MaxUint16,
-				YLoc:      math.MaxUint16,
+				Coordinates: &services.Coordinate{
+					XLoc: math.MaxUint16,
+					YLoc: math.MaxUint16,
+					ZLoc: math.MaxInt8,
+				},
 				Direction: services.ObjectDirection_running | services.ObjectDirection_down,
-				ZLoc:      math.MaxInt8,
 			}},
 			want: commands.TeleportPlayer{
 				Serial:    100,
@@ -84,12 +90,14 @@ func Test_toCommandTeleportPlayer(t *testing.T) {
 		{
 			name: "with lower limit values",
 			args: args{player: &services.MsgTeleportPlayer{
-				Id:        &services.ObjectId{Value: 0},
-				Status:    []services.MsgTeleportPlayer_PlayerStatus{},
-				XLoc:      0,
-				YLoc:      0,
+				Id:     &services.ObjectId{Value: 0},
+				Status: []services.MsgTeleportPlayer_PlayerStatus{},
+				Coordinates: &services.Coordinate{
+					XLoc: 0,
+					YLoc: 0,
+					ZLoc: math.MinInt8,
+				},
 				Direction: services.ObjectDirection_north,
-				ZLoc:      math.MinInt8,
 			}},
 			want: commands.TeleportPlayer{
 				Serial:    0,

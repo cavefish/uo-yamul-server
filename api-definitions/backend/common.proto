@@ -30,3 +30,9 @@ enum ObjectDirection {
   running = 0x80;
   none = 0xED;
 }
+
+message Coordinate {
+  uint32 xLoc = 5;
+  uint32 yLoc = 6;
+  int32 zLoc = 9;
+}

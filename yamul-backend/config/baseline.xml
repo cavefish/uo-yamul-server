@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues>
     <ID>SpreadOperator:ServiceMain.kt$(*args)</ID>
+    <ID>TooManyFunctions:GameStreamObserver.kt$GameStreamObserver : StreamObserver</ID>
   </ManuallySuppressedIssues>
   <CurrentIssues/>
 </SmellBaseline>
