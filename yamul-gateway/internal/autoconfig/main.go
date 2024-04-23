@@ -11,7 +11,7 @@ func Setup() error {
 	formatter := &log.TextFormatter{}
 	formatter.ForceColors = true
 	log.SetFormatter(formatter)
-	//log.SetLevel(log.DebugLevel)
+	log.SetLevel(log.DebugLevel)
 
 	handlers.Setup()
 	events.Setup()

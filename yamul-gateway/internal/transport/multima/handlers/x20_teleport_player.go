@@ -11,7 +11,8 @@ func TeleportPlayer(client interfaces.ClientConnection, command commands.Telepor
 
 	client.WriteByte(0x20)
 	client.WriteUInt(command.Serial)
-	client.WriteByte(0x00) // UNKNOWN
+	client.WriteUShort(0)  // body type
+	client.WriteByte(0x00) // Unknown
 	client.WriteUShort(0)  //skin color
 	client.WriteByte(command.Status)
 	client.WriteUShort(command.XLoc)

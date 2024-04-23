@@ -10,7 +10,7 @@ func HealthBarUpdate(client interfaces.ClientConnection, command commands.Health
 	client.StartPacket()
 	defer client.EndPacket()
 
-	var length uint16 = uint16(7 + len(command.Values)*3)
+	var length uint16 = uint16(9 + len(command.Values)*3)
 
 	client.WriteByte(0x17)
 	client.WriteUShort(length)

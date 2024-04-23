@@ -10,7 +10,7 @@ func MapChange(client interfaces.ClientConnection, command commands.MapChange) {
 	defer client.EndPacket()
 
 	client.WriteByte(0xbf)
-	client.WriteUShort(0x0006)
+	client.WriteUShort(6)
 	client.WriteUShort(0x0008)
 	client.WriteByte(command.MapId)
 }

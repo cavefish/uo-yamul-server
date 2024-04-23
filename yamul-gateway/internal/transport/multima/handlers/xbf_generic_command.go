@@ -14,12 +14,3 @@ func receiveGenericCommand(client interfaces.ClientConnection) { // 0xBF
 
 	client.GetLogger().Errorf("Unimplemented subcommand processor 0x%02x", subCommand)
 }
-
-func sendGenericCommand_changeWorldMap(client interfaces.ClientConnection, worldMapId byte) {
-	client.StartPacket()
-	defer client.EndPacket()
-
-	client.WriteByte(0xBF)
-	client.WriteUShort(5)
-	client.WriteByte(worldMapId)
-}

@@ -11,10 +11,10 @@ func WorldPatches(client interfaces.ClientConnection, command commands.WorldPatc
 	defer client.EndPacket()
 
 	client.WriteByte(0xbf)
-	client.WriteUShort(0x31)
+	client.WriteUShort(49)
 	client.WriteUShort(0x0018)
 	client.WriteUInt(5)
-	for i := 0; i < 41; i++ {
+	for i := 0; i < 40; i++ {
 		client.WriteByte(0)
 	}
 }

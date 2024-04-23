@@ -18,7 +18,7 @@ func Setup() {
 
 	messages.RegisterProcessor(services.MsgType_TypeApplyWorldPatches, gameEvents.ApplyWorldPatches)
 	messages.RegisterProcessor(services.MsgType_TypeCharacterSelection, messages.UnimplementedProcessor) // TODO
-	messages.RegisterProcessor(services.MsgType_TypeUpdateObject, messages.UnimplementedProcessor)       // TODO
+	messages.RegisterProcessor(services.MsgType_TypeUpdateObject, gameEvents.OnUpdateObject)
 	messages.RegisterProcessor(services.MsgType_TypeHealthBar, gameEvents.OnHealthBarUpdate)
 	messages.RegisterProcessor(services.MsgType_TypeMapChange, gameEvents.OnMapChange)
 	messages.RegisterProcessor(services.MsgType_TypePlayMusic, gameEvents.OnPlayMusic)
