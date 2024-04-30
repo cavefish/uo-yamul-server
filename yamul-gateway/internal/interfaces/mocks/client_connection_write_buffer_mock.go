@@ -9,7 +9,7 @@ import (
 	"yamul-gateway/internal/transport/multima/connection"
 )
 
-type ClientConnectionMock struct {
+type ClientConnectionWriteBufferMock struct {
 	assert           *assert.Assertions
 	mutexIsLocked    bool
 	mutexAlreadyUsed bool
@@ -18,62 +18,62 @@ type ClientConnectionMock struct {
 	logger           interfaces.Logger
 }
 
-func (c *ClientConnectionMock) Close() {
+func (c *ClientConnectionWriteBufferMock) Close() {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) SendAnyData() error {
+func (c *ClientConnectionWriteBufferMock) SendAnyData() error {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) ReceiveData() error {
+func (c *ClientConnectionWriteBufferMock) ReceiveData() error {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) ProcessInputBuffer() {
+func (c *ClientConnectionWriteBufferMock) ProcessInputBuffer() {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) ReadByte() byte {
+func (c *ClientConnectionWriteBufferMock) ReadByte() byte {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) WriteByte(value byte) {
+func (c *ClientConnectionWriteBufferMock) WriteByte(value byte) {
 	c.assert.True(c.mutexIsLocked, "Mutex not locked")
 	c.assert.Less(c.usedBufferLength, 1024, "Buffer overflow. Message too large.")
 	c.buffer[c.usedBufferLength] = value
 	c.usedBufferLength++
 }
 
-func (c *ClientConnectionMock) ReadUShort() uint16 {
+func (c *ClientConnectionWriteBufferMock) ReadUShort() uint16 {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) WriteUShort(value uint16) {
+func (c *ClientConnectionWriteBufferMock) WriteUShort(value uint16) {
 	c.WriteByte(byte(value >> 8))
 	c.WriteByte(byte(value))
 }
 
-func (c *ClientConnectionMock) ReadUInt() uint32 {
+func (c *ClientConnectionWriteBufferMock) ReadUInt() uint32 {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) WriteUInt(value uint32) {
+func (c *ClientConnectionWriteBufferMock) WriteUInt(value uint32) {
 	c.WriteByte(byte(value >> 24))
 	c.WriteByte(byte(value >> 16))
 	c.WriteByte(byte(value >> 8))
 	c.WriteByte(byte(value))
 }
 
-func (c *ClientConnectionMock) ReadFixedString(length int) string {
+func (c *ClientConnectionWriteBufferMock) ReadFixedString(length int) string {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) ReadFixedBytes(length int) []byte {
+func (c *ClientConnectionWriteBufferMock) ReadFixedBytes(length int) []byte {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) WriteFixedString(length int, value string) {
+func (c *ClientConnectionWriteBufferMock) WriteFixedString(length int, value string) {
 	for i := 0; i < length; i++ {
 		if i < len(value) {
 			c.WriteByte(value[i])
@@ -83,73 +83,73 @@ func (c *ClientConnectionMock) WriteFixedString(length int, value string) {
 	}
 }
 
-func (c *ClientConnectionMock) UpdateEncryptionSeed(newSeed uint32) {
+func (c *ClientConnectionWriteBufferMock) UpdateEncryptionSeed(newSeed uint32) {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) StartPacket() {
+func (c *ClientConnectionWriteBufferMock) StartPacket() {
 	c.assert.False(c.mutexIsLocked, "Mutex is already Locked")
 	c.assert.False(c.mutexAlreadyUsed, "Mutex was already Locked")
 	c.mutexIsLocked = true
 }
 
-func (c *ClientConnectionMock) EndPacket() {
+func (c *ClientConnectionWriteBufferMock) EndPacket() {
 	c.assert.True(c.mutexIsLocked, "Mutex is not Locked")
 	c.mutexIsLocked = false
 	c.mutexAlreadyUsed = true
 }
 
-func (c *ClientConnectionMock) CheckEncryptionHandshake() {
+func (c *ClientConnectionWriteBufferMock) CheckEncryptionHandshake() {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) SetLogin(username string, password string) {
+func (c *ClientConnectionWriteBufferMock) SetLogin(username string, password string) {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) CreateGameConnection() error {
+func (c *ClientConnectionWriteBufferMock) CreateGameConnection() error {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) KillConnection(err error) {
+func (c *ClientConnectionWriteBufferMock) KillConnection(err error) {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) IsConnectionHealthy() bool {
+func (c *ClientConnectionWriteBufferMock) IsConnectionHealthy() bool {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) GetLogger() interfaces.Logger {
+func (c *ClientConnectionWriteBufferMock) GetLogger() interfaces.Logger {
 	return c.logger
 }
 
-func (c *ClientConnectionMock) GetStatus() *dtos.ClientConnectionStatus {
+func (c *ClientConnectionWriteBufferMock) GetStatus() *dtos.ClientConnectionStatus {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) GetEncryptionState() *dtos.EncryptionConfig {
+func (c *ClientConnectionWriteBufferMock) GetEncryptionState() *dtos.EncryptionConfig {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) GetLoginDetails() *dtos.LoginDetails {
+func (c *ClientConnectionWriteBufferMock) GetLoginDetails() *dtos.LoginDetails {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) GetConnection() net.Conn {
+func (c *ClientConnectionWriteBufferMock) GetConnection() net.Conn {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) GetGameService() interfaces.GameService {
+func (c *ClientConnectionWriteBufferMock) GetGameService() interfaces.GameService {
 	panic("Unimplemented mock behaviour")
 }
 
-func (c *ClientConnectionMock) AssertSentBuffer(expected []byte) {
+func (c *ClientConnectionWriteBufferMock) AssertSentBuffer(expected []byte) {
 	c.assert.False(c.mutexIsLocked, "Mutex is Locked")
 	c.assert.EqualValues(expected, c.buffer[0:c.usedBufferLength])
 }
 
-func CreateClientConnectionMock(t *testing.T) *ClientConnectionMock {
-	result := &ClientConnectionMock{
+func CreateClientConnectionWriteBufferMock(t *testing.T) *ClientConnectionWriteBufferMock {
+	result := &ClientConnectionWriteBufferMock{
 		assert:           assert.New(t),
 		mutexIsLocked:    false,
 		mutexAlreadyUsed: false,

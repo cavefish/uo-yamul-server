@@ -4,12 +4,19 @@ import (
 	"yamul-gateway/internal/dtos/commands"
 	"yamul-gateway/internal/interfaces"
 	"yamul-gateway/internal/transport/multima/listeners"
+	"yamul-gateway/utils/string"
 )
 
 func preLogin(client interfaces.ClientConnection) { // 0x5d
+	command := preLoginReadBuffer(client)
+
+	listeners.Listeners.OnPreLogin.Trigger(client, command)
+}
+
+func preLoginReadBuffer(client interfaces.ClientConnection) commands.PreLogin {
 	_ = client.ReadUInt()
-	charName := client.ReadFixedString(30)
-	charPassword := client.ReadFixedString(30)
+	charName := string.TrimRight(client.ReadFixedString(30))
+	charPassword := string.TrimRight(client.ReadFixedString(30))
 	slot := client.ReadUInt()
 	encryptionKey := client.ReadUInt()
 
@@ -19,6 +26,5 @@ func preLogin(client interfaces.ClientConnection) { // 0x5d
 		Slot:          slot,
 		EncryptionKey: encryptionKey,
 	}
-
-	listeners.Listeners.OnPreLogin.Trigger(client, command)
+	return command
 }

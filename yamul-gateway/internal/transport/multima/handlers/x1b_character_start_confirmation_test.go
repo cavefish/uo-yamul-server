@@ -42,7 +42,7 @@ func TestPlayerStartConfirmation(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			client := mocks.CreateClientConnectionMock(t)
+			client := mocks.CreateClientConnectionWriteBufferMock(t)
 			PlayerStartConfirmation(client, tt.args.body)
 			client.AssertSentBuffer(tt.args.buffer)
 		})
