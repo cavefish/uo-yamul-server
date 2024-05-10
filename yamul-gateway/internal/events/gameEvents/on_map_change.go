@@ -8,7 +8,7 @@ import (
 )
 
 func OnMapChange(connection interfaces.ClientConnection, msg *services.StreamPackage) {
-	var command commands.MapChange = toCommandMapChange(msg.Body.GetMapChange())
+	var command = toCommandMapChange(msg.Body.GetMapChange())
 	handlers.MapChange(connection, command)
 }
 
