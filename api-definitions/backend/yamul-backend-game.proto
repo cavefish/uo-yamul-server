@@ -18,10 +18,23 @@ message MsgCharacterSelection {
   int32 slot = 3;
 }
 
-message MsgUpdateObject {
-  common.ObjectId id = 1;
-  // TODO add missing fields
+message MsgExtendedStats {
+  oneof msg {
+    MsgExtendedStats_Dead dead = 1;
+    MsgExtendedStats_AttributeLock lock = 2;
+  }
+  message MsgExtendedStats_Dead {
+    common.ObjectId id = 1;
+    bool isDead = 2;
+  }
+  message MsgExtendedStats_AttributeLock {
+    common.ObjectId id = 1;
+    bool strLock = 2;
+    bool dexLock = 3;
+    bool intLock = 4;
+  }
 }
+
 
 message MsgHealthBar {
   common.ObjectId id = 1;
@@ -36,6 +49,10 @@ message MsgHealthBar {
   }
 }
 
+message MsgGeneralLightLevel {
+  uint32 level = 1;
+}
+
 message MsgMapChange {
   int32 mapId = 1;
 }
@@ -48,6 +65,72 @@ message MsgPlayerStartConfirmation {
 
 message MsgPlayMusic {
   int32 musicId = 1;
+}
+
+message MsgStatWindowInfo{
+  common.ObjectId characterID = 1;
+  string characterName  = 2;
+  uint32 hitPointsCurrent = 3;
+  uint32 hitPointsMax = 4;
+  bool flagNameAllowed = 5;
+  uint32 flagDisplay = 6;
+  MsgStatWindowInfoLevel2 level2 = 99;
+  message MsgStatWindowInfoLevel2 {
+    uint32 gender = 7;
+    uint32 strength = 8;
+    uint32 intelligence = 9;
+    uint32 staminaCurrent = 10;
+    uint32 staminaMax = 11;
+    uint32 manaCurrent = 12;
+    uint32 manaMax = 13;
+    uint32 gold = 14;
+    uint32 resistancePhysical = 15;
+    uint32 weightCurrent = 16;
+    MsgStatWindowInfoLevel3 level3 = 99;
+    message MsgStatWindowInfoLevel3 {
+      uint32 statsCap = 17;
+      MsgStatWindowInfoLevel4 level4 = 99;
+      message MsgStatWindowInfoLevel4 {
+        uint32 followersCurrent = 18;
+        uint32 followersMax = 19;
+        MsgStatWindowInfoLevel5 level5 = 99;
+        message MsgStatWindowInfoLevel5 {
+          uint32 resistanceFire = 20;
+          uint32 resistanceCold = 21;
+          uint32 resistancePoison = 22;
+          uint32 resistanceEnergy = 23;
+          uint32 luck = 24;
+          uint32 damageMin = 25;
+          uint32 damageMax = 26;
+          uint32 tithingPoints = 27;
+          MsgStatWindowInfoLevel6 level6 = 99;
+          message MsgStatWindowInfoLevel6 {
+            uint32 weightMax = 28;
+            uint32 race = 29;
+            MsgStatWindowInfoLevel7 level7 = 99;
+            message MsgStatWindowInfoLevel7 {
+              uint32 resistancePhysicalMax = 30;
+              uint32 resistanceFireMax = 31;
+              uint32 resistanceColdMax = 32;
+              uint32 resistancePoisonMax = 33;
+              uint32 resistanceEnergyMax = 34;
+              uint32 defenseChanceIncreaseCurrent = 35;
+              uint32 defenseChanceIncreaseMax = 36;
+              uint32 hitChanceIncrease = 37;
+              uint32 swingSpeedIncrease = 38;
+              uint32 damageIncrease = 39;
+              uint32 lowerReagentCost = 40;
+              uint32 spellDamageIncrease = 41;
+              uint32 fasterCastRecovery = 42;
+              uint32 fasterCasting = 43;
+              uint32 lowerManaCost = 44;
+            }
+          }
+        }
+      }
+    }
+  }
+
 }
 
 message MsgTeleportPlayer {
@@ -66,28 +149,45 @@ enum MsgTeleportPlayer_PlayerStatus {
   hidden = 0x80;
 }
 
+message MsgUpdateObject {
+  common.ObjectId id = 1;
+  // TODO add missing fields
+}
+
+message MsgWarmode {
+  bool isWarmode = 1;
+}
+
 enum MsgType {
   TypeUndefined = 0; // TODO this is a valid value on UO packet ids
   TypeHealthBar = 0x1700;
+  TypeStatWindowInfo = 0x1100;
   TypePlayerStartConfirmation = 0x1b00;
   TypeTeleportPlayer = 0x2000;
+  TypeGeneralLightLevel = 0x4f00;
   TypeCharacterSelection = 0x5d00;
   TypePlayMusic = 0x6D00;
+  TypeWarmode = 0x7200;
   TypeUpdateObject = 0x7800;
   TypeMapChange = 0xBF08;
   TypeApplyWorldPatches = 0xBF18;
+  TypeExtendedStats = 0xBF19;
 }
 
 message Message {
   oneof msg {
     MsgHealthBar healthBar = 0x1700;
+    MsgStatWindowInfo statWindowInfo = 0x1100;
     MsgPlayerStartConfirmation playerStartConfirmation = 0x1b00;
     MsgTeleportPlayer teleportPlayer = 0x2000;
+    MsgGeneralLightLevel GeneralLightLevel = 0x4f00;
     MsgCharacterSelection characterSelection = 0x5d00;
     MsgPlayMusic playMusic = 0x6D00;
+    MsgWarmode warmode = 0x7200;
     MsgUpdateObject updateObject = 0x7800;
     MsgMapChange mapChange = 0xBF08;
     MsgApplyWorldPatches applyWorldPatches = 0xBF18;
+    MsgExtendedStats extendedStats = 0xBF19;
   }
 }
 
