@@ -165,6 +165,7 @@ enum MsgType {
   TypePlayerStartConfirmation = 0x1b00;
   TypeTeleportPlayer = 0x2000;
   TypeGeneralLightLevel = 0x4f00;
+  TypeLoginComplete = 0x5500;
   TypeCharacterSelection = 0x5d00;
   TypePlayMusic = 0x6D00;
   TypeWarmode = 0x7200;

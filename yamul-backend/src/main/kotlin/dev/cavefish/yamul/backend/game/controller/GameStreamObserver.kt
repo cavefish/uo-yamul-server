@@ -6,13 +6,17 @@ import dev.cavefish.yamul.backend.common.api.ObjectId
 import dev.cavefish.yamul.backend.game.api.Message
 import dev.cavefish.yamul.backend.game.api.MsgApplyWorldPatches
 import dev.cavefish.yamul.backend.game.api.MsgCharacterSelection
+import dev.cavefish.yamul.backend.game.api.MsgExtendedStats
+import dev.cavefish.yamul.backend.game.api.MsgGeneralLightLevel
 import dev.cavefish.yamul.backend.game.api.MsgHealthBar
 import dev.cavefish.yamul.backend.game.api.MsgMapChange
 import dev.cavefish.yamul.backend.game.api.MsgPlayMusic
 import dev.cavefish.yamul.backend.game.api.MsgPlayerStartConfirmation
+import dev.cavefish.yamul.backend.game.api.MsgStatWindowInfo
 import dev.cavefish.yamul.backend.game.api.MsgTeleportPlayer
 import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.api.MsgUpdateObject
+import dev.cavefish.yamul.backend.game.api.MsgWarmode
 import dev.cavefish.yamul.backend.game.api.StreamPackage
 import io.grpc.stub.StreamObserver
 import org.tinylog.Logger
@@ -65,6 +69,11 @@ class GameStreamObserver(
         }
         send(MsgType.TypeHealthBar) { it.setHealthBar(createHealthBar()) }
         send(MsgType.TypeTeleportPlayer) { it.setTeleportPlayer(createTeleportPlayer()) }
+        send(MsgType.TypeGeneralLightLevel) { it.setGeneralLightLevel(MsgGeneralLightLevel.getDefaultInstance()) }
+        send(MsgType.TypeStatWindowInfo) { it.setStatWindowInfo(MsgStatWindowInfo.newBuilder().setCharacterID(createPlayerObjectId())) }
+        send(MsgType.TypeExtendedStats) { it.setExtendedStats(MsgExtendedStats.getDefaultInstance()) }
+        send(MsgType.TypeWarmode) { it.setWarmode(MsgWarmode.getDefaultInstance()) }
+        send(MsgType.TypeLoginComplete) {}
     }
 
     private fun createPlayerObjectCoordinates(): Coordinate.Builder =

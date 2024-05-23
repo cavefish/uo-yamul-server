@@ -21,6 +21,7 @@ func Setup() {
 	messages.RegisterProcessor(services.MsgType_TypeExtendedStats, gameEvents.ExtendedStats)
 	messages.RegisterProcessor(services.MsgType_TypeGeneralLightLevel, gameEvents.GeneralLightLevel)
 	messages.RegisterProcessor(services.MsgType_TypeHealthBar, gameEvents.OnHealthBarUpdate)
+	messages.RegisterProcessor(services.MsgType_TypeLoginComplete, gameEvents.OnLoginComplete)
 	messages.RegisterProcessor(services.MsgType_TypeMapChange, gameEvents.OnMapChange)
 	messages.RegisterProcessor(services.MsgType_TypePlayerStartConfirmation, gameEvents.OnPlayerStartConfirmation)
 	messages.RegisterProcessor(services.MsgType_TypePlayMusic, gameEvents.OnPlayMusic)
