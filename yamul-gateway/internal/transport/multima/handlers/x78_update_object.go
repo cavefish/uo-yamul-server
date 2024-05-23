@@ -15,7 +15,7 @@ func UpdateObject(client interfaces.ClientConnection, command commands.UpdateObj
 	client.WriteUShort(command.GraphicId)
 	client.WriteUShort(command.XLoc)
 	client.WriteUShort(command.YLoc)
-	client.WriteByte(byte(command.ZLoc))
+	client.WriteByte(command.ZLoc)
 	client.WriteByte(command.Direction)
 	client.WriteUShort(command.Hue)
 	client.WriteByte(command.Flags)

@@ -5,7 +5,7 @@ type UpdateObject struct {
 	GraphicId     uint16
 	XLoc          uint16
 	YLoc          uint16
-	ZLoc          int8
+	ZLoc          byte
 	Direction     byte
 	Hue           uint16
 	Flags         byte

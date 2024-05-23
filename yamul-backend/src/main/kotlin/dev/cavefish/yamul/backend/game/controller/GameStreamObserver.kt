@@ -61,23 +61,30 @@ class GameStreamObserver(
         }
         send(MsgType.TypeApplyWorldPatches) { it.setApplyWorldPatches(MsgApplyWorldPatches.getDefaultInstance()) }
         send(MsgType.TypePlayMusic) { it.setPlayMusic(MsgPlayMusic.newBuilder().setMusicId(0x1E)) }
-        send(MsgType.TypeMapChange) { it.setMapChange(MsgMapChange.newBuilder().setMapId(3)) }
+        send(MsgType.TypeMapChange) { it.setMapChange(MsgMapChange.newBuilder().setMapId(1)) }
         send(MsgType.TypeUpdateObject) {
             it.setUpdateObject(
-                MsgUpdateObject.newBuilder().setId(createPlayerObjectId())
+                MsgUpdateObject.newBuilder()
+                    .setId(createPlayerObjectId())
+                    .setGraphicId(0x0190)
+                    .setHue(0x83EA)
             )
         }
         send(MsgType.TypeHealthBar) { it.setHealthBar(createHealthBar()) }
         send(MsgType.TypeTeleportPlayer) { it.setTeleportPlayer(createTeleportPlayer()) }
-        send(MsgType.TypeGeneralLightLevel) { it.setGeneralLightLevel(MsgGeneralLightLevel.getDefaultInstance()) }
-        send(MsgType.TypeStatWindowInfo) { it.setStatWindowInfo(MsgStatWindowInfo.newBuilder().setCharacterID(createPlayerObjectId())) }
+        send(MsgType.TypeGeneralLightLevel) { it.setGeneralLightLevel(MsgGeneralLightLevel.newBuilder().setLevel(0x18)) }
+        send(MsgType.TypeStatWindowInfo) {
+            it.setStatWindowInfo(
+                MsgStatWindowInfo.newBuilder().setCharacterID(createPlayerObjectId())
+            )
+        }
         send(MsgType.TypeExtendedStats) { it.setExtendedStats(MsgExtendedStats.getDefaultInstance()) }
         send(MsgType.TypeWarmode) { it.setWarmode(MsgWarmode.getDefaultInstance()) }
         send(MsgType.TypeLoginComplete) {}
     }
 
     private fun createPlayerObjectCoordinates(): Coordinate.Builder =
-        Coordinate.newBuilder().setXLoc(0).setYLoc(0).setZLoc(0)
+        Coordinate.newBuilder().setXLoc(6787).setYLoc(2181).setZLoc(0)
 
     private fun createHealthBar(): MsgHealthBar.Builder = MsgHealthBar.newBuilder()
         .setId(createPlayerObjectId())

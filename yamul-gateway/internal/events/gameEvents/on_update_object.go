@@ -12,16 +12,16 @@ func OnUpdateObject(connection interfaces.ClientConnection, msg *services.Stream
 	handlers.UpdateObject(connection, command)
 }
 
-func toCommandUpdateObject(object *services.MsgUpdateObject) commands.UpdateObject {
+func toCommandUpdateObject(msg *services.MsgUpdateObject) commands.UpdateObject {
 	return commands.UpdateObject{
-		Serial:        object.Id.Value,
-		GraphicId:     0,
-		XLoc:          0,
-		YLoc:          0,
-		ZLoc:          0,
-		Direction:     0,
-		Hue:           0,
-		Flags:         0,
-		NotorietyFlag: 0,
+		Serial:        msg.Id.Value,
+		GraphicId:     uint16(msg.GraphicId),
+		XLoc:          uint16(msg.XLoc),
+		YLoc:          uint16(msg.YLoc),
+		ZLoc:          byte(msg.ZLoc),
+		Direction:     byte(msg.Direction),
+		Hue:           uint16(msg.Hue),
+		Flags:         byte(msg.Flags),
+		NotorietyFlag: byte(msg.NotorietyFlags),
 	}
 }

@@ -151,7 +151,14 @@ enum MsgTeleportPlayer_PlayerStatus {
 
 message MsgUpdateObject {
   common.ObjectId id = 1;
-  // TODO add missing fields
+  uint32 graphicId = 2;
+  uint32 xLoc = 3;
+  uint32 yLoc = 4;
+  uint32 zLoc = 5;
+  uint32 direction = 6;
+  uint32 hue = 7;
+  uint32 flags = 8;
+  uint32 notorietyFlags = 9;
 }
 
 message MsgWarmode {
