@@ -13,6 +13,7 @@ func Setup() {
 		connection.ClientCommandHandlers[i] = noop
 	}
 	setHandler(0x09, unimplemented(4)) // Single click on event id http://www.hoogi.de/wolfpack/wiki/doku.php?id=uo_protocol_0x09
+	setHandler(0x22, moveAck)
 	setHandler(0x34, unimplemented(9)) // Get player status http://www.hoogi.de/wolfpack/wiki/doku.php?id=uo_protocol_0x34
 	setHandler(0x5d, preLogin)
 	setHandler(0x73, ping)
@@ -20,6 +21,7 @@ func Setup() {
 	forbiddenClientCommand(0x82, "Login denied")
 	setHandler(0x91, gameServerLogin)
 	setHandler(0xa0, serverSelected)
+	setHandler(0xb5, openChatWindow)
 	setHandler(0xbd, receiveClientVersion)
 	setHandler(0xbf, receiveGenericCommand)
 	setHandler(0xef, newSeed)
@@ -42,8 +44,8 @@ func setHandler(command byte, delegate func(client interfaces.ClientConnection))
 
 func unimplemented(skip int) func(client interfaces.ClientConnection) {
 	return func(client interfaces.ClientConnection) {
-		client.GetLogger().Infof("Unimplemented command, skipping %d bytes.", skip)
-		client.ReadFixedString(skip)
+		skippedBytes := client.ReadFixedBytes(skip)
+		client.GetLogger().Infof("Unimplemented command, skipping %d bytes: % x", skip, skippedBytes)
 	}
 }
 

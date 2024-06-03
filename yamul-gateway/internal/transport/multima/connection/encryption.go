@@ -115,6 +115,11 @@ func gameplayDecryptionAlgorithm(config *dtos.EncryptionConfig, in byte) byte {
 	if config.TwofishReset == TwofishTableSize {
 		// reset table
 		config.TwofishReset = 0
+		cache := make([]byte, 16)
+		for i := 0; i < TwofishTableSize; i += 16 {
+			config.TwofishCipher.Encrypt(cache, config.TwofishTable[i:])
+			copy(config.TwofishTable[i:], cache)
+		}
 	}
 	out := in ^ config.TwofishTable[config.TwofishReset]
 	config.TwofishReset++

@@ -41,17 +41,21 @@ func (handler *ListenerHandler[T]) SetListener(listener func(event CommandEvent[
 }
 
 var Listeners = struct {
-	OnLoginRequest     *ListenerHandler[commands2.LoginRequestCommand]
-	OnShardSelected    *ListenerHandler[commands2.ShardSelected]
 	OnGameLoginRequest *ListenerHandler[commands2.GameLoginRequest]
+	OnLoginRequest     *ListenerHandler[commands2.LoginRequestCommand]
+	OnMoveAck          *ListenerHandler[commands2.MoveAck]
+	OnOpenChatWindow   *ListenerHandler[string]
 	OnPreLogin         *ListenerHandler[commands2.PreLogin]
+	OnShardSelected    *ListenerHandler[commands2.ShardSelected]
 }{
-	OnLoginRequest:     createHandler[commands2.LoginRequestCommand](),
-	OnShardSelected:    createHandler[commands2.ShardSelected](),
 	OnGameLoginRequest: createHandler[commands2.GameLoginRequest](),
+	OnLoginRequest:     createHandler[commands2.LoginRequestCommand](),
+	OnMoveAck:          createHandler[commands2.MoveAck](),
+	OnOpenChatWindow:   createHandler[string](),
 	OnPreLogin:         createHandler[commands2.PreLogin](),
+	OnShardSelected:    createHandler[commands2.ShardSelected](),
 }
 
 func onMissingListener[T any](event CommandEvent[T]) {
-	event.Client.GetLogger().Errorf("Missing listener %T", event.Command)
+	event.Client.GetLogger().Errorf("Missing listener %T: %v", event.Command, event.Command)
 }
