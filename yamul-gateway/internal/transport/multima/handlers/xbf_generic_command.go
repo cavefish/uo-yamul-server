@@ -12,5 +12,14 @@ func receiveGenericCommand(client interfaces.ClientConnection) { // 0xBF
 	client.GetLogger().Infof("Received subcommand request 0x%02x", subCommand)
 	client.GetLogger().Debugf("size=%d [% x]", size, body)
 
-	client.GetLogger().Errorf("Unimplemented subcommand processor 0x%02x", subCommand)
+	switch subCommand {
+	case 0x0f:
+		ignoredSubcommand(client, "Client info", body)
+	default:
+		client.GetLogger().Errorf("Unimplemented subcommand processor 0x%02x", subCommand)
+	}
+}
+
+func ignoredSubcommand(client interfaces.ClientConnection, name string, body []byte) {
+	client.GetLogger().Debugf("Received ignored sub command for %s: % x", name, body)
 }

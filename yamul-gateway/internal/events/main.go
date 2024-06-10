@@ -9,10 +9,12 @@ import (
 )
 
 func Setup() {
-	listeners.Listeners.OnLoginRequest.SetListener(clientEvents.OnLoginRequest)
-	listeners.Listeners.OnShardSelected.SetListener(clientEvents.OnShardSelected)
 	listeners.Listeners.OnGameLoginRequest.SetListener(clientEvents.OnGameLoginRequest)
+	listeners.Listeners.OnLoginRequest.SetListener(clientEvents.OnLoginRequest)
+	listeners.Listeners.OnMoveAck.SetListener(clientEvents.OnMoveAck)
+	listeners.Listeners.OnOpenChatWindow.SetListener(clientEvents.OnOpenChatWindow)
 	listeners.Listeners.OnPreLogin.SetListener(clientEvents.OnCharacterPreLogin)
+	listeners.Listeners.OnShardSelected.SetListener(clientEvents.OnShardSelected)
 
 	messages.RegisterProcessor(services.MsgType_TypeUndefined, messages.UnimplementedProcessor)
 

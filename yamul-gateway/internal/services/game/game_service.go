@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"io"
 	backendServices "yamul-gateway/backend/services"
 	"yamul-gateway/internal/interfaces"
 	servicesCommon "yamul-gateway/internal/services/common"
@@ -59,13 +60,19 @@ func (s gameService) Send(_type backendServices.MsgType, message *backendService
 }
 
 func (s gameService) Close() {
-	s.streamLoopEnabled = false
+	if s.streamLoopEnabled { // TODO add atomicity
+		s.streamLoopEnabled = false
+		_ = s.stream.CloseSend() // TODO send also when initiated by server
+	}
 }
 
 func (s gameService) streamLoop() {
 	defer s.cleanResources()
 	for s.streamLoopEnabled {
 		msg, err := s.stream.Recv()
+		if err == io.EOF {
+			return
+		}
 		if err != nil {
 			s.clientConnection.KillConnection(err)
 			return
@@ -73,6 +80,7 @@ func (s gameService) streamLoop() {
 		processor, ok := messages.Processors[msg.Type]
 		if !ok {
 			s.clientConnection.KillConnection(fmt.Errorf("Unknown message type %d: %x", msg.Type, msg.Body))
+			return
 		}
 		processor.Accept(s.clientConnection, msg)
 	}
@@ -80,4 +88,5 @@ func (s gameService) streamLoop() {
 
 func (s gameService) cleanResources() {
 	_ = s.dial.Close()
+	s.clientConnection.GetLogger().Info("Game stream closed")
 }

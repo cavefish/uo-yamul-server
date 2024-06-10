@@ -83,6 +83,9 @@ func (client *clientConnection) getOutputSlice() []byte {
 
 func (client *clientConnection) Close() {
 	_ = client.connection.Close()
+	if client.gameService != nil {
+		client.gameService.Close()
+	}
 }
 
 func (client *clientConnection) sendDataIfAlmostFull(requiredSize int) error {

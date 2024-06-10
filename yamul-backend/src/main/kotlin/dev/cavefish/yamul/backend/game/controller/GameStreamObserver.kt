@@ -26,12 +26,13 @@ class GameStreamObserver(
 
     override fun onError(errr: Throwable?) {
         when (errr) {
-            is StatusRuntimeException -> Logger.warn("${errr.status} ${errr.message}", "")
+            is StatusRuntimeException -> Logger.warn("%s %s".format(errr.status, errr.message), errr)
             else -> {Logger.error(errr)}
         }
     }
 
     override fun onCompleted() {
+        outputStream.onCompleted()
         Logger.info("Game stream closed", "")
     }
 
