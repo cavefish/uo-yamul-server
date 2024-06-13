@@ -11,7 +11,7 @@ var (
 	OnClientViewRange   = createHandler[byte]("OnClientViewRange")
 	OnGameLoginRequest  = createHandler[commands.GameLoginRequest]("OnGameLoginRequest")
 	OnLoginRequest      = createHandler[commands.LoginRequestCommand]("OnLoginRequest")
-	OnMoveAck           = createHandler[commands.MoveAck]("OnMoveAck")
+	OnClientMoveAck     = createHandler[commands.MoveAck]("OnClientMoveAck")
 	OnOpenChatWindow    = createHandler[string]("OnOpenChatWindow")
 	OnPreLogin          = createHandler[commands.PreLogin]("OnPreLogin")
 	OnShardSelected     = createHandler[commands.ShardSelected]("OnShardSelected")

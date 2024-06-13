@@ -2,6 +2,7 @@ package dev.cavefish.yamul.backend.game.controller.processors
 
 import dev.cavefish.yamul.backend.common.api.Coordinate
 import dev.cavefish.yamul.backend.common.api.ObjectId
+import dev.cavefish.yamul.backend.game.api.Message
 import dev.cavefish.yamul.backend.game.api.MsgApplyWorldPatches
 import dev.cavefish.yamul.backend.game.api.MsgCharacterSelection
 import dev.cavefish.yamul.backend.game.api.MsgExtendedStats
@@ -14,7 +15,6 @@ import dev.cavefish.yamul.backend.game.api.MsgTeleportPlayer
 import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.api.MsgUpdateObject
 import dev.cavefish.yamul.backend.game.api.MsgWarmode
-import dev.cavefish.yamul.backend.game.api.StreamPackage
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 import dev.cavefish.yamul.backend.game.controller.domain.GameState
@@ -24,10 +24,7 @@ import org.springframework.stereotype.Component
 @Component
 class OnCharacterSelectedProcessor (
     private val playerStartConfirmationSender: PlayerStartConfirmationSender
-) : MessageProcessor<MsgCharacterSelection>() {
-    override fun getType() = MsgType.TypeCharacterSelection
-
-    override fun getPayload(payload: StreamPackage): MsgCharacterSelection = payload.body.characterSelection
+) : MessageProcessor<MsgCharacterSelection>(MsgType.TypeCharacterSelection, Message::getCharacterSelection) {
 
     override fun process(
         payload: MsgCharacterSelection,

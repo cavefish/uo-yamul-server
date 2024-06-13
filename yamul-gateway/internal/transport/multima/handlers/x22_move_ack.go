@@ -6,10 +6,10 @@ import (
 	"yamul-gateway/internal/transport/multima/listeners"
 )
 
-func moveAck(client interfaces.ClientConnection) { // 0x22
+func moveAckFromClient(client interfaces.ClientConnection) { // 0x22
 	command := moveAckReadBuffer(client)
 
-	listeners.OnMoveAck.Trigger(client, command)
+	listeners.OnClientMoveAck.Trigger(client, command)
 }
 
 func moveAckReadBuffer(client interfaces.ClientConnection) commands.MoveAck {
@@ -19,4 +19,13 @@ func moveAckReadBuffer(client interfaces.ClientConnection) commands.MoveAck {
 		Sequence: sequence,
 		Status:   status,
 	}
+}
+
+func MoveAckFromServer(client interfaces.ClientConnection, command commands.MoveAck) { // 0x22
+	client.StartPacket()
+	defer client.EndPacket()
+
+	client.WriteByte(0x22)
+	client.WriteByte(command.Sequence)
+	client.WriteByte(command.Status)
 }

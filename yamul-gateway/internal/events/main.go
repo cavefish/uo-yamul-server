@@ -9,9 +9,10 @@ import (
 )
 
 func Setup() {
+	listeners.OnClientMoveAck.SetListener(clientEvents.OnClientMoveAck)
+	listeners.OnClientMoveRequest.SetListener(clientEvents.OnClientMoveRequest)
 	listeners.OnGameLoginRequest.SetListener(clientEvents.OnGameLoginRequest)
 	listeners.OnLoginRequest.SetListener(clientEvents.OnLoginRequest)
-	listeners.OnMoveAck.SetListener(clientEvents.OnMoveAck)
 	listeners.OnOpenChatWindow.SetListener(clientEvents.OnOpenChatWindow)
 	listeners.OnPreLogin.SetListener(clientEvents.OnCharacterPreLogin)
 	listeners.OnShardSelected.SetListener(clientEvents.OnShardSelected)
@@ -25,6 +26,7 @@ func Setup() {
 	messages.RegisterProcessor(services.MsgType_TypeHealthBar, gameEvents.OnHealthBarUpdate)
 	messages.RegisterProcessor(services.MsgType_TypeLoginComplete, gameEvents.OnLoginComplete)
 	messages.RegisterProcessor(services.MsgType_TypeMapChange, gameEvents.OnMapChange)
+	messages.RegisterProcessor(services.MsgType_TypeMoveAck, gameEvents.ServerMoveAck)
 	messages.RegisterProcessor(services.MsgType_TypePlayerStartConfirmation, gameEvents.OnPlayerStartConfirmation)
 	messages.RegisterProcessor(services.MsgType_TypePlayMusic, gameEvents.OnPlayMusic)
 	messages.RegisterProcessor(services.MsgType_TypeStatWindowInfo, gameEvents.StatWindowInfo)

@@ -18,6 +18,13 @@ message MsgCharacterSelection {
   int32 slot = 3;
 }
 
+message MsgClientMoveRequest {
+  common.ObjectDirection direction = 1;
+  uint32 sequence = 2;
+  uint32 ackKey = 3;
+}
+
+
 message MsgExtendedStats {
   oneof msg {
     MsgExtendedStats_Dead dead = 1;
@@ -55,6 +62,11 @@ message MsgGeneralLightLevel {
 
 message MsgMapChange {
   int32 mapId = 1;
+}
+
+message MsgMoveAck {
+  uint32 sequence = 1;
+  common.Notoriety notorietyFlags = 2;
 }
 
 message MsgPlayerStartConfirmation {
@@ -158,7 +170,7 @@ message MsgUpdateObject {
   uint32 direction = 6;
   uint32 hue = 7;
   uint32 flags = 8;
-  uint32 notorietyFlags = 9;
+  common.Notoriety notorietyFlags = 9;
 }
 
 message MsgWarmode {
@@ -167,10 +179,12 @@ message MsgWarmode {
 
 enum MsgType {
   TypeUndefined = 0; // TODO this is a valid value on UO packet ids
+  TypeClientMoveRequest = 0x0200;
   TypeHealthBar = 0x1700;
   TypeStatWindowInfo = 0x1100;
   TypePlayerStartConfirmation = 0x1b00;
   TypeTeleportPlayer = 0x2000;
+  TypeMoveAck = 0x2200;
   TypeGeneralLightLevel = 0x4f00;
   TypeLoginComplete = 0x5500;
   TypeCharacterSelection = 0x5d00;
@@ -184,10 +198,12 @@ enum MsgType {
 
 message Message {
   oneof msg {
+    MsgClientMoveRequest clientMoveRequest = 0x0200;
     MsgHealthBar healthBar = 0x1700;
     MsgStatWindowInfo statWindowInfo = 0x1100;
     MsgPlayerStartConfirmation playerStartConfirmation = 0x1b00;
     MsgTeleportPlayer teleportPlayer = 0x2000;
+    MsgMoveAck moveAck = 0x2200;
     MsgGeneralLightLevel GeneralLightLevel = 0x4f00;
     MsgCharacterSelection characterSelection = 0x5d00;
     MsgPlayMusic playMusic = 0x6D00;

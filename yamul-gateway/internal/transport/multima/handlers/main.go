@@ -15,7 +15,7 @@ func Setup() {
 	setHandler(0x02, clientMoveRequest)
 	setHandler(0x06, clientDoubleClick)
 	setHandler(0x09, unimplemented(0x09, 4)) // Single click on event id http://www.hoogi.de/wolfpack/wiki/doku.php?id=uo_protocol_0x09
-	setHandler(0x22, moveAck)
+	setHandler(0x22, moveAckFromClient)
 	setHandler(0x34, unimplemented(0x34, 9)) // Get player status http://www.hoogi.de/wolfpack/wiki/doku.php?id=uo_protocol_0x34
 	setHandler(0x5d, preLogin)
 	setHandler(0x73, ping)
