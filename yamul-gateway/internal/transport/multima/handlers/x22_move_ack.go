@@ -9,7 +9,7 @@ import (
 func moveAck(client interfaces.ClientConnection) { // 0x22
 	command := moveAckReadBuffer(client)
 
-	listeners.Listeners.OnMoveAck.Trigger(client, command)
+	listeners.OnMoveAck.Trigger(client, command)
 }
 
 func moveAckReadBuffer(client interfaces.ClientConnection) commands.MoveAck {

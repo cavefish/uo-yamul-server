@@ -12,5 +12,5 @@ func loginRequest(client interfaces.ClientConnection) { // 0x80
 	nextKey := client.ReadByte()
 	body := commands.LoginRequestCommand{Username: username, Password: password, Nextkey: nextKey}
 
-	listeners.Listeners.OnLoginRequest.Trigger(client, body)
+	listeners.OnLoginRequest.Trigger(client, body)
 }

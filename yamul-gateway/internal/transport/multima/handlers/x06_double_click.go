@@ -7,5 +7,5 @@ import (
 
 func clientDoubleClick(client interfaces.ClientConnection) { // 0x06
 	target := client.ReadUInt() // TODO implement
-	listeners.Listeners.OnClientDoubleClick.Trigger(client, target)
+	listeners.OnClientDoubleClick.Trigger(client, target)
 }

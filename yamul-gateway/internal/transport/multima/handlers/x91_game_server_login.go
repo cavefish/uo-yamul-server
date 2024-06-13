@@ -16,6 +16,6 @@ func gameServerLogin(client interfaces.ClientConnection) { // 0xA0
 		EncryptionKey: encriptionKey,
 	}
 
-	listeners.Listeners.OnGameLoginRequest.Trigger(client, command)
+	listeners.OnGameLoginRequest.Trigger(client, command)
 
 }

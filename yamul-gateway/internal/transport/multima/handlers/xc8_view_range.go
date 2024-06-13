@@ -7,5 +7,5 @@ import (
 
 func clientViewRange(client interfaces.ClientConnection) { // 0xC8
 	viewRange := client.ReadByte() // TODO implement
-	listeners.Listeners.OnClientViewRange.Trigger(client, viewRange)
+	listeners.OnClientViewRange.Trigger(client, viewRange)
 }

@@ -10,7 +10,7 @@ import (
 func preLogin(client interfaces.ClientConnection) { // 0x5d
 	command := preLoginReadBuffer(client)
 
-	listeners.Listeners.OnPreLogin.Trigger(client, command)
+	listeners.OnPreLogin.Trigger(client, command)
 }
 
 func preLoginReadBuffer(client interfaces.ClientConnection) commands.PreLogin {

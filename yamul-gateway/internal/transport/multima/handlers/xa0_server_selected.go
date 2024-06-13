@@ -11,5 +11,5 @@ func serverSelected(client interfaces.ClientConnection) { // 0xA0
 
 	body := commands.ShardSelected{Idx: idx}
 
-	listeners.Listeners.OnShardSelected.Trigger(client, body)
+	listeners.OnShardSelected.Trigger(client, body)
 }

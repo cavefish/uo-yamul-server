@@ -15,5 +15,5 @@ func clientMoveRequest(client interfaces.ClientConnection) { // 0x02
 		Sequence:  sequence,
 		AckKey:    ackKey,
 	}
-	listeners.Listeners.OnClientMoveRequest.Trigger(client, command)
+	listeners.OnClientMoveRequest.Trigger(client, command)
 }
