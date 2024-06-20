@@ -10,7 +10,8 @@ func UpdateObject(client interfaces.ClientConnection, command commands.UpdateObj
 	defer client.EndPacket()
 
 	client.WriteByte(0x78)
-	client.WriteUShort(23) // size
+	packageSize := 23 + 9*len(command.Items)
+	client.WriteUShort(uint16(packageSize)) // size
 	client.WriteUInt(command.Serial)
 	client.WriteUShort(command.GraphicId)
 	client.WriteUShort(command.XLoc)
@@ -20,5 +21,11 @@ func UpdateObject(client interfaces.ClientConnection, command commands.UpdateObj
 	client.WriteUShort(command.Hue)
 	client.WriteByte(command.Flags)
 	client.WriteByte(command.NotorietyFlag)
+	for _, item := range command.Items {
+		client.WriteUInt(item.Serial)
+		client.WriteUShort(item.Artwork)
+		client.WriteByte(item.Layer)
+		client.WriteUShort(item.Hue)
+	}
 	client.WriteUInt(0) // 0 ended array of items
 }

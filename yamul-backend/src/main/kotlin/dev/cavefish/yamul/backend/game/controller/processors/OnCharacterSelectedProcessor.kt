@@ -52,6 +52,8 @@ class OnCharacterSelectedProcessor (
                     .setId(createPlayerObjectId(nextState.characterObjectId))
                     .setGraphicId(0x0190)
                     .setHue(0x83EA)
+                    .setFlags(0x18)
+                    .setNotorietyFlagsValue(0x07)
             )
         }
         wrapper.send(MsgType.TypeHealthBar) { it.setHealthBar(createHealthBar(nextState.characterObjectId)) }

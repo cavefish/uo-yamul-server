@@ -18,7 +18,7 @@ func mapToHealthBarUpdate(body *services.MsgHealthBar) commands.HealthBarUpdate 
 		values[idx].Enabled = body.Values[idx].Enabled
 	}
 	return commands.HealthBarUpdate{
-		Serial: 0,
+		Serial: body.Id.Value,
 		Values: values,
 	}
 }

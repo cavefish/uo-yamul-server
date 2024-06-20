@@ -16,7 +16,8 @@ class PlayerStartConfirmationSender (
     fun send(state: GameState, wrapper: GameStreamWrapper) {
         wrapper.send(MsgType.TypePlayerStartConfirmation) {
             it.setPlayerStartConfirmation(
-                MsgPlayerStartConfirmation.newBuilder().setId(objectIdMapper.create(state.characterObjectId))
+                MsgPlayerStartConfirmation.newBuilder()
+                    .setId(objectIdMapper.create(state.characterObjectId))
                     .setCoordinates(coordinateMapper.map(state.coordinates))
             )
         }

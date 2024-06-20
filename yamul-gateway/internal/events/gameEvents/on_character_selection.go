@@ -15,7 +15,7 @@ func OnPlayerStartConfirmation(connection interfaces.ClientConnection, msg *serv
 func toPlayerStartConfirmationCommand(confirmation *services.MsgPlayerStartConfirmation) commands.PlayerStartConfirmation {
 	return commands.PlayerStartConfirmation{
 		CharacterID:       confirmation.Id.Value,
-		CharacterBodyType: 0,
+		CharacterBodyType: 0x0190, // TODO fix hardcoded value
 		Coordinates: commands.Coordinates{
 			X: uint16(confirmation.Coordinates.XLoc),
 			Y: uint16(confirmation.Coordinates.YLoc),

@@ -10,4 +10,12 @@ type UpdateObject struct {
 	Hue           uint16
 	Flags         byte
 	NotorietyFlag byte
+	Items         []UpdateObjectItem
+}
+
+type UpdateObjectItem struct {
+	Serial  uint32
+	Artwork uint16
+	Layer   byte
+	Hue     uint16
 }
