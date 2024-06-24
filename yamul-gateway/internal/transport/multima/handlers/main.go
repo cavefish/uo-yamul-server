@@ -22,6 +22,7 @@ func Setup() {
 	setHandler(0x80, loginRequest)
 	forbiddenClientCommand(0x82, "Login denied")
 	setHandler(0x91, gameServerLogin)
+	setHandler(0x9b, helpRequest)
 	setHandler(0xa0, serverSelected)
 	setHandler(0xb5, openChatWindow)
 	setHandler(0xbd, receiveClientVersion)
