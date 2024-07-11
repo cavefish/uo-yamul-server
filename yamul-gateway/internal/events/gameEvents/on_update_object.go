@@ -23,32 +23,15 @@ func toCommandUpdateObject(msg *services.MsgUpdateObject) commands.UpdateObject 
 		Hue:           uint16(msg.Hue),
 		Flags:         byte(msg.Flags),
 		NotorietyFlag: byte(msg.NotorietyFlags),
-		Items:         make([]commands.UpdateObjectItem, 4),
+		Items:         make([]commands.UpdateObjectItem, len(msg.Items)),
 	}
-	// TODO remove hardcoded values
-	command.Items[0] = commands.UpdateObjectItem{
-		Serial:  0x40001FEE,
-		Artwork: 0x0E75,
-		Layer:   0x15,
-		Hue:     0x0000,
-	}
-	command.Items[1] = commands.UpdateObjectItem{
-		Serial:  0x40001FEC,
-		Artwork: 0x203B,
-		Layer:   0x0B,
-		Hue:     0x044E,
-	}
-	command.Items[2] = commands.UpdateObjectItem{
-		Serial:  0x40001FDA,
-		Artwork: 0x204F,
-		Layer:   0x16,
-		Hue:     0x0022,
-	}
-	command.Items[3] = commands.UpdateObjectItem{
-		Serial:  0x40001FD6,
-		Artwork: 0x3EBE,
-		Layer:   0x19,
-		Hue:     0x0000,
+	for i, item := range msg.Items {
+		command.Items[i] = commands.UpdateObjectItem{
+			Serial:  item.Id.Value,
+			Artwork: uint16(item.GraphicId),
+			Layer:   byte(item.Layer),
+			Hue:     uint16(item.Hue),
+		}
 	}
 	return command
 }

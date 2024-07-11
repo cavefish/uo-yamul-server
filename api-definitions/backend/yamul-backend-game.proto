@@ -73,6 +73,8 @@ message MsgPlayerStartConfirmation {
   common.ObjectId id = 1;
   common.Coordinate coordinates = 2;
   common.ObjectDirection direction = 3;
+  uint32 graphicId = 4;
+  uint32 hue = 5;
 }
 
 message MsgPlayMusic {
@@ -147,6 +149,8 @@ message MsgStatWindowInfo{
 
 message MsgTeleportPlayer {
   common.ObjectId id = 1;
+  uint32 graphicId = 2;
+  uint32 hue = 3;
   repeated MsgTeleportPlayer_PlayerStatus status = 4;
   common.Coordinate coordinates = 5;
   common.ObjectDirection direction = 8;
@@ -171,6 +175,14 @@ message MsgUpdateObject {
   uint32 hue = 7;
   uint32 flags = 8;
   common.Notoriety notorietyFlags = 9;
+  repeated MsgUpdateObjectItems items = 10;
+}
+
+message MsgUpdateObjectItems {
+   common.ObjectId id = 1;
+   uint32 graphicId = 2;
+   uint32 layer = 3;
+   uint32 hue = 4;
 }
 
 message MsgWarmode {

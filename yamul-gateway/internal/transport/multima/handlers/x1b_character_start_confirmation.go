@@ -21,8 +21,8 @@ func PlayerStartConfirmation(client interfaces.ClientConnection, body commands.P
 	client.WriteUInt(0xFFFFFFFF)
 	client.WriteUShort(0)
 	client.WriteUShort(0)
-	client.WriteUShort(0x0A00) // TODO remove hardcoded values
-	client.WriteUShort(0x0800)
+	client.WriteUShort(0)
+	client.WriteUShort(0)
 	client.WriteUShort(0)
 	client.WriteUInt(0)
 }

@@ -5,4 +5,5 @@ type PlayerStartConfirmation struct {
 	CharacterBodyType uint16
 	Coordinates       Coordinates
 	DirectionFacing   DirectionFacing
+	Hue               uint16
 }

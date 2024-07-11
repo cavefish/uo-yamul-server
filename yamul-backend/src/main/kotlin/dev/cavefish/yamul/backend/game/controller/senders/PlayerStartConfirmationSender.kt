@@ -19,6 +19,8 @@ class PlayerStartConfirmationSender (
                 MsgPlayerStartConfirmation.newBuilder()
                     .setId(objectIdMapper.create(state.characterObjectId))
                     .setCoordinates(coordinateMapper.map(state.coordinates))
+                    .setGraphicId(state.characterBodyType.id)
+                    .setHue(state.characterBodyHue.toInt16())
             )
         }
     }
