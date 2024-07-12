@@ -17,10 +17,10 @@ class PlayerStartConfirmationSender (
         wrapper.send(MsgType.TypePlayerStartConfirmation) {
             it.setPlayerStartConfirmation(
                 MsgPlayerStartConfirmation.newBuilder()
-                    .setId(objectIdMapper.create(state.characterObjectId))
+                    .setId(objectIdMapper.create(state.characterObject.id))
                     .setCoordinates(coordinateMapper.map(state.coordinates))
-                    .setGraphicId(state.characterBodyType.id)
-                    .setHue(state.characterBodyHue.toInt16())
+                    .setGraphicId(state.characterObject.graphicId.id)
+                    .setHue(state.characterObject.hue.toInt16())
             )
         }
     }

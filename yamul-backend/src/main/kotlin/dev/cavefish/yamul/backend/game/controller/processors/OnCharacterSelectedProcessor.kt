@@ -17,32 +17,34 @@ import dev.cavefish.yamul.backend.game.api.MsgUpdateObject
 import dev.cavefish.yamul.backend.game.api.MsgUpdateObjectItems
 import dev.cavefish.yamul.backend.game.api.MsgWarmode
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
-import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
-import dev.cavefish.yamul.backend.game.controller.domain.Flags
 import dev.cavefish.yamul.backend.game.controller.domain.GameState
-import dev.cavefish.yamul.backend.game.controller.domain.GraphicIds
+import dev.cavefish.yamul.backend.game.controller.domain.GraphicId
 import dev.cavefish.yamul.backend.game.controller.domain.Hue
-import dev.cavefish.yamul.backend.game.controller.domain.Hues
-import dev.cavefish.yamul.backend.game.controller.domain.Notoriety
+import dev.cavefish.yamul.backend.game.controller.domain.LoggedUser
+import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRepository
+import dev.cavefish.yamul.backend.game.controller.infra.UserCharacterRepository
 import dev.cavefish.yamul.backend.game.controller.senders.PlayerStartConfirmationSender
 import org.springframework.stereotype.Component
 
 @Component
 class OnCharacterSelectedProcessor (
-    private val playerStartConfirmationSender: PlayerStartConfirmationSender
+    private val playerStartConfirmationSender: PlayerStartConfirmationSender,
+    private val userCharacterRepository: UserCharacterRepository,
+    private val gameObjectRepository: GameObjectRepository
 ) : MessageProcessor<MsgCharacterSelection>(MsgType.TypeCharacterSelection, Message::getCharacterSelection) {
 
     @SuppressWarnings("MaxLineLength")
     override fun process(
         payload: MsgCharacterSelection,
-        currentState: GameState,
+        currentState: GameState?,
+        loggedUser: LoggedUser,
         wrapper: GameStreamWrapper
     ): GameState {
-        val nextState = currentState.copy(
-            characterObjectId = 1,
-            characterBodyType = GraphicIds.BodyHumanMale,
-            characterBodyHue = Hues.White.hue,
-            coordinates = Coordinates(x = 6787, y = 2181, z = 0)
+        val character = userCharacterRepository.getCharacterByOrder(loggedUser, payload.slot)!!
+        val characterAsObject = gameObjectRepository.getById(character.id)!!
+        val nextState = GameState(
+            characterObject = characterAsObject,
+            coordinates = characterAsObject.coordinates
         )
         playerStartConfirmationSender.send(nextState, wrapper)
 
@@ -55,29 +57,28 @@ class OnCharacterSelectedProcessor (
                 MsgMapChange.newBuilder().setMapId(1)
             )
         }
+        val gameObject = nextState.characterObject
         wrapper.send(MsgType.TypeUpdateObject) {
             it.setUpdateObject(
                 MsgUpdateObject.newBuilder()
-                    .setId(createObjectId(nextState.characterObjectId))
-                    .setGraphicId(nextState.characterBodyType.id)
-                    .setHue(nextState.characterBodyHue.toInt16())
-                    .setFlags(Flags.None.id)
-                    .setNotorietyFlagsValue(Notoriety.Innocent.id)
-                    .addItems(createItem(2, GraphicIds.Backpack, Hues.Blue.hue, 0x15))
-                    .addItems(createItem(3, GraphicIds.HairShort, Hues.Green.hue, 0x0B))
-                    .addItems(createItem(4, GraphicIds.RobeGm, Hues.White.hue, 0x16))
+                    .setId(createObjectId(gameObject.id))
+                    .setGraphicId(gameObject.graphicId.id)
+                    .setHue(gameObject.hue.toInt16())
+                    .setFlags(gameObject.flags.id)
+                    .setNotorietyFlagsValue(gameObject.notoriety.id)
+                    .addAllItems(gameObject.items.map { item -> createItem(item.id, item.graphicId, item.hue, item.layer).build() })
             )
         }
-        wrapper.send(MsgType.TypeHealthBar) { it.setHealthBar(createHealthBar(nextState.characterObjectId)) }
+        wrapper.send(MsgType.TypeHealthBar) { it.setHealthBar(createHealthBar(nextState.characterObject.id)) }
         wrapper.send(MsgType.TypeTeleportPlayer) { it.setTeleportPlayer(createTeleportPlayer(nextState)) }
         wrapper.send(MsgType.TypeGeneralLightLevel) {
             it.setGeneralLightLevel(
-                MsgGeneralLightLevel.newBuilder().setLevel(0x18)
+                MsgGeneralLightLevel.newBuilder().setLevel(0x0)
             )
         }
         wrapper.send(MsgType.TypeStatWindowInfo) {
             it.setStatWindowInfo(
-                MsgStatWindowInfo.newBuilder().setCharacterID(createObjectId(nextState.characterObjectId))
+                MsgStatWindowInfo.newBuilder().setCharacterID(createObjectId(nextState.characterObject.id))
             )
         }
         wrapper.send(MsgType.TypeExtendedStats) { it.setExtendedStats(MsgExtendedStats.getDefaultInstance()) }
@@ -86,7 +87,7 @@ class OnCharacterSelectedProcessor (
         return nextState
     }
 
-    private fun createItem(id: Int, graphicId: GraphicIds, hue: Hue, layer: Int): MsgUpdateObjectItems.Builder? =
+    private fun createItem(id: Int, graphicId: GraphicId, hue: Hue, layer: Int): MsgUpdateObjectItems.Builder =
         MsgUpdateObjectItems.newBuilder().setId(createObjectId(id)).setGraphicId(graphicId.id)
             .setHue(hue.toInt16()).setLayer(layer)
 
@@ -101,10 +102,10 @@ class OnCharacterSelectedProcessor (
 
     private fun createTeleportPlayer(state: GameState): MsgTeleportPlayer.Builder =
         MsgTeleportPlayer.newBuilder()
-            .setId(createObjectId(state.characterObjectId))
+            .setId(createObjectId(state.characterObject.id))
             .setCoordinates(createPlayerObjectCoordinates(state))
-            .setGraphicId(state.characterBodyType.id)
-            .setHue(state.characterBodyHue.toInt16())
+            .setGraphicId(state.characterObject.graphicId.id)
+            .setHue(state.characterObject.hue.toInt16())
             .addStatusValue(0) // TODO remove hardcoded value
 
     private fun createPlayerObjectCoordinates(state: GameState): Coordinate.Builder =

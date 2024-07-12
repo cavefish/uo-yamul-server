@@ -7,6 +7,7 @@ import dev.cavefish.yamul.backend.game.api.MsgMoveAck
 import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
 import dev.cavefish.yamul.backend.game.controller.domain.GameState
+import dev.cavefish.yamul.backend.game.controller.domain.LoggedUser
 import org.springframework.stereotype.Component
 
 @Component
@@ -15,9 +16,10 @@ class OnMoveRequestProcessor : MessageProcessor<MsgClientMoveRequest>(
 ) {
     override fun process(
         payload: MsgClientMoveRequest,
-        currentState: GameState,
+        currentState: GameState?,
+        loggedUser: LoggedUser,
         wrapper: GameStreamWrapper
-    ): GameState {
+    ): GameState? {
         // TODO implement movement persistence and assertions
         wrapper.send(MsgType.TypeMoveAck) {
             it.setMoveAck(

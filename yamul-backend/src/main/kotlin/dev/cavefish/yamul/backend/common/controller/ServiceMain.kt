@@ -3,6 +3,7 @@ package dev.cavefish.yamul.backend.common.controller
 import dev.cavefish.yamul.backend.auth.controller.BasicAuthInterceptor
 import dev.cavefish.yamul.backend.character.controller.CharacterServiceController
 import dev.cavefish.yamul.backend.game.controller.GameServiceController
+import dev.cavefish.yamul.backend.infra.inmemory.InMemoryInitRepositories
 import dev.cavefish.yamul.backend.login.controller.LoginServiceController
 import io.grpc.ServerBuilder
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,6 +44,8 @@ class ServiceMain @Autowired constructor(
                 .build()
         gameServer.start()
         Logger.info("Running Game server on port {0}", GAME_SERVICE_PORT)
+
+        InMemoryInitRepositories.init()
 
         Logger.info("Running ...", null)
         loginServer.awaitTermination()
