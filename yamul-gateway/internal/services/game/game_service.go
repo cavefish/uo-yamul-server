@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"io"
+	"sync/atomic"
 	backendServices "yamul-gateway/backend/services"
 	"yamul-gateway/internal/interfaces"
 	servicesCommon "yamul-gateway/internal/services/common"
@@ -32,8 +33,9 @@ func CreateGameService(connection interfaces.ClientConnection) (interfaces.GameS
 		client:            client,
 		stream:            stream,
 		clientConnection:  connection,
-		streamLoopEnabled: true,
+		streamLoopEnabled: atomic.Bool{},
 	}
+	result.streamLoopEnabled.Store(true)
 
 	go result.streamLoop()
 
@@ -45,10 +47,10 @@ type gameService struct {
 	client            backendServices.GameServiceClient
 	stream            backendServices.GameService_OpenGameStreamClient
 	clientConnection  interfaces.ClientConnection
-	streamLoopEnabled bool
+	streamLoopEnabled atomic.Bool
 }
 
-func (s gameService) Send(_type backendServices.MsgType, message *backendServices.Message) {
+func (s *gameService) Send(_type backendServices.MsgType, message *backendServices.Message) {
 	err := s.stream.Send(&backendServices.StreamPackage{
 		Type: _type,
 		Body: message,
@@ -59,16 +61,15 @@ func (s gameService) Send(_type backendServices.MsgType, message *backendService
 	}
 }
 
-func (s gameService) Close() {
-	if s.streamLoopEnabled { // TODO add atomicity
-		s.streamLoopEnabled = false
+func (s *gameService) Close() {
+	if s.streamLoopEnabled.Swap(false) {
 		_ = s.stream.CloseSend() // TODO send also when initiated by server
 	}
 }
 
-func (s gameService) streamLoop() {
+func (s *gameService) streamLoop() {
 	defer s.cleanResources()
-	for s.streamLoopEnabled {
+	for s.streamLoopEnabled.Load() {
 		msg, err := s.stream.Recv()
 		if err == io.EOF {
 			return
@@ -86,7 +87,7 @@ func (s gameService) streamLoop() {
 	}
 }
 
-func (s gameService) cleanResources() {
+func (s *gameService) cleanResources() {
 	_ = s.dial.Close()
 	s.clientConnection.GetLogger().Info("Game stream closed")
 }

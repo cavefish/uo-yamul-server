@@ -41,8 +41,8 @@ dependencies {
 
     testImplementation(kotlin("test"))
 
-    implementation("org.tinylog:tinylog-api:2.4.1")
-    runtimeOnly("org.tinylog:tinylog-impl:2.4.1")
+    implementation("org.tinylog:tinylog-api-kotlin:2.7.0")
+    runtimeOnly("org.tinylog:tinylog-impl:2.7.0")
 }
 
 tasks.test {
@@ -112,6 +112,8 @@ tasks.withType<Detekt>().configureEach {
 
 tasks.withType<Detekt>().configureEach {
     jvmTarget = "19"
+    exclude("src/test/")
+    setSource(files("src/main/kotlin"))
 }
 tasks.withType<DetektCreateBaselineTask>().configureEach {
     jvmTarget = "19"

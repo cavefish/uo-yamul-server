@@ -10,7 +10,7 @@ import dev.cavefish.yamul.backend.game.controller.processors.MessageProcessor
 import io.grpc.Context
 import io.grpc.StatusRuntimeException
 import io.grpc.stub.StreamObserver
-import org.tinylog.Logger
+import org.tinylog.kotlin.Logger
 
 class GameStreamObserver(
     private val outputStream: StreamObserver<StreamPackage>,
@@ -35,7 +35,7 @@ class GameStreamObserver(
 
     override fun onCompleted() {
         outputStream.onCompleted()
-        Logger.info("Game stream closed", "")
+        Logger.info("Game stream closed")
     }
 
     private fun unimplementedMessage(message: StreamPackage) {

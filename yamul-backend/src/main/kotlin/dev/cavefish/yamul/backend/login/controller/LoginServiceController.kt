@@ -7,7 +7,7 @@ import dev.cavefish.yamul.backend.login.api.LoginServiceGrpc
 import dev.cavefish.yamul.backend.utils.StringUtils
 import io.grpc.stub.StreamObserver
 import org.springframework.stereotype.Component
-import org.tinylog.Logger
+import org.tinylog.kotlin.Logger
 
 @Component
 class LoginServiceController : LoginServiceGrpc.LoginServiceImplBase() {

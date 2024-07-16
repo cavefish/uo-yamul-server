@@ -12,7 +12,7 @@ import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.ComponentScan
-import org.tinylog.Logger
+import org.tinylog.kotlin.Logger
 import javax.annotation.PostConstruct
 
 const val LOGIN_SERVICE_PORT = 8087
@@ -47,7 +47,7 @@ class ServiceMain @Autowired constructor(
 
         InMemoryInitRepositories.init()
 
-        Logger.info("Running ...", null)
+        Logger.info("Running ...")
         loginServer.awaitTermination()
         characterServer.awaitTermination()
         gameServer.awaitTermination()

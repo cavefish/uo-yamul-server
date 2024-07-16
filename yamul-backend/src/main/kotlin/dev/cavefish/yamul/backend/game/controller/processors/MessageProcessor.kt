@@ -6,7 +6,7 @@ import dev.cavefish.yamul.backend.game.api.StreamPackage
 import dev.cavefish.yamul.backend.game.controller.domain.GameState
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
 import dev.cavefish.yamul.backend.game.controller.domain.LoggedUser
-import org.tinylog.Logger
+import org.tinylog.kotlin.Logger
 
 abstract class MessageProcessor<T>(
     private val msgType: MsgType,

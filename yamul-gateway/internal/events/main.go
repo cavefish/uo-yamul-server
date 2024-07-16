@@ -10,6 +10,7 @@ import (
 
 func Setup() {
 	listeners.OnClientMoveAck.SetListener(clientEvents.OnClientMoveAck)
+	listeners.OnClientDoubleClick.SetListener(clientEvents.OnClientDoubleClick)
 	listeners.OnClientMoveRequest.SetListener(clientEvents.OnClientMoveRequest)
 	listeners.OnGameLoginRequest.SetListener(clientEvents.OnGameLoginRequest)
 	listeners.OnLoginRequest.SetListener(clientEvents.OnLoginRequest)

@@ -24,6 +24,10 @@ message MsgClientMoveRequest {
   uint32 ackKey = 3;
 }
 
+message MsgClientDoubleClick {
+  common.ObjectId target = 1;
+}
+
 
 message MsgExtendedStats {
   oneof msg {
@@ -192,6 +196,7 @@ message MsgWarmode {
 enum MsgType {
   TypeUndefined = 0; // TODO this is a valid value on UO packet ids
   TypeClientMoveRequest = 0x0200;
+  TypeClientDoubleClick = 0x0600;
   TypeHealthBar = 0x1700;
   TypeStatWindowInfo = 0x1100;
   TypePlayerStartConfirmation = 0x1b00;
@@ -211,6 +216,7 @@ enum MsgType {
 message Message {
   oneof msg {
     MsgClientMoveRequest clientMoveRequest = 0x0200;
+    MsgClientDoubleClick clientDoubleClick = 0x0600;
     MsgHealthBar healthBar = 0x1700;
     MsgStatWindowInfo statWindowInfo = 0x1100;
     MsgPlayerStartConfirmation playerStartConfirmation = 0x1b00;

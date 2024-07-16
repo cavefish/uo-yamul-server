@@ -33,7 +33,7 @@ class OnCharacterSelectedProcessor (
     private val gameObjectRepository: GameObjectRepository
 ) : MessageProcessor<MsgCharacterSelection>(MsgType.TypeCharacterSelection, Message::getCharacterSelection) {
 
-    @SuppressWarnings("MaxLineLength")
+    @SuppressWarnings("MaxLineLength", "MagicNumber") // TODO remove exceptions
     override fun process(
         payload: MsgCharacterSelection,
         currentState: GameState?,
