@@ -27,7 +27,14 @@ enum ObjectDirection {
   west = 0x06;
   up = 0x07;
   mask = 0x70;
-  running = 0x80;
+  running_north = 0x80;
+  running_right = 0x81;
+  running_east = 0x82;
+  running_down = 0x83;
+  running_south = 0x84;
+  running_left = 0x85;
+  running_west = 0x86;
+  running_up = 0x87;
   none = 0xED;
 }
 

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Service
 
 @Service
 class CoordinateMapper {
-    fun map(obj: Coordinates) = Coordinate.newBuilder().setXLoc(obj.x).setYLoc(obj.y).setZLoc(obj.z)
+    fun map(obj: Coordinates): Coordinate.Builder = Coordinate.newBuilder().setXLoc(obj.x).setYLoc(obj.y).setZLoc(obj.z)
 }

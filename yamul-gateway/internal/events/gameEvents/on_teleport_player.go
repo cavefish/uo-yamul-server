@@ -17,6 +17,7 @@ func toCommandTeleportPlayer(player *services.MsgTeleportPlayer) commands.Telepo
 	for i := range player.Status {
 		status = status | byte(player.Status[i].Number())
 	}
+
 	return commands.TeleportPlayer{
 		Serial:    player.Id.Value,
 		Status:    status,
@@ -24,5 +25,7 @@ func toCommandTeleportPlayer(player *services.MsgTeleportPlayer) commands.Telepo
 		YLoc:      uint16(player.Coordinates.YLoc),
 		Direction: byte(player.Direction.Number()),
 		ZLoc:      int8(player.Coordinates.ZLoc),
+		GraphicId: uint16(player.GraphicId),
+		Hue:       uint16(player.Hue),
 	}
 }

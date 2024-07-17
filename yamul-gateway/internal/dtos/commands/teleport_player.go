@@ -7,4 +7,6 @@ type TeleportPlayer struct {
 	YLoc      uint16
 	Direction byte
 	ZLoc      int8
+	GraphicId uint16
+	Hue       uint16
 }
