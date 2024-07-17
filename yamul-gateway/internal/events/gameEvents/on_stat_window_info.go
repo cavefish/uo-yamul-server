@@ -18,11 +18,12 @@ func mapToCommandStatWindowInfo(level1 *services.MsgStatWindowInfo) commands.Sta
 	c.HitPointsCurrent = uint16(level1.HitPointsCurrent)
 	c.HitPointsMax = uint16(level1.HitPointsMax)
 	c.FlagNameAllowed = level1.FlagNameAllowed
-	c.FlagDisplay = byte(level1.FlagDisplay)
+	c.FlagDisplay = 0
 	level2 := level1.Level2
 	if level2 == nil {
 		return c
 	}
+	c.FlagDisplay = 1
 	c.Gender = byte(level2.Gender)
 	c.Strength = uint16(level2.Strength)
 	c.Intelligence = uint16(level2.Intelligence)
@@ -37,17 +38,20 @@ func mapToCommandStatWindowInfo(level1 *services.MsgStatWindowInfo) commands.Sta
 	if level3 == nil {
 		return c
 	}
+	c.FlagDisplay = 2
 	c.StatsCap = uint16(level3.StatsCap)
 	level4 := level3.Level4
 	if level4 == nil {
 		return c
 	}
+	c.FlagDisplay = 3
 	c.FollowersCurrent = byte(level4.FollowersCurrent)
 	c.FollowersMax = byte(level4.FollowersMax)
 	level5 := level4.Level5
 	if level5 == nil {
 		return c
 	}
+	c.FlagDisplay = 4
 	c.ResistanceFire = uint16(level5.ResistanceFire)
 	c.ResistanceCold = uint16(level5.ResistanceCold)
 	c.ResistancePoison = uint16(level5.ResistancePoison)
@@ -60,12 +64,14 @@ func mapToCommandStatWindowInfo(level1 *services.MsgStatWindowInfo) commands.Sta
 	if level6 == nil {
 		return c
 	}
+	c.FlagDisplay = 5
 	c.WeightMax = uint16(level6.WeightMax)
 	c.Race = byte(level6.Race)
 	level7 := level6.Level7
 	if level7 == nil {
 		return c
 	}
+	c.FlagDisplay = 6
 	c.ResistancePhysicalMax = uint16(level7.ResistancePhysicalMax)
 	c.ResistanceFireMax = uint16(level7.ResistanceFireMax)
 	c.ResistanceColdMax = uint16(level7.ResistanceColdMax)

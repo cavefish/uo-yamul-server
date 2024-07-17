@@ -2,6 +2,7 @@ package dev.cavefish.yamul.backend.game.controller.domain
 
 data class GameObject(
     val id: ObjectId = 0,
+    val name: String? = null,
     val parentId: ObjectId?,
     val graphicId: GraphicId,
     val layer: Int = 0,

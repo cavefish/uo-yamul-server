@@ -91,7 +91,7 @@ message MsgStatWindowInfo{
   uint32 hitPointsCurrent = 3;
   uint32 hitPointsMax = 4;
   bool flagNameAllowed = 5;
-  uint32 flagDisplay = 6;
+  // uint32 flagDisplay = 6; Unnecessary implementation detail
   MsgStatWindowInfoLevel2 level2 = 99;
   message MsgStatWindowInfoLevel2 {
     uint32 gender = 7;

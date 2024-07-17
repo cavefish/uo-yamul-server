@@ -98,13 +98,85 @@ class OnCharacterSelectedProcessor(
         }
         wrapper.send(MsgType.TypeStatWindowInfo) {
             it.setStatWindowInfo(
-                MsgStatWindowInfo.newBuilder().setCharacterID(createObjectId(nextState.characterObject.id))
+                getStatWindowForCharacter(nextState)
             )
         }
-        wrapper.send(MsgType.TypeExtendedStats) { it.setExtendedStats(MsgExtendedStats.getDefaultInstance()) }
+        wrapper.send(MsgType.TypeExtendedStats) {
+            it.setExtendedStats(
+                MsgExtendedStats.newBuilder().setLock(
+                    MsgExtendedStats.MsgExtendedStats_AttributeLock.newBuilder()
+                        .setId(createObjectId(nextState.characterObject.id))
+                )
+            )
+        }
         wrapper.send(MsgType.TypeWarmode) { it.setWarmode(MsgWarmode.getDefaultInstance()) }
         wrapper.send(MsgType.TypeLoginComplete) {}
         return nextState
+    }
+
+    private fun getStatWindowForCharacter(nextState: GameState): MsgStatWindowInfo.Builder? {
+        return MsgStatWindowInfo.newBuilder()
+            .setCharacterID(createObjectId(nextState.characterObject.id))
+            .setCharacterName(nextState.characterObject.name)
+            .setHitPointsCurrent(45)
+            .setHitPointsMax(45)
+            .setFlagNameAllowed(false)
+            .setLevel2(
+                MsgStatWindowInfo.MsgStatWindowInfoLevel2.newBuilder()
+                    .setStrength(0)
+                    .setStrength(45)
+                    .setIntelligence(35)
+                    .setStaminaCurrent(10)
+                    .setStaminaMax(35)
+                    .setManaCurrent(35)
+                    .setManaMax(10)
+                    .setGold(655360)
+                    .setResistancePhysical(1000)
+                    .setWeightCurrent(0)
+                    .setLevel3(
+                        MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.newBuilder()
+                            .setStatsCap(50433)
+                            .setLevel4(
+                                MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.newBuilder()
+                                    .setFollowersCurrent(1)
+                                    .setFollowersMax(44)
+                                    .setLevel5(
+                                        MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.newBuilder()
+                                            .setResistanceFire(5)
+                                            .setResistanceCold(0)
+                                            .setResistancePoison(0)
+                                            .setResistanceEnergy(0)
+                                            .setLuck(0)
+                                            .setDamageMin(0)
+                                            .setDamageMax(1)
+                                            .setTithingPoints(262144)
+                                            .setLevel6(
+                                                MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6.newBuilder()
+                                                    .setWeightMax(72)
+                                                    .setRace(0)
+                                                    .setLevel7(
+                                                        MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6.MsgStatWindowInfoLevel7.newBuilder()
+                                                            .setResistancePhysicalMax(0)
+                                                            .setResistanceFireMax(70)
+                                                            .setResistanceColdMax(70)
+                                                            .setResistancePoisonMax(70)
+                                                            .setResistanceEnergyMax(70)
+                                                            .setDefenseChanceIncreaseCurrent(70)
+                                                            .setDefenseChanceIncreaseMax(0)
+                                                            .setHitChanceIncrease(45)
+                                                            .setSwingSpeedIncrease(0)
+                                                            .setDamageIncrease(0)
+                                                            .setLowerReagentCost(0)
+                                                            .setSpellDamageIncrease(0)
+                                                            .setFasterCasting(0)
+                                                            .setFasterCastRecovery(0)
+                                                            .setLowerManaCost(0)
+                                                    )
+                                            )
+                                    )
+                            )
+                    )
+            )
     }
 
     private fun createItem(id: Int, graphicId: GraphicId, hue: Hue, layer: Int): MsgUpdateObjectItems.Builder =

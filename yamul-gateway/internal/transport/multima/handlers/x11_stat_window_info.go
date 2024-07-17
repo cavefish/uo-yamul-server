@@ -6,7 +6,7 @@ import (
 	"yamul-gateway/utils/booleans"
 )
 
-var StatWindowInfo_PackageSize = []uint16{43, 64, 66, 68, 86, 89, 129}
+var StatWindowInfo_PackageSize = []uint16{43, 64, 66, 68, 86, 89, 119}
 
 func StatWindowInfo(client interfaces.ClientConnection, command commands.StatWindowInfo) { // 0x11
 	client.StartPacket()

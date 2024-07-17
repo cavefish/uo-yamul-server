@@ -16,6 +16,7 @@ class InMemoryInitRepositories(
 ) {
     fun init() {
         val playerCharacterObject = GameObject(
+            name = "John Doe",
             parentId = null,
             graphicId = GraphicId.BodyHumanMale,
             hue = Hues.Character.hue,
@@ -29,7 +30,7 @@ class InMemoryInitRepositories(
                 parentId = gameCharacterObjectId,
                 graphicId = GraphicId.Backpack,
                 layer = 0x15,
-                hue = Hues.Blue.hue
+                hue = Hues.Blue.hue,
             )
         )
         gameObjectRepository.registerNewObject(
@@ -37,7 +38,7 @@ class InMemoryInitRepositories(
                 parentId = gameCharacterObjectId,
                 graphicId = GraphicId.HairShort,
                 layer = 0x0B,
-                hue = Hues.Black.hue
+                hue = Hues.Black.hue,
             )
         )
         gameObjectRepository.registerNewObject(
@@ -45,13 +46,13 @@ class InMemoryInitRepositories(
                 parentId = gameCharacterObjectId,
                 graphicId = GraphicId.RobeGm,
                 layer = 0x16,
-                hue = Hues.White.hue
+                hue = Hues.White.hue,
             )
         )
 
         InMemoryUserCharacterRepository.database["admin" to 0] = Character(
             objectId = gameCharacterObjectId,
-            name = "John Doe"
+            name = playerCharacterObject.name!!
         )
 
     }

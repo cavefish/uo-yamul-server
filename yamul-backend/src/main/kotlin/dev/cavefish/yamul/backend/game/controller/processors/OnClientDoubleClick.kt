@@ -23,9 +23,11 @@ class OnClientDoubleClick(
     ): GameState? {
         Logger.debug("Received onClientDoubleClick payload: $payload")
 
-        val gameObject = gameObjectRepository.getById(payload.target.value)
+        val targetId = payload.target.value and 0x7FFFFFFF
+
+        val gameObject = gameObjectRepository.getById(targetId)
         if (gameObject == null) {
-            Logger.warn("Unknown objectId ${payload.target.value}")
+            Logger.warn("Unknown objectId $targetId")
             return currentState
         }
 
