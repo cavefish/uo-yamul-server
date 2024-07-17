@@ -1,13 +1,14 @@
 package dev.cavefish.yamul.backend.game.controller.domain
 
 data class GameObject(
-    val id: ObjectId,
+    val id: ObjectId = 0,
+    val parentId: ObjectId?,
     val graphicId: GraphicId,
+    val layer: Int = 0,
     val hue: Hue,
-    val coordinates: Coordinates,
-    val flags: Flags,
-    val notoriety: Notoriety,
-    val items: List<GameObjectItem>
+    val flags: Flags = Flags.None,
+    val notoriety: Notoriety = Notoriety.Unknown,
+    val items: List<GameObjectItem> = emptyList()
 )
 
 data class GameObjectItem(

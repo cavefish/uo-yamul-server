@@ -25,7 +25,8 @@ class ServiceMain @Autowired constructor(
     val loginServiceController: LoginServiceController,
     val characterServiceController: CharacterServiceController,
     val gameServiceController: GameServiceController,
-    val basicAuthInterceptor: BasicAuthInterceptor
+    val basicAuthInterceptor: BasicAuthInterceptor,
+    val initMemoryRepositories: InMemoryInitRepositories,
 ) {
 
     @PostConstruct
@@ -45,7 +46,7 @@ class ServiceMain @Autowired constructor(
         gameServer.start()
         Logger.info("Running Game server on port {0}", GAME_SERVICE_PORT)
 
-        InMemoryInitRepositories.init()
+        initMemoryRepositories.init()
 
         Logger.info("Running ...")
         loginServer.awaitTermination()

@@ -17,23 +17,27 @@ import dev.cavefish.yamul.backend.game.api.MsgUpdateObject
 import dev.cavefish.yamul.backend.game.api.MsgUpdateObjectItems
 import dev.cavefish.yamul.backend.game.api.MsgWarmode
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
+import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 import dev.cavefish.yamul.backend.game.controller.domain.GameState
 import dev.cavefish.yamul.backend.game.controller.domain.GraphicId
 import dev.cavefish.yamul.backend.game.controller.domain.Hue
 import dev.cavefish.yamul.backend.game.controller.domain.LoggedUser
+import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRealtimeLocalization
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRepository
 import dev.cavefish.yamul.backend.game.controller.infra.UserCharacterRepository
 import dev.cavefish.yamul.backend.game.controller.senders.PlayerStartConfirmationSender
 import org.springframework.stereotype.Component
+import org.tinylog.kotlin.Logger
 
 @Component
-class OnCharacterSelectedProcessor (
+class OnCharacterSelectedProcessor(
     private val playerStartConfirmationSender: PlayerStartConfirmationSender,
     private val userCharacterRepository: UserCharacterRepository,
-    private val gameObjectRepository: GameObjectRepository
+    private val gameObjectRepository: GameObjectRepository,
+    private val gameObjectRealtimeLocalization: GameObjectRealtimeLocalization,
 ) : MessageProcessor<MsgCharacterSelection>(MsgType.TypeCharacterSelection, Message::getCharacterSelection) {
 
-    @SuppressWarnings("MaxLineLength", "MagicNumber") // TODO remove exceptions
+    @SuppressWarnings("MaxLineLength", "MagicNumber", "LongMethod") // TODO remove exceptions
     override fun process(
         payload: MsgCharacterSelection,
         currentState: GameState?,
@@ -41,10 +45,19 @@ class OnCharacterSelectedProcessor (
         wrapper: GameStreamWrapper
     ): GameState {
         val character = userCharacterRepository.getCharacterByOrder(loggedUser, payload.slot)!!
-        val characterAsObject = gameObjectRepository.getById(character.id)!!
+        val characterAsObject = gameObjectRepository.getById(character.objectId)!!
+        val coordinatesOnRepo = gameObjectRealtimeLocalization.getCoordinates(character.objectId)
+        val coordinates = if (coordinatesOnRepo != null) coordinatesOnRepo else {
+            Logger.error("GameObject ${character.objectId} is not synchronized")
+            Coordinates(
+                x = 6787,
+                y = 2181,
+                z = 0
+            )
+        }
         val nextState = GameState(
             characterObject = characterAsObject,
-            coordinates = characterAsObject.coordinates
+            coordinates = coordinates
         )
         playerStartConfirmationSender.send(nextState, wrapper)
 
@@ -66,7 +79,14 @@ class OnCharacterSelectedProcessor (
                     .setHue(gameObject.hue.toInt16())
                     .setFlags(gameObject.flags.id)
                     .setNotorietyFlagsValue(gameObject.notoriety.id)
-                    .addAllItems(gameObject.items.map { item -> createItem(item.id, item.graphicId, item.hue, item.layer).build() })
+                    .addAllItems(gameObject.items.map { item ->
+                        createItem(
+                            item.id,
+                            item.graphicId,
+                            item.hue,
+                            item.layer
+                        ).build()
+                    })
             )
         }
         wrapper.send(MsgType.TypeHealthBar) { it.setHealthBar(createHealthBar(nextState.characterObject.id)) }
