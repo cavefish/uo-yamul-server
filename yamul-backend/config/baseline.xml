@@ -3,6 +3,7 @@
   <ManuallySuppressedIssues>
     <ID>SpreadOperator:ServiceMain.kt$(*args)</ID>
     <ID>TooManyFunctions:GameStreamObserver.kt$GameStreamObserver : StreamObserver</ID>
+    <ID>WildcardImport:HueTest.kt$import org.junit.jupiter.api.Assertions.*</ID>
   </ManuallySuppressedIssues>
   <CurrentIssues/>
 </SmellBaseline>

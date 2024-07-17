@@ -1,23 +1,31 @@
 package dev.cavefish.yamul.backend.game.controller.domain
 
-data class Hue(val red: Int, val green: Int, val blue: Int, val alpha: Int = 0) {
+import dev.cavefish.yamul.backend.game.controller.domain.Hue.Companion.P99
+import dev.cavefish.yamul.backend.game.controller.domain.Hue.Companion.P00
+
+// https://uo.stratics.com/heptazane/fileformats.shtml#1.2
+data class Hue(val red: Int, val green: Int, val blue: Int) {
 
     @SuppressWarnings("MagicNumber")
     fun toInt16():Int {
-        val c = alpha shl 24 or red shl 16 or green shl 8 or blue
-        return ((((c and 0xFF) shl 5) shr 8)
-                or
-                (((((c shr 16) and 0xFF) shl 5) shr 8) shl 10)
-                or
-                (((((c shr 8) and 0xFF) shl 5) shr 8) shl 5))
+        val newR = (red shr 3) and 0b11111
+        val newG = (green shr 3) and 0b11111
+        val newB = (blue shr 3) and 0b11111
+        return (newR shl 10) or (newG shl 5) or (newB) or 0b1_00000_00000_00000
+    }
+
+    companion object {
+        const val P99:Int = 0b11111_000
+        const val P00:Int = 0b00000_000
     }
 }
 
 @SuppressWarnings("MagicNumber")
 enum class Hues(val hue: Hue) {
-    Red(Hue(255, 0, 0)),
-    Green(Hue(0, 255, 0)),
-    Blue(Hue(0, 0, 255)),
-    White(Hue(255, 255, 255)),
-    Black(Hue(0, 0, 0))
+    Red(Hue(P99, P00, P00)),
+    Green(Hue(P00, P99, P00)),
+    Blue(Hue(P00, P00, P99)),
+    White(Hue(P99, P99, P99)),
+    Black(Hue(P00, P00, P00)),
+    Character(Hue(P00, P99, 0b01010_000)),
 }

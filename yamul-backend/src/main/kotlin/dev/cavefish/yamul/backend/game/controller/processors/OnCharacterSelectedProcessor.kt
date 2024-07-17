@@ -77,8 +77,8 @@ class OnCharacterSelectedProcessor(
                     .setId(createObjectId(gameObject.id))
                     .setGraphicId(gameObject.graphicId.id)
                     .setHue(gameObject.hue.toInt16())
-                    .setFlags(gameObject.flags.id)
-                    .setNotorietyFlagsValue(gameObject.notoriety.id)
+                    .setFlags(gameObject.flags)
+                    .setNotorietyFlagsValue(gameObject.notoriety)
                     .addAllItems(gameObject.items.map { item ->
                         createItem(
                             item.id,

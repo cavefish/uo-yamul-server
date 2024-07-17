@@ -6,8 +6,8 @@ data class GameObject(
     val graphicId: GraphicId,
     val layer: Int = 0,
     val hue: Hue,
-    val flags: Flags = Flags.None,
-    val notoriety: Notoriety = Notoriety.Unknown,
+    val flags: FlagsValue = 0,
+    val notoriety: NotorietyValue = 0,
     val items: List<GameObjectItem> = emptyList()
 )
 

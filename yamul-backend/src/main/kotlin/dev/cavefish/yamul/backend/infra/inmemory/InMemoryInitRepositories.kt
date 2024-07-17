@@ -18,9 +18,9 @@ class InMemoryInitRepositories(
         val playerCharacterObject = GameObject(
             parentId = null,
             graphicId = GraphicId.BodyHumanMale,
-            hue = Hues.White.hue,
-            flags = Flags.None,
-            notoriety = Notoriety.Innocent,
+            hue = Hues.Character.hue,
+            flags = Flags.and(Flags.IgnoreMobiles, Flags.YellowBar),
+            notoriety = Notoriety.and(Notoriety.Gray, Notoriety.Criminal),
         )
         val gameCharacterObjectId = gameObjectRepository.registerNewObject(playerCharacterObject)
 
@@ -37,7 +37,7 @@ class InMemoryInitRepositories(
                 parentId = gameCharacterObjectId,
                 graphicId = GraphicId.HairShort,
                 layer = 0x0B,
-                hue = Hues.Green.hue
+                hue = Hues.Black.hue
             )
         )
         gameObjectRepository.registerNewObject(
