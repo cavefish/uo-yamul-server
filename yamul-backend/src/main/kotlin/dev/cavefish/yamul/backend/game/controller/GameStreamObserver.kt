@@ -43,6 +43,8 @@ class GameStreamObserver(
     }
 
     override fun send(msgType: MsgType, f: (Message.Builder) -> Unit) {
-        outputStream.onNext(StreamPackage.newBuilder().setType(msgType).setBody(Message.newBuilder().apply(f)).build())
+        val body = StreamPackage.newBuilder().setType(msgType).setBody(Message.newBuilder().apply(f)).build()
+        Logger.debug(body)
+        outputStream.onNext(body)
     }
 }

@@ -73,6 +73,38 @@ message MsgMoveAck {
   common.Notoriety notorietyFlags = 2;
 }
 
+enum MsgSkillUpdateType {
+  basic = 0x00;
+  godView = 0x01;
+  basicSkillCap = 0x02;
+  godViewSkillCap = 0x03;
+  updateSkillCap = 0xDF;
+  update = 0xFF;
+}
+
+enum MsgSkillUpdateStatus {
+  up = 0;
+  down = 1;
+  locked = 2;
+}
+
+message MsgSkillUpdateServer {
+    MsgSkillUpdateType type = 1;
+    repeated MsgSkillUpdateSkills skills = 2;
+    message MsgSkillUpdateSkills {
+      uint32 skillId = 1;
+      uint32 value = 2;
+      uint32 baseValue = 3;
+      MsgSkillUpdateStatus status = 4;
+      uint32 maxValue = 5;
+    }
+}
+
+message MsgSkillUpdateClient {
+  uint32 skillId = 1;
+  MsgSkillUpdateStatus status = 2;
+}
+
 message MsgPlayerStartConfirmation {
   common.ObjectId id = 1;
   common.Coordinate coordinates = 2;
@@ -202,6 +234,8 @@ enum MsgType {
   TypePlayerStartConfirmation = 0x1b00;
   TypeTeleportPlayer = 0x2000;
   TypeMoveAck = 0x2200;
+  TypeSkillUpdateServer = 0x3A00;
+  TypeSkillUpdateClient = 0x3A01;
   TypeGeneralLightLevel = 0x4f00;
   TypeLoginComplete = 0x5500;
   TypeCharacterSelection = 0x5d00;
@@ -222,6 +256,8 @@ message Message {
     MsgPlayerStartConfirmation playerStartConfirmation = 0x1b00;
     MsgTeleportPlayer teleportPlayer = 0x2000;
     MsgMoveAck moveAck = 0x2200;
+    MsgSkillUpdateServer skillUpdateServer = 0x3A00;
+    MsgSkillUpdateClient skillUpdateClient = 0x3A01;
     MsgGeneralLightLevel GeneralLightLevel = 0x4f00;
     MsgCharacterSelection characterSelection = 0x5d00;
     MsgPlayMusic playMusic = 0x6D00;

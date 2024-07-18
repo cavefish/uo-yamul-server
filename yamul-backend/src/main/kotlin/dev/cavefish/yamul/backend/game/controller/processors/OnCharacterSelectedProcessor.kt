@@ -24,6 +24,7 @@ import dev.cavefish.yamul.backend.game.controller.domain.LoggedUser
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRealtimeLocalization
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRepository
 import dev.cavefish.yamul.backend.game.controller.infra.UserCharacterRepository
+import dev.cavefish.yamul.backend.game.controller.mappers.CharacterSkillUpdateMapper
 import dev.cavefish.yamul.backend.game.controller.mappers.CharacterStatWindowMapper
 import dev.cavefish.yamul.backend.game.controller.senders.PlayerStartConfirmationSender
 import org.springframework.stereotype.Component
@@ -36,6 +37,7 @@ class OnCharacterSelectedProcessor(
     private val gameObjectRepository: GameObjectRepository,
     private val gameObjectRealtimeLocalization: GameObjectRealtimeLocalization,
     private val characterStatWindowMapper: CharacterStatWindowMapper,
+    private val characterSkillUpdateMapper: CharacterSkillUpdateMapper,
 ) : MessageProcessor<MsgCharacterSelection>(MsgType.TypeCharacterSelection, Message::getCharacterSelection) {
 
     @SuppressWarnings("MaxLineLength", "MagicNumber", "LongMethod") // TODO remove exceptions
@@ -110,7 +112,8 @@ class OnCharacterSelectedProcessor(
                 )
             )
         }
-        wrapper.send(MsgType.TypeWarmode) { it.setWarmode(MsgWarmode.getDefaultInstance()) }
+        wrapper.send(MsgType.TypeSkillUpdateServer) {it.setSkillUpdateServer(characterSkillUpdateMapper.getFullUpdate())}
+        wrapper.send(MsgType.TypeWarmode) { it.setWarmode(MsgWarmode.newBuilder().setIsWarmode(false)) }
         wrapper.send(MsgType.TypeLoginComplete) {}
         return nextState
     }

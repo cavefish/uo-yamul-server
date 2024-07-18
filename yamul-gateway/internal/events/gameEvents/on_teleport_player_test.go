@@ -76,7 +76,7 @@ func Test_toCommandTeleportPlayer(t *testing.T) {
 					YLoc: math.MaxUint16,
 					ZLoc: math.MaxInt8,
 				},
-				Direction: services.ObjectDirection_running | services.ObjectDirection_down,
+				Direction: services.ObjectDirection_running_down,
 			}},
 			want: commands.TeleportPlayer{
 				Serial:    100,
