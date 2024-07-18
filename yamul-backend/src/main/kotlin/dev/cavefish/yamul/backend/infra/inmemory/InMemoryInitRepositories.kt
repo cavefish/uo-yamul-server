@@ -21,8 +21,8 @@ class InMemoryInitRepositories(
             parentId = null,
             graphicId = GraphicId.BodyHumanMale,
             hue = Hues.Character.hue,
-            flags = Flags.and(Flags.IgnoreMobiles, Flags.YellowBar),
-            notoriety = Notoriety.and(Notoriety.Gray, Notoriety.Criminal),
+            flags = listOf(Flags.Normal, Flags.CanAlterPaperDoll),
+            notoriety = listOf(Notoriety.Gray, Notoriety.Criminal),
         )
         val gameCharacterObjectId = gameObjectRepository.registerNewObject(playerCharacterObject)
 

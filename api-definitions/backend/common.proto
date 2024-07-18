@@ -49,6 +49,15 @@ enum Notoriety {
   Invulnerable = 0x07;
 }
 
+enum Flags {
+  normal = 0x00;
+  canAlterPaperDoll = 0x02;
+  poisoned = 0x04;
+  goldenHealth = 0x08;
+  warMode = 0x40;
+  hidden = 0x80;
+}
+
 message Coordinate {
   uint32 xLoc = 5;
   uint32 yLoc = 6;

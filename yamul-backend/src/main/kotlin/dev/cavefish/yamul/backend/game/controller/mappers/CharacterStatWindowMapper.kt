@@ -47,7 +47,7 @@ class CharacterStatWindowMapper(
 
     private fun createLevel4(): MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.Builder? =
         MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.newBuilder()
-            .setFollowersCurrent(1)
+            .setFollowersCurrent(0)
             .setFollowersMax(44)
             .setLevel5(
                 createLevel5()

@@ -1,6 +1,8 @@
 package dev.cavefish.yamul.backend.game.controller.processors
 
 import dev.cavefish.yamul.backend.common.api.Coordinate
+import dev.cavefish.yamul.backend.common.api.Flags
+import dev.cavefish.yamul.backend.common.api.Notoriety
 import dev.cavefish.yamul.backend.common.api.ObjectId
 import dev.cavefish.yamul.backend.game.api.Message
 import dev.cavefish.yamul.backend.game.api.MsgApplyWorldPatches
@@ -80,8 +82,8 @@ class OnCharacterSelectedProcessor(
                     .setId(createObjectId(gameObject.id))
                     .setGraphicId(gameObject.graphicId.id)
                     .setHue(gameObject.hue.toInt16())
-                    .setFlags(gameObject.flags)
-                    .setNotorietyFlagsValue(gameObject.notoriety)
+                    .addAllFlags(gameObject.flags.map { f -> Flags.forNumber(f.id) })
+                    .addAllNotorietyFlags(gameObject.notoriety.map { n-> Notoriety.forNumber(n.id) })
                     .addAllItems(gameObject.items.map { item ->
                         createItem(
                             item.id,
@@ -112,7 +114,7 @@ class OnCharacterSelectedProcessor(
                 )
             )
         }
-        wrapper.send(MsgType.TypeSkillUpdateServer) {it.setSkillUpdateServer(characterSkillUpdateMapper.getFullUpdate())}
+        wrapper.send(MsgType.TypeSkillUpdateServer) { it.setSkillUpdateServer(characterSkillUpdateMapper.getFullUpdate()) }
         wrapper.send(MsgType.TypeWarmode) { it.setWarmode(MsgWarmode.newBuilder().setIsWarmode(false)) }
         wrapper.send(MsgType.TypeLoginComplete) {}
         return nextState
@@ -126,7 +128,9 @@ class OnCharacterSelectedProcessor(
 
     private fun createHealthBar(objectId: Int): MsgHealthBar.Builder = MsgHealthBar.newBuilder()
         .setId(createObjectId(objectId))
-        .addValues(MsgHealthBar.Values.newBuilder().setTypeValue(MsgHealthBar.Values.Type.GREEN_VALUE).setEnabled(true))
+        .addValues(
+            MsgHealthBar.Values.newBuilder().setTypeValue(MsgHealthBar.Values.Type.GREEN_VALUE).setEnabled(false)
+        )
         .addValues(
             MsgHealthBar.Values.newBuilder().setTypeValue(MsgHealthBar.Values.Type.YELLOW_VALUE).setEnabled(false)
         )
@@ -138,7 +142,7 @@ class OnCharacterSelectedProcessor(
             .setCoordinates(createPlayerObjectCoordinates(state))
             .setGraphicId(state.characterObject.graphicId.id)
             .setHue(state.characterObject.hue.toInt16())
-            .addStatusValue(state.characterObject.flags)
+            .addAllStatusValue(state.characterObject.flags.map { f -> f.id })
 
     private fun createPlayerObjectCoordinates(state: GameState): Coordinate.Builder =
         Coordinate.newBuilder().setXLoc(state.coordinates.x).setYLoc(state.coordinates.y).setZLoc(state.coordinates.z)

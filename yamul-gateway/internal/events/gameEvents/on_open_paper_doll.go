@@ -13,9 +13,13 @@ func OnOpenPaperDoll(connection interfaces.ClientConnection, msg *services.Strea
 }
 
 func mapToOpenPaperDoll(input *services.MsgOpenPaperDoll) commands.OpenPaperDoll {
+	var f byte = 0
+	for _, flag := range input.Flags {
+		f = f | byte(flag)
+	}
 	return commands.OpenPaperDoll{
 		Id:     input.Id.Value,
 		Name:   input.Name,
-		Status: byte(input.Flags),
+		Status: f,
 	}
 }

@@ -187,18 +187,9 @@ message MsgTeleportPlayer {
   common.ObjectId id = 1;
   uint32 graphicId = 2;
   uint32 hue = 3;
-  repeated MsgTeleportPlayer_PlayerStatus status = 4;
+  repeated common.Flags status = 4;
   common.Coordinate coordinates = 5;
   common.ObjectDirection direction = 8;
-}
-
-enum MsgTeleportPlayer_PlayerStatus {
-  normal = 0x00;
-  canAlterPaperDoll = 0x02;
-  poisoned = 0x04;
-  goldenHealth = 0x08;
-  warMode = 0x40;
-  hidden = 0x80;
 }
 
 message MsgUpdateObject {
@@ -209,15 +200,15 @@ message MsgUpdateObject {
   uint32 zLoc = 5;
   uint32 direction = 6;
   uint32 hue = 7;
-  uint32 flags = 8;
-  common.Notoriety notorietyFlags = 9;
+  repeated common.Flags flags = 8;
+  repeated common.Notoriety notorietyFlags = 9;
   repeated MsgUpdateObjectItems items = 10;
 }
 
 message MsgOpenPaperDoll{
   common.ObjectId id = 1;
   string name = 2;
-  uint32 flags = 3; // TODO decouple bitwise flags into an array of its own type
+  repeated common.Flags flags = 3;
 }
 
 message MsgUpdateObjectItems {

@@ -13,6 +13,14 @@ func OnUpdateObject(connection interfaces.ClientConnection, msg *services.Stream
 }
 
 func toCommandUpdateObject(msg *services.MsgUpdateObject) commands.UpdateObject {
+	var f byte = 0
+	for _, flag := range msg.Flags {
+		f = f | byte(flag)
+	}
+	var n byte = 0
+	for _, flag := range msg.NotorietyFlags {
+		n = n | byte(flag)
+	}
 	command := commands.UpdateObject{
 		Serial:        msg.Id.Value,
 		GraphicId:     uint16(msg.GraphicId),
@@ -21,8 +29,8 @@ func toCommandUpdateObject(msg *services.MsgUpdateObject) commands.UpdateObject 
 		ZLoc:          byte(msg.ZLoc),
 		Direction:     byte(msg.Direction),
 		Hue:           uint16(msg.Hue),
-		Flags:         byte(msg.Flags),
-		NotorietyFlag: byte(msg.NotorietyFlags),
+		Flags:         f,
+		NotorietyFlag: n,
 		Items:         make([]commands.UpdateObjectItem, len(msg.Items)),
 	}
 	for i, item := range msg.Items {
