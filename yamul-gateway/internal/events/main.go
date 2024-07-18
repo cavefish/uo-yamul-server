@@ -29,6 +29,7 @@ func Setup() {
 	messages.RegisterProcessor(services.MsgType_TypeMapChange, gameEvents.OnMapChange)
 	messages.RegisterProcessor(services.MsgType_TypeMoveAck, gameEvents.ServerMoveAck)
 	messages.RegisterProcessor(services.MsgType_TypeSkillUpdateServer, gameEvents.SkillUpdateServer)
+	messages.RegisterProcessor(services.MsgType_TypeOpenPaperDoll, gameEvents.OnOpenPaperDoll)
 	messages.RegisterProcessor(services.MsgType_TypePlayerStartConfirmation, gameEvents.OnPlayerStartConfirmation)
 	messages.RegisterProcessor(services.MsgType_TypePlayMusic, gameEvents.OnPlayMusic)
 	messages.RegisterProcessor(services.MsgType_TypeStatWindowInfo, gameEvents.StatWindowInfo)

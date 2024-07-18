@@ -214,6 +214,12 @@ message MsgUpdateObject {
   repeated MsgUpdateObjectItems items = 10;
 }
 
+message MsgOpenPaperDoll{
+  common.ObjectId id = 1;
+  string name = 2;
+  uint32 flags = 3; // TODO decouple bitwise flags into an array of its own type
+}
+
 message MsgUpdateObjectItems {
    common.ObjectId id = 1;
    uint32 graphicId = 2;
@@ -242,6 +248,7 @@ enum MsgType {
   TypePlayMusic = 0x6D00;
   TypeWarmode = 0x7200;
   TypeUpdateObject = 0x7800;
+  TypeOpenPaperDoll = 0x8800;
   TypeMapChange = 0xBF08;
   TypeApplyWorldPatches = 0xBF18;
   TypeExtendedStats = 0xBF19;
@@ -263,6 +270,7 @@ message Message {
     MsgPlayMusic playMusic = 0x6D00;
     MsgWarmode warmode = 0x7200;
     MsgUpdateObject updateObject = 0x7800;
+    MsgOpenPaperDoll openPaperDoll = 0x8800;
     MsgMapChange mapChange = 0xBF08;
     MsgApplyWorldPatches applyWorldPatches = 0xBF18;
     MsgExtendedStats extendedStats = 0xBF19;

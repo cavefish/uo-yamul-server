@@ -204,6 +204,7 @@ const (
 	MsgType_TypePlayMusic               MsgType = 27904
 	MsgType_TypeWarmode                 MsgType = 29184
 	MsgType_TypeUpdateObject            MsgType = 30720
+	MsgType_TypeOpenPaperDoll           MsgType = 34816
 	MsgType_TypeMapChange               MsgType = 48904
 	MsgType_TypeApplyWorldPatches       MsgType = 48920
 	MsgType_TypeExtendedStats           MsgType = 48921
@@ -228,6 +229,7 @@ var (
 		27904: "TypePlayMusic",
 		29184: "TypeWarmode",
 		30720: "TypeUpdateObject",
+		34816: "TypeOpenPaperDoll",
 		48904: "TypeMapChange",
 		48920: "TypeApplyWorldPatches",
 		48921: "TypeExtendedStats",
@@ -249,6 +251,7 @@ var (
 		"TypePlayMusic":               27904,
 		"TypeWarmode":                 29184,
 		"TypeUpdateObject":            30720,
+		"TypeOpenPaperDoll":           34816,
 		"TypeMapChange":               48904,
 		"TypeApplyWorldPatches":       48920,
 		"TypeExtendedStats":           48921,
@@ -1355,6 +1358,69 @@ func (x *MsgUpdateObject) GetItems() []*MsgUpdateObjectItems {
 	return nil
 }
 
+type MsgOpenPaperDoll struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id    *ObjectId `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name  string    `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Flags uint32    `protobuf:"varint,3,opt,name=flags,proto3" json:"flags,omitempty"` // TODO decouple bitwise flags into an array of its own type
+}
+
+func (x *MsgOpenPaperDoll) Reset() {
+	*x = MsgOpenPaperDoll{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_yamul_backend_game_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MsgOpenPaperDoll) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MsgOpenPaperDoll) ProtoMessage() {}
+
+func (x *MsgOpenPaperDoll) ProtoReflect() protoreflect.Message {
+	mi := &file_yamul_backend_game_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MsgOpenPaperDoll.ProtoReflect.Descriptor instead.
+func (*MsgOpenPaperDoll) Descriptor() ([]byte, []int) {
+	return file_yamul_backend_game_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *MsgOpenPaperDoll) GetId() *ObjectId {
+	if x != nil {
+		return x.Id
+	}
+	return nil
+}
+
+func (x *MsgOpenPaperDoll) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *MsgOpenPaperDoll) GetFlags() uint32 {
+	if x != nil {
+		return x.Flags
+	}
+	return 0
+}
+
 type MsgUpdateObjectItems struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1369,7 +1435,7 @@ type MsgUpdateObjectItems struct {
 func (x *MsgUpdateObjectItems) Reset() {
 	*x = MsgUpdateObjectItems{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[16]
+		mi := &file_yamul_backend_game_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1382,7 +1448,7 @@ func (x *MsgUpdateObjectItems) String() string {
 func (*MsgUpdateObjectItems) ProtoMessage() {}
 
 func (x *MsgUpdateObjectItems) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[16]
+	mi := &file_yamul_backend_game_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1395,7 +1461,7 @@ func (x *MsgUpdateObjectItems) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MsgUpdateObjectItems.ProtoReflect.Descriptor instead.
 func (*MsgUpdateObjectItems) Descriptor() ([]byte, []int) {
-	return file_yamul_backend_game_proto_rawDescGZIP(), []int{16}
+	return file_yamul_backend_game_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *MsgUpdateObjectItems) GetId() *ObjectId {
@@ -1437,7 +1503,7 @@ type MsgWarmode struct {
 func (x *MsgWarmode) Reset() {
 	*x = MsgWarmode{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[17]
+		mi := &file_yamul_backend_game_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1450,7 +1516,7 @@ func (x *MsgWarmode) String() string {
 func (*MsgWarmode) ProtoMessage() {}
 
 func (x *MsgWarmode) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[17]
+	mi := &file_yamul_backend_game_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1463,7 +1529,7 @@ func (x *MsgWarmode) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MsgWarmode.ProtoReflect.Descriptor instead.
 func (*MsgWarmode) Descriptor() ([]byte, []int) {
-	return file_yamul_backend_game_proto_rawDescGZIP(), []int{17}
+	return file_yamul_backend_game_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *MsgWarmode) GetIsWarmode() bool {
@@ -1494,6 +1560,7 @@ type Message struct {
 	//	*Message_PlayMusic
 	//	*Message_Warmode
 	//	*Message_UpdateObject
+	//	*Message_OpenPaperDoll
 	//	*Message_MapChange
 	//	*Message_ApplyWorldPatches
 	//	*Message_ExtendedStats
@@ -1503,7 +1570,7 @@ type Message struct {
 func (x *Message) Reset() {
 	*x = Message{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[18]
+		mi := &file_yamul_backend_game_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1516,7 +1583,7 @@ func (x *Message) String() string {
 func (*Message) ProtoMessage() {}
 
 func (x *Message) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[18]
+	mi := &file_yamul_backend_game_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1529,7 +1596,7 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Message.ProtoReflect.Descriptor instead.
 func (*Message) Descriptor() ([]byte, []int) {
-	return file_yamul_backend_game_proto_rawDescGZIP(), []int{18}
+	return file_yamul_backend_game_proto_rawDescGZIP(), []int{19}
 }
 
 func (m *Message) GetMsg() isMessage_Msg {
@@ -1637,6 +1704,13 @@ func (x *Message) GetUpdateObject() *MsgUpdateObject {
 	return nil
 }
 
+func (x *Message) GetOpenPaperDoll() *MsgOpenPaperDoll {
+	if x, ok := x.GetMsg().(*Message_OpenPaperDoll); ok {
+		return x.OpenPaperDoll
+	}
+	return nil
+}
+
 func (x *Message) GetMapChange() *MsgMapChange {
 	if x, ok := x.GetMsg().(*Message_MapChange); ok {
 		return x.MapChange
@@ -1718,6 +1792,10 @@ type Message_UpdateObject struct {
 	UpdateObject *MsgUpdateObject `protobuf:"bytes,30720,opt,name=updateObject,proto3,oneof"`
 }
 
+type Message_OpenPaperDoll struct {
+	OpenPaperDoll *MsgOpenPaperDoll `protobuf:"bytes,34816,opt,name=openPaperDoll,proto3,oneof"`
+}
+
 type Message_MapChange struct {
 	MapChange *MsgMapChange `protobuf:"bytes,48904,opt,name=mapChange,proto3,oneof"`
 }
@@ -1758,6 +1836,8 @@ func (*Message_Warmode) isMessage_Msg() {}
 
 func (*Message_UpdateObject) isMessage_Msg() {}
 
+func (*Message_OpenPaperDoll) isMessage_Msg() {}
+
 func (*Message_MapChange) isMessage_Msg() {}
 
 func (*Message_ApplyWorldPatches) isMessage_Msg() {}
@@ -1776,7 +1856,7 @@ type StreamPackage struct {
 func (x *StreamPackage) Reset() {
 	*x = StreamPackage{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[19]
+		mi := &file_yamul_backend_game_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1789,7 +1869,7 @@ func (x *StreamPackage) String() string {
 func (*StreamPackage) ProtoMessage() {}
 
 func (x *StreamPackage) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[19]
+	mi := &file_yamul_backend_game_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1802,7 +1882,7 @@ func (x *StreamPackage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamPackage.ProtoReflect.Descriptor instead.
 func (*StreamPackage) Descriptor() ([]byte, []int) {
-	return file_yamul_backend_game_proto_rawDescGZIP(), []int{19}
+	return file_yamul_backend_game_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *StreamPackage) GetType() MsgType {
@@ -1831,7 +1911,7 @@ type MsgExtendedStats_MsgExtendedStats_Dead struct {
 func (x *MsgExtendedStats_MsgExtendedStats_Dead) Reset() {
 	*x = MsgExtendedStats_MsgExtendedStats_Dead{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[20]
+		mi := &file_yamul_backend_game_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1844,7 +1924,7 @@ func (x *MsgExtendedStats_MsgExtendedStats_Dead) String() string {
 func (*MsgExtendedStats_MsgExtendedStats_Dead) ProtoMessage() {}
 
 func (x *MsgExtendedStats_MsgExtendedStats_Dead) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[20]
+	mi := &file_yamul_backend_game_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1888,7 +1968,7 @@ type MsgExtendedStats_MsgExtendedStats_AttributeLock struct {
 func (x *MsgExtendedStats_MsgExtendedStats_AttributeLock) Reset() {
 	*x = MsgExtendedStats_MsgExtendedStats_AttributeLock{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[21]
+		mi := &file_yamul_backend_game_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1901,7 +1981,7 @@ func (x *MsgExtendedStats_MsgExtendedStats_AttributeLock) String() string {
 func (*MsgExtendedStats_MsgExtendedStats_AttributeLock) ProtoMessage() {}
 
 func (x *MsgExtendedStats_MsgExtendedStats_AttributeLock) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[21]
+	mi := &file_yamul_backend_game_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1957,7 +2037,7 @@ type MsgHealthBar_Values struct {
 func (x *MsgHealthBar_Values) Reset() {
 	*x = MsgHealthBar_Values{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[22]
+		mi := &file_yamul_backend_game_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1970,7 +2050,7 @@ func (x *MsgHealthBar_Values) String() string {
 func (*MsgHealthBar_Values) ProtoMessage() {}
 
 func (x *MsgHealthBar_Values) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[22]
+	mi := &file_yamul_backend_game_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2015,7 +2095,7 @@ type MsgSkillUpdateServer_MsgSkillUpdateSkills struct {
 func (x *MsgSkillUpdateServer_MsgSkillUpdateSkills) Reset() {
 	*x = MsgSkillUpdateServer_MsgSkillUpdateSkills{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[23]
+		mi := &file_yamul_backend_game_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2028,7 +2108,7 @@ func (x *MsgSkillUpdateServer_MsgSkillUpdateSkills) String() string {
 func (*MsgSkillUpdateServer_MsgSkillUpdateSkills) ProtoMessage() {}
 
 func (x *MsgSkillUpdateServer_MsgSkillUpdateSkills) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[23]
+	mi := &file_yamul_backend_game_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2100,7 +2180,7 @@ type MsgStatWindowInfo_MsgStatWindowInfoLevel2 struct {
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2) Reset() {
 	*x = MsgStatWindowInfo_MsgStatWindowInfoLevel2{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[24]
+		mi := &file_yamul_backend_game_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2113,7 +2193,7 @@ func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2) String() string {
 func (*MsgStatWindowInfo_MsgStatWindowInfoLevel2) ProtoMessage() {}
 
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[24]
+	mi := &file_yamul_backend_game_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2218,7 +2298,7 @@ type MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3 struct {
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3) Reset() {
 	*x = MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[25]
+		mi := &file_yamul_backend_game_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2231,7 +2311,7 @@ func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3) Stri
 func (*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3) ProtoMessage() {}
 
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[25]
+	mi := &file_yamul_backend_game_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2274,7 +2354,7 @@ type MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWi
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4) Reset() {
 	*x = MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[26]
+		mi := &file_yamul_backend_game_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2288,7 +2368,7 @@ func (*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStat
 }
 
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[26]
+	mi := &file_yamul_backend_game_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2344,7 +2424,7 @@ type MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWi
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5) Reset() {
 	*x = MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[27]
+		mi := &file_yamul_backend_game_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2358,7 +2438,7 @@ func (*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStat
 }
 
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[27]
+	mi := &file_yamul_backend_game_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2450,7 +2530,7 @@ type MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWi
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6) Reset() {
 	*x = MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[28]
+		mi := &file_yamul_backend_game_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2464,7 +2544,7 @@ func (*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStat
 }
 
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[28]
+	mi := &file_yamul_backend_game_proto_msgTypes[29]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2526,7 +2606,7 @@ type MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWi
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6_MsgStatWindowInfoLevel7) Reset() {
 	*x = MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6_MsgStatWindowInfoLevel7{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_yamul_backend_game_proto_msgTypes[29]
+		mi := &file_yamul_backend_game_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2540,7 +2620,7 @@ func (*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStat
 }
 
 func (x *MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6_MsgStatWindowInfoLevel7) ProtoReflect() protoreflect.Message {
-	mi := &file_yamul_backend_game_proto_msgTypes[29]
+	mi := &file_yamul_backend_game_proto_msgTypes[30]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2987,7 +3067,13 @@ var file_yamul_backend_game_proto_rawDesc = []byte{
 	0x12, 0x30, 0x0a, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x18, 0x0a, 0x20, 0x03, 0x28, 0x0b, 0x32,
 	0x1a, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
 	0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x49, 0x74, 0x65, 0x6d, 0x73, 0x52, 0x05, 0x69, 0x74, 0x65,
-	0x6d, 0x73, 0x22, 0x7e, 0x0a, 0x14, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f,
+	0x6d, 0x73, 0x22, 0x5e, 0x0a, 0x10, 0x4d, 0x73, 0x67, 0x4f, 0x70, 0x65, 0x6e, 0x50, 0x61, 0x70,
+	0x65, 0x72, 0x44, 0x6f, 0x6c, 0x6c, 0x12, 0x20, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x10, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x4f, 0x62, 0x6a, 0x65,
+	0x63, 0x74, 0x49, 0x64, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05,
+	0x66, 0x6c, 0x61, 0x67, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x66, 0x6c, 0x61,
+	0x67, 0x73, 0x22, 0x7e, 0x0a, 0x14, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f,
 	0x62, 0x6a, 0x65, 0x63, 0x74, 0x49, 0x74, 0x65, 0x6d, 0x73, 0x12, 0x20, 0x0a, 0x02, 0x69, 0x64,
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e,
 	0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x49, 0x64, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1c, 0x0a, 0x09,
@@ -2997,7 +3083,7 @@ var file_yamul_backend_game_proto_rawDesc = []byte{
 	0x12, 0x10, 0x0a, 0x03, 0x68, 0x75, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x03, 0x68,
 	0x75, 0x65, 0x22, 0x2a, 0x0a, 0x0a, 0x4d, 0x73, 0x67, 0x57, 0x61, 0x72, 0x6d, 0x6f, 0x64, 0x65,
 	0x12, 0x1c, 0x0a, 0x09, 0x69, 0x73, 0x57, 0x61, 0x72, 0x6d, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x08, 0x52, 0x09, 0x69, 0x73, 0x57, 0x61, 0x72, 0x6d, 0x6f, 0x64, 0x65, 0x22, 0x99,
+	0x01, 0x28, 0x08, 0x52, 0x09, 0x69, 0x73, 0x57, 0x61, 0x72, 0x6d, 0x6f, 0x64, 0x65, 0x22, 0xdb,
 	0x09, 0x0a, 0x07, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x4b, 0x0a, 0x11, 0x63, 0x6c,
 	0x69, 0x65, 0x6e, 0x74, 0x4d, 0x6f, 0x76, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x18,
 	0x80, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x4d, 0x73,
@@ -3058,84 +3144,90 @@ var file_yamul_backend_game_proto_rawDesc = []byte{
 	0x0a, 0x0c, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x18, 0x80,
 	0xf0, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x4d, 0x73,
 	0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x48, 0x00, 0x52,
-	0x0c, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x12, 0x34, 0x0a,
-	0x09, 0x6d, 0x61, 0x70, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x18, 0x88, 0xfe, 0x02, 0x20, 0x01,
-	0x28, 0x0b, 0x32, 0x12, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x4d, 0x73, 0x67, 0x4d, 0x61, 0x70,
-	0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x48, 0x00, 0x52, 0x09, 0x6d, 0x61, 0x70, 0x43, 0x68, 0x61,
-	0x6e, 0x67, 0x65, 0x12, 0x4c, 0x0a, 0x11, 0x61, 0x70, 0x70, 0x6c, 0x79, 0x57, 0x6f, 0x72, 0x6c,
-	0x64, 0x50, 0x61, 0x74, 0x63, 0x68, 0x65, 0x73, 0x18, 0x98, 0xfe, 0x02, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x1a, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x4d, 0x73, 0x67, 0x41, 0x70, 0x70, 0x6c, 0x79,
-	0x57, 0x6f, 0x72, 0x6c, 0x64, 0x50, 0x61, 0x74, 0x63, 0x68, 0x65, 0x73, 0x48, 0x00, 0x52, 0x11,
-	0x61, 0x70, 0x70, 0x6c, 0x79, 0x57, 0x6f, 0x72, 0x6c, 0x64, 0x50, 0x61, 0x74, 0x63, 0x68, 0x65,
-	0x73, 0x12, 0x40, 0x0a, 0x0d, 0x65, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x53, 0x74, 0x61,
-	0x74, 0x73, 0x18, 0x99, 0xfe, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x67, 0x61, 0x6d,
-	0x65, 0x2e, 0x4d, 0x73, 0x67, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x53, 0x74, 0x61,
-	0x74, 0x73, 0x48, 0x00, 0x52, 0x0d, 0x65, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x53, 0x74,
-	0x61, 0x74, 0x73, 0x42, 0x05, 0x0a, 0x03, 0x6d, 0x73, 0x67, 0x22, 0x55, 0x0a, 0x0d, 0x53, 0x74,
-	0x72, 0x65, 0x61, 0x6d, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x12, 0x21, 0x0a, 0x04, 0x74,
-	0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x0d, 0x2e, 0x67, 0x61, 0x6d, 0x65,
-	0x2e, 0x4d, 0x73, 0x67, 0x54, 0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x21,
-	0x0a, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x67,
-	0x61, 0x6d, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52, 0x04, 0x62, 0x6f, 0x64,
-	0x79, 0x2a, 0x76, 0x0a, 0x12, 0x4d, 0x73, 0x67, 0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x55, 0x70, 0x64,
-	0x61, 0x74, 0x65, 0x54, 0x79, 0x70, 0x65, 0x12, 0x09, 0x0a, 0x05, 0x62, 0x61, 0x73, 0x69, 0x63,
-	0x10, 0x00, 0x12, 0x0b, 0x0a, 0x07, 0x67, 0x6f, 0x64, 0x56, 0x69, 0x65, 0x77, 0x10, 0x01, 0x12,
-	0x11, 0x0a, 0x0d, 0x62, 0x61, 0x73, 0x69, 0x63, 0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x43, 0x61, 0x70,
-	0x10, 0x02, 0x12, 0x13, 0x0a, 0x0f, 0x67, 0x6f, 0x64, 0x56, 0x69, 0x65, 0x77, 0x53, 0x6b, 0x69,
-	0x6c, 0x6c, 0x43, 0x61, 0x70, 0x10, 0x03, 0x12, 0x13, 0x0a, 0x0e, 0x75, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x43, 0x61, 0x70, 0x10, 0xdf, 0x01, 0x12, 0x0b, 0x0a, 0x06,
-	0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x10, 0xff, 0x01, 0x2a, 0x34, 0x0a, 0x14, 0x4d, 0x73, 0x67,
-	0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x74, 0x61, 0x74, 0x75,
-	0x73, 0x12, 0x06, 0x0a, 0x02, 0x75, 0x70, 0x10, 0x00, 0x12, 0x08, 0x0a, 0x04, 0x64, 0x6f, 0x77,
-	0x6e, 0x10, 0x01, 0x12, 0x0a, 0x0a, 0x06, 0x6c, 0x6f, 0x63, 0x6b, 0x65, 0x64, 0x10, 0x02, 0x2a,
-	0x7d, 0x0a, 0x1e, 0x4d, 0x73, 0x67, 0x54, 0x65, 0x6c, 0x65, 0x70, 0x6f, 0x72, 0x74, 0x50, 0x6c,
-	0x61, 0x79, 0x65, 0x72, 0x5f, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x53, 0x74, 0x61, 0x74, 0x75,
-	0x73, 0x12, 0x0a, 0x0a, 0x06, 0x6e, 0x6f, 0x72, 0x6d, 0x61, 0x6c, 0x10, 0x00, 0x12, 0x15, 0x0a,
-	0x11, 0x63, 0x61, 0x6e, 0x41, 0x6c, 0x74, 0x65, 0x72, 0x50, 0x61, 0x70, 0x65, 0x72, 0x44, 0x6f,
-	0x6c, 0x6c, 0x10, 0x02, 0x12, 0x0c, 0x0a, 0x08, 0x70, 0x6f, 0x69, 0x73, 0x6f, 0x6e, 0x65, 0x64,
-	0x10, 0x04, 0x12, 0x10, 0x0a, 0x0c, 0x67, 0x6f, 0x6c, 0x64, 0x65, 0x6e, 0x48, 0x65, 0x61, 0x6c,
-	0x74, 0x68, 0x10, 0x08, 0x12, 0x0b, 0x0a, 0x07, 0x77, 0x61, 0x72, 0x4d, 0x6f, 0x64, 0x65, 0x10,
-	0x40, 0x12, 0x0b, 0x0a, 0x06, 0x68, 0x69, 0x64, 0x64, 0x65, 0x6e, 0x10, 0x80, 0x01, 0x2a, 0xe5,
-	0x03, 0x0a, 0x07, 0x4d, 0x73, 0x67, 0x54, 0x79, 0x70, 0x65, 0x12, 0x11, 0x0a, 0x0d, 0x54, 0x79,
-	0x70, 0x65, 0x55, 0x6e, 0x64, 0x65, 0x66, 0x69, 0x6e, 0x65, 0x64, 0x10, 0x00, 0x12, 0x1a, 0x0a,
-	0x15, 0x54, 0x79, 0x70, 0x65, 0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x4d, 0x6f, 0x76, 0x65, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x10, 0x80, 0x04, 0x12, 0x1a, 0x0a, 0x15, 0x54, 0x79, 0x70,
-	0x65, 0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x44, 0x6f, 0x75, 0x62, 0x6c, 0x65, 0x43, 0x6c, 0x69,
-	0x63, 0x6b, 0x10, 0x80, 0x0c, 0x12, 0x12, 0x0a, 0x0d, 0x54, 0x79, 0x70, 0x65, 0x48, 0x65, 0x61,
-	0x6c, 0x74, 0x68, 0x42, 0x61, 0x72, 0x10, 0x80, 0x2e, 0x12, 0x17, 0x0a, 0x12, 0x54, 0x79, 0x70,
-	0x65, 0x53, 0x74, 0x61, 0x74, 0x57, 0x69, 0x6e, 0x64, 0x6f, 0x77, 0x49, 0x6e, 0x66, 0x6f, 0x10,
-	0x80, 0x22, 0x12, 0x20, 0x0a, 0x1b, 0x54, 0x79, 0x70, 0x65, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72,
-	0x53, 0x74, 0x61, 0x72, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x72, 0x6d, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x10, 0x80, 0x36, 0x12, 0x17, 0x0a, 0x12, 0x54, 0x79, 0x70, 0x65, 0x54, 0x65, 0x6c, 0x65,
-	0x70, 0x6f, 0x72, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x10, 0x80, 0x40, 0x12, 0x10, 0x0a,
-	0x0b, 0x54, 0x79, 0x70, 0x65, 0x4d, 0x6f, 0x76, 0x65, 0x41, 0x63, 0x6b, 0x10, 0x80, 0x44, 0x12,
-	0x1a, 0x0a, 0x15, 0x54, 0x79, 0x70, 0x65, 0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x10, 0x80, 0x74, 0x12, 0x1a, 0x0a, 0x15, 0x54,
-	0x79, 0x70, 0x65, 0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x43, 0x6c,
-	0x69, 0x65, 0x6e, 0x74, 0x10, 0x81, 0x74, 0x12, 0x1b, 0x0a, 0x15, 0x54, 0x79, 0x70, 0x65, 0x47,
-	0x65, 0x6e, 0x65, 0x72, 0x61, 0x6c, 0x4c, 0x69, 0x67, 0x68, 0x74, 0x4c, 0x65, 0x76, 0x65, 0x6c,
-	0x10, 0x80, 0x9e, 0x01, 0x12, 0x17, 0x0a, 0x11, 0x54, 0x79, 0x70, 0x65, 0x4c, 0x6f, 0x67, 0x69,
-	0x6e, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x10, 0x80, 0xaa, 0x01, 0x12, 0x1c, 0x0a,
-	0x16, 0x54, 0x79, 0x70, 0x65, 0x43, 0x68, 0x61, 0x72, 0x61, 0x63, 0x74, 0x65, 0x72, 0x53, 0x65,
-	0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x10, 0x80, 0xba, 0x01, 0x12, 0x13, 0x0a, 0x0d, 0x54,
-	0x79, 0x70, 0x65, 0x50, 0x6c, 0x61, 0x79, 0x4d, 0x75, 0x73, 0x69, 0x63, 0x10, 0x80, 0xda, 0x01,
-	0x12, 0x11, 0x0a, 0x0b, 0x54, 0x79, 0x70, 0x65, 0x57, 0x61, 0x72, 0x6d, 0x6f, 0x64, 0x65, 0x10,
-	0x80, 0xe4, 0x01, 0x12, 0x16, 0x0a, 0x10, 0x54, 0x79, 0x70, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x10, 0x80, 0xf0, 0x01, 0x12, 0x13, 0x0a, 0x0d, 0x54,
-	0x79, 0x70, 0x65, 0x4d, 0x61, 0x70, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x10, 0x88, 0xfe, 0x02,
-	0x12, 0x1b, 0x0a, 0x15, 0x54, 0x79, 0x70, 0x65, 0x41, 0x70, 0x70, 0x6c, 0x79, 0x57, 0x6f, 0x72,
-	0x6c, 0x64, 0x50, 0x61, 0x74, 0x63, 0x68, 0x65, 0x73, 0x10, 0x98, 0xfe, 0x02, 0x12, 0x17, 0x0a,
-	0x11, 0x54, 0x79, 0x70, 0x65, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x53, 0x74, 0x61,
-	0x74, 0x73, 0x10, 0x99, 0xfe, 0x02, 0x32, 0x4d, 0x0a, 0x0b, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3e, 0x0a, 0x0e, 0x6f, 0x70, 0x65, 0x6e, 0x47, 0x61, 0x6d,
-	0x65, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x12, 0x13, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x53,
-	0x74, 0x72, 0x65, 0x61, 0x6d, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x1a, 0x13, 0x2e, 0x67,
-	0x61, 0x6d, 0x65, 0x2e, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67,
-	0x65, 0x28, 0x01, 0x30, 0x01, 0x42, 0x41, 0x0a, 0x23, 0x64, 0x65, 0x76, 0x2e, 0x63, 0x61, 0x76,
-	0x65, 0x66, 0x69, 0x73, 0x68, 0x2e, 0x79, 0x61, 0x6d, 0x75, 0x6c, 0x2e, 0x62, 0x61, 0x63, 0x6b,
-	0x65, 0x6e, 0x64, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x61, 0x70, 0x69, 0x50, 0x01, 0x5a, 0x12,
-	0x2e, 0x2f, 0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
-	0x65, 0x73, 0x88, 0x01, 0x01, 0xa0, 0x01, 0x01, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x0c, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x12, 0x40, 0x0a,
+	0x0d, 0x6f, 0x70, 0x65, 0x6e, 0x50, 0x61, 0x70, 0x65, 0x72, 0x44, 0x6f, 0x6c, 0x6c, 0x18, 0x80,
+	0x90, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x4d, 0x73,
+	0x67, 0x4f, 0x70, 0x65, 0x6e, 0x50, 0x61, 0x70, 0x65, 0x72, 0x44, 0x6f, 0x6c, 0x6c, 0x48, 0x00,
+	0x52, 0x0d, 0x6f, 0x70, 0x65, 0x6e, 0x50, 0x61, 0x70, 0x65, 0x72, 0x44, 0x6f, 0x6c, 0x6c, 0x12,
+	0x34, 0x0a, 0x09, 0x6d, 0x61, 0x70, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x18, 0x88, 0xfe, 0x02,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x4d, 0x73, 0x67, 0x4d,
+	0x61, 0x70, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x48, 0x00, 0x52, 0x09, 0x6d, 0x61, 0x70, 0x43,
+	0x68, 0x61, 0x6e, 0x67, 0x65, 0x12, 0x4c, 0x0a, 0x11, 0x61, 0x70, 0x70, 0x6c, 0x79, 0x57, 0x6f,
+	0x72, 0x6c, 0x64, 0x50, 0x61, 0x74, 0x63, 0x68, 0x65, 0x73, 0x18, 0x98, 0xfe, 0x02, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x4d, 0x73, 0x67, 0x41, 0x70, 0x70,
+	0x6c, 0x79, 0x57, 0x6f, 0x72, 0x6c, 0x64, 0x50, 0x61, 0x74, 0x63, 0x68, 0x65, 0x73, 0x48, 0x00,
+	0x52, 0x11, 0x61, 0x70, 0x70, 0x6c, 0x79, 0x57, 0x6f, 0x72, 0x6c, 0x64, 0x50, 0x61, 0x74, 0x63,
+	0x68, 0x65, 0x73, 0x12, 0x40, 0x0a, 0x0d, 0x65, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x53,
+	0x74, 0x61, 0x74, 0x73, 0x18, 0x99, 0xfe, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x67,
+	0x61, 0x6d, 0x65, 0x2e, 0x4d, 0x73, 0x67, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x53,
+	0x74, 0x61, 0x74, 0x73, 0x48, 0x00, 0x52, 0x0d, 0x65, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64,
+	0x53, 0x74, 0x61, 0x74, 0x73, 0x42, 0x05, 0x0a, 0x03, 0x6d, 0x73, 0x67, 0x22, 0x55, 0x0a, 0x0d,
+	0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x12, 0x21, 0x0a,
+	0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x0d, 0x2e, 0x67, 0x61,
+	0x6d, 0x65, 0x2e, 0x4d, 0x73, 0x67, 0x54, 0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65,
+	0x12, 0x21, 0x0a, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d,
+	0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52, 0x04, 0x62,
+	0x6f, 0x64, 0x79, 0x2a, 0x76, 0x0a, 0x12, 0x4d, 0x73, 0x67, 0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x79, 0x70, 0x65, 0x12, 0x09, 0x0a, 0x05, 0x62, 0x61, 0x73,
+	0x69, 0x63, 0x10, 0x00, 0x12, 0x0b, 0x0a, 0x07, 0x67, 0x6f, 0x64, 0x56, 0x69, 0x65, 0x77, 0x10,
+	0x01, 0x12, 0x11, 0x0a, 0x0d, 0x62, 0x61, 0x73, 0x69, 0x63, 0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x43,
+	0x61, 0x70, 0x10, 0x02, 0x12, 0x13, 0x0a, 0x0f, 0x67, 0x6f, 0x64, 0x56, 0x69, 0x65, 0x77, 0x53,
+	0x6b, 0x69, 0x6c, 0x6c, 0x43, 0x61, 0x70, 0x10, 0x03, 0x12, 0x13, 0x0a, 0x0e, 0x75, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x43, 0x61, 0x70, 0x10, 0xdf, 0x01, 0x12, 0x0b,
+	0x0a, 0x06, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x10, 0xff, 0x01, 0x2a, 0x34, 0x0a, 0x14, 0x4d,
+	0x73, 0x67, 0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x53, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x12, 0x06, 0x0a, 0x02, 0x75, 0x70, 0x10, 0x00, 0x12, 0x08, 0x0a, 0x04, 0x64,
+	0x6f, 0x77, 0x6e, 0x10, 0x01, 0x12, 0x0a, 0x0a, 0x06, 0x6c, 0x6f, 0x63, 0x6b, 0x65, 0x64, 0x10,
+	0x02, 0x2a, 0x7d, 0x0a, 0x1e, 0x4d, 0x73, 0x67, 0x54, 0x65, 0x6c, 0x65, 0x70, 0x6f, 0x72, 0x74,
+	0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x5f, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x53, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x12, 0x0a, 0x0a, 0x06, 0x6e, 0x6f, 0x72, 0x6d, 0x61, 0x6c, 0x10, 0x00, 0x12,
+	0x15, 0x0a, 0x11, 0x63, 0x61, 0x6e, 0x41, 0x6c, 0x74, 0x65, 0x72, 0x50, 0x61, 0x70, 0x65, 0x72,
+	0x44, 0x6f, 0x6c, 0x6c, 0x10, 0x02, 0x12, 0x0c, 0x0a, 0x08, 0x70, 0x6f, 0x69, 0x73, 0x6f, 0x6e,
+	0x65, 0x64, 0x10, 0x04, 0x12, 0x10, 0x0a, 0x0c, 0x67, 0x6f, 0x6c, 0x64, 0x65, 0x6e, 0x48, 0x65,
+	0x61, 0x6c, 0x74, 0x68, 0x10, 0x08, 0x12, 0x0b, 0x0a, 0x07, 0x77, 0x61, 0x72, 0x4d, 0x6f, 0x64,
+	0x65, 0x10, 0x40, 0x12, 0x0b, 0x0a, 0x06, 0x68, 0x69, 0x64, 0x64, 0x65, 0x6e, 0x10, 0x80, 0x01,
+	0x2a, 0xfe, 0x03, 0x0a, 0x07, 0x4d, 0x73, 0x67, 0x54, 0x79, 0x70, 0x65, 0x12, 0x11, 0x0a, 0x0d,
+	0x54, 0x79, 0x70, 0x65, 0x55, 0x6e, 0x64, 0x65, 0x66, 0x69, 0x6e, 0x65, 0x64, 0x10, 0x00, 0x12,
+	0x1a, 0x0a, 0x15, 0x54, 0x79, 0x70, 0x65, 0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x4d, 0x6f, 0x76,
+	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x10, 0x80, 0x04, 0x12, 0x1a, 0x0a, 0x15, 0x54,
+	0x79, 0x70, 0x65, 0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x44, 0x6f, 0x75, 0x62, 0x6c, 0x65, 0x43,
+	0x6c, 0x69, 0x63, 0x6b, 0x10, 0x80, 0x0c, 0x12, 0x12, 0x0a, 0x0d, 0x54, 0x79, 0x70, 0x65, 0x48,
+	0x65, 0x61, 0x6c, 0x74, 0x68, 0x42, 0x61, 0x72, 0x10, 0x80, 0x2e, 0x12, 0x17, 0x0a, 0x12, 0x54,
+	0x79, 0x70, 0x65, 0x53, 0x74, 0x61, 0x74, 0x57, 0x69, 0x6e, 0x64, 0x6f, 0x77, 0x49, 0x6e, 0x66,
+	0x6f, 0x10, 0x80, 0x22, 0x12, 0x20, 0x0a, 0x1b, 0x54, 0x79, 0x70, 0x65, 0x50, 0x6c, 0x61, 0x79,
+	0x65, 0x72, 0x53, 0x74, 0x61, 0x72, 0x74, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x72, 0x6d, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x10, 0x80, 0x36, 0x12, 0x17, 0x0a, 0x12, 0x54, 0x79, 0x70, 0x65, 0x54, 0x65,
+	0x6c, 0x65, 0x70, 0x6f, 0x72, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x10, 0x80, 0x40, 0x12,
+	0x10, 0x0a, 0x0b, 0x54, 0x79, 0x70, 0x65, 0x4d, 0x6f, 0x76, 0x65, 0x41, 0x63, 0x6b, 0x10, 0x80,
+	0x44, 0x12, 0x1a, 0x0a, 0x15, 0x54, 0x79, 0x70, 0x65, 0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x10, 0x80, 0x74, 0x12, 0x1a, 0x0a,
+	0x15, 0x54, 0x79, 0x70, 0x65, 0x53, 0x6b, 0x69, 0x6c, 0x6c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x10, 0x81, 0x74, 0x12, 0x1b, 0x0a, 0x15, 0x54, 0x79, 0x70,
+	0x65, 0x47, 0x65, 0x6e, 0x65, 0x72, 0x61, 0x6c, 0x4c, 0x69, 0x67, 0x68, 0x74, 0x4c, 0x65, 0x76,
+	0x65, 0x6c, 0x10, 0x80, 0x9e, 0x01, 0x12, 0x17, 0x0a, 0x11, 0x54, 0x79, 0x70, 0x65, 0x4c, 0x6f,
+	0x67, 0x69, 0x6e, 0x43, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x10, 0x80, 0xaa, 0x01, 0x12,
+	0x1c, 0x0a, 0x16, 0x54, 0x79, 0x70, 0x65, 0x43, 0x68, 0x61, 0x72, 0x61, 0x63, 0x74, 0x65, 0x72,
+	0x53, 0x65, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x10, 0x80, 0xba, 0x01, 0x12, 0x13, 0x0a,
+	0x0d, 0x54, 0x79, 0x70, 0x65, 0x50, 0x6c, 0x61, 0x79, 0x4d, 0x75, 0x73, 0x69, 0x63, 0x10, 0x80,
+	0xda, 0x01, 0x12, 0x11, 0x0a, 0x0b, 0x54, 0x79, 0x70, 0x65, 0x57, 0x61, 0x72, 0x6d, 0x6f, 0x64,
+	0x65, 0x10, 0x80, 0xe4, 0x01, 0x12, 0x16, 0x0a, 0x10, 0x54, 0x79, 0x70, 0x65, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x10, 0x80, 0xf0, 0x01, 0x12, 0x17, 0x0a,
+	0x11, 0x54, 0x79, 0x70, 0x65, 0x4f, 0x70, 0x65, 0x6e, 0x50, 0x61, 0x70, 0x65, 0x72, 0x44, 0x6f,
+	0x6c, 0x6c, 0x10, 0x80, 0x90, 0x02, 0x12, 0x13, 0x0a, 0x0d, 0x54, 0x79, 0x70, 0x65, 0x4d, 0x61,
+	0x70, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x10, 0x88, 0xfe, 0x02, 0x12, 0x1b, 0x0a, 0x15, 0x54,
+	0x79, 0x70, 0x65, 0x41, 0x70, 0x70, 0x6c, 0x79, 0x57, 0x6f, 0x72, 0x6c, 0x64, 0x50, 0x61, 0x74,
+	0x63, 0x68, 0x65, 0x73, 0x10, 0x98, 0xfe, 0x02, 0x12, 0x17, 0x0a, 0x11, 0x54, 0x79, 0x70, 0x65,
+	0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x53, 0x74, 0x61, 0x74, 0x73, 0x10, 0x99, 0xfe,
+	0x02, 0x32, 0x4d, 0x0a, 0x0b, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x12, 0x3e, 0x0a, 0x0e, 0x6f, 0x70, 0x65, 0x6e, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x74, 0x72, 0x65,
+	0x61, 0x6d, 0x12, 0x13, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d,
+	0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x1a, 0x13, 0x2e, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x53,
+	0x74, 0x72, 0x65, 0x61, 0x6d, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x28, 0x01, 0x30, 0x01,
+	0x42, 0x41, 0x0a, 0x23, 0x64, 0x65, 0x76, 0x2e, 0x63, 0x61, 0x76, 0x65, 0x66, 0x69, 0x73, 0x68,
+	0x2e, 0x79, 0x61, 0x6d, 0x75, 0x6c, 0x2e, 0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2e, 0x67,
+	0x61, 0x6d, 0x65, 0x2e, 0x61, 0x70, 0x69, 0x50, 0x01, 0x5a, 0x12, 0x2e, 0x2f, 0x62, 0x61, 0x63,
+	0x6b, 0x65, 0x6e, 0x64, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x88, 0x01, 0x01,
+	0xa0, 0x01, 0x01, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -3151,7 +3243,7 @@ func file_yamul_backend_game_proto_rawDescGZIP() []byte {
 }
 
 var file_yamul_backend_game_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_yamul_backend_game_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
+var file_yamul_backend_game_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_yamul_backend_game_proto_goTypes = []interface{}{
 	(MsgSkillUpdateType)(0),                                 // 0: game.MsgSkillUpdateType
 	(MsgSkillUpdateStatus)(0),                               // 1: game.MsgSkillUpdateStatus
@@ -3174,84 +3266,87 @@ var file_yamul_backend_game_proto_goTypes = []interface{}{
 	(*MsgStatWindowInfo)(nil),                               // 18: game.MsgStatWindowInfo
 	(*MsgTeleportPlayer)(nil),                               // 19: game.MsgTeleportPlayer
 	(*MsgUpdateObject)(nil),                                 // 20: game.MsgUpdateObject
-	(*MsgUpdateObjectItems)(nil),                            // 21: game.MsgUpdateObjectItems
-	(*MsgWarmode)(nil),                                      // 22: game.MsgWarmode
-	(*Message)(nil),                                         // 23: game.Message
-	(*StreamPackage)(nil),                                   // 24: game.StreamPackage
-	(*MsgExtendedStats_MsgExtendedStats_Dead)(nil),          // 25: game.MsgExtendedStats.MsgExtendedStats_Dead
-	(*MsgExtendedStats_MsgExtendedStats_AttributeLock)(nil), // 26: game.MsgExtendedStats.MsgExtendedStats_AttributeLock
-	(*MsgHealthBar_Values)(nil),                             // 27: game.MsgHealthBar.Values
-	(*MsgSkillUpdateServer_MsgSkillUpdateSkills)(nil),       // 28: game.MsgSkillUpdateServer.MsgSkillUpdateSkills
-	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2)(nil),       // 29: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2
-	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3)(nil),                                                                                                 // 30: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3
-	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4)(nil),                                                                         // 31: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4
-	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5)(nil),                                                 // 32: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5
-	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6)(nil),                         // 33: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6
-	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6_MsgStatWindowInfoLevel7)(nil), // 34: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6.MsgStatWindowInfoLevel7
-	(ObjectDirection)(0), // 35: common.ObjectDirection
-	(*ObjectId)(nil),     // 36: common.ObjectId
-	(Notoriety)(0),       // 37: common.Notoriety
-	(*Coordinate)(nil),   // 38: common.Coordinate
+	(*MsgOpenPaperDoll)(nil),                                // 21: game.MsgOpenPaperDoll
+	(*MsgUpdateObjectItems)(nil),                            // 22: game.MsgUpdateObjectItems
+	(*MsgWarmode)(nil),                                      // 23: game.MsgWarmode
+	(*Message)(nil),                                         // 24: game.Message
+	(*StreamPackage)(nil),                                   // 25: game.StreamPackage
+	(*MsgExtendedStats_MsgExtendedStats_Dead)(nil),          // 26: game.MsgExtendedStats.MsgExtendedStats_Dead
+	(*MsgExtendedStats_MsgExtendedStats_AttributeLock)(nil), // 27: game.MsgExtendedStats.MsgExtendedStats_AttributeLock
+	(*MsgHealthBar_Values)(nil),                             // 28: game.MsgHealthBar.Values
+	(*MsgSkillUpdateServer_MsgSkillUpdateSkills)(nil),       // 29: game.MsgSkillUpdateServer.MsgSkillUpdateSkills
+	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2)(nil),       // 30: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2
+	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3)(nil),                                                                                                 // 31: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3
+	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4)(nil),                                                                         // 32: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4
+	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5)(nil),                                                 // 33: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5
+	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6)(nil),                         // 34: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6
+	(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6_MsgStatWindowInfoLevel7)(nil), // 35: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6.MsgStatWindowInfoLevel7
+	(ObjectDirection)(0), // 36: common.ObjectDirection
+	(*ObjectId)(nil),     // 37: common.ObjectId
+	(Notoriety)(0),       // 38: common.Notoriety
+	(*Coordinate)(nil),   // 39: common.Coordinate
 }
 var file_yamul_backend_game_proto_depIdxs = []int32{
-	35, // 0: game.MsgClientMoveRequest.direction:type_name -> common.ObjectDirection
-	36, // 1: game.MsgClientDoubleClick.target:type_name -> common.ObjectId
-	25, // 2: game.MsgExtendedStats.dead:type_name -> game.MsgExtendedStats.MsgExtendedStats_Dead
-	26, // 3: game.MsgExtendedStats.lock:type_name -> game.MsgExtendedStats.MsgExtendedStats_AttributeLock
-	36, // 4: game.MsgHealthBar.id:type_name -> common.ObjectId
-	27, // 5: game.MsgHealthBar.values:type_name -> game.MsgHealthBar.Values
-	37, // 6: game.MsgMoveAck.notorietyFlags:type_name -> common.Notoriety
+	36, // 0: game.MsgClientMoveRequest.direction:type_name -> common.ObjectDirection
+	37, // 1: game.MsgClientDoubleClick.target:type_name -> common.ObjectId
+	26, // 2: game.MsgExtendedStats.dead:type_name -> game.MsgExtendedStats.MsgExtendedStats_Dead
+	27, // 3: game.MsgExtendedStats.lock:type_name -> game.MsgExtendedStats.MsgExtendedStats_AttributeLock
+	37, // 4: game.MsgHealthBar.id:type_name -> common.ObjectId
+	28, // 5: game.MsgHealthBar.values:type_name -> game.MsgHealthBar.Values
+	38, // 6: game.MsgMoveAck.notorietyFlags:type_name -> common.Notoriety
 	0,  // 7: game.MsgSkillUpdateServer.type:type_name -> game.MsgSkillUpdateType
-	28, // 8: game.MsgSkillUpdateServer.skills:type_name -> game.MsgSkillUpdateServer.MsgSkillUpdateSkills
+	29, // 8: game.MsgSkillUpdateServer.skills:type_name -> game.MsgSkillUpdateServer.MsgSkillUpdateSkills
 	1,  // 9: game.MsgSkillUpdateClient.status:type_name -> game.MsgSkillUpdateStatus
-	36, // 10: game.MsgPlayerStartConfirmation.id:type_name -> common.ObjectId
-	38, // 11: game.MsgPlayerStartConfirmation.coordinates:type_name -> common.Coordinate
-	35, // 12: game.MsgPlayerStartConfirmation.direction:type_name -> common.ObjectDirection
-	36, // 13: game.MsgStatWindowInfo.characterID:type_name -> common.ObjectId
-	29, // 14: game.MsgStatWindowInfo.level2:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2
-	36, // 15: game.MsgTeleportPlayer.id:type_name -> common.ObjectId
+	37, // 10: game.MsgPlayerStartConfirmation.id:type_name -> common.ObjectId
+	39, // 11: game.MsgPlayerStartConfirmation.coordinates:type_name -> common.Coordinate
+	36, // 12: game.MsgPlayerStartConfirmation.direction:type_name -> common.ObjectDirection
+	37, // 13: game.MsgStatWindowInfo.characterID:type_name -> common.ObjectId
+	30, // 14: game.MsgStatWindowInfo.level2:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2
+	37, // 15: game.MsgTeleportPlayer.id:type_name -> common.ObjectId
 	2,  // 16: game.MsgTeleportPlayer.status:type_name -> game.MsgTeleportPlayer_PlayerStatus
-	38, // 17: game.MsgTeleportPlayer.coordinates:type_name -> common.Coordinate
-	35, // 18: game.MsgTeleportPlayer.direction:type_name -> common.ObjectDirection
-	36, // 19: game.MsgUpdateObject.id:type_name -> common.ObjectId
-	37, // 20: game.MsgUpdateObject.notorietyFlags:type_name -> common.Notoriety
-	21, // 21: game.MsgUpdateObject.items:type_name -> game.MsgUpdateObjectItems
-	36, // 22: game.MsgUpdateObjectItems.id:type_name -> common.ObjectId
-	7,  // 23: game.Message.clientMoveRequest:type_name -> game.MsgClientMoveRequest
-	8,  // 24: game.Message.clientDoubleClick:type_name -> game.MsgClientDoubleClick
-	10, // 25: game.Message.healthBar:type_name -> game.MsgHealthBar
-	18, // 26: game.Message.statWindowInfo:type_name -> game.MsgStatWindowInfo
-	16, // 27: game.Message.playerStartConfirmation:type_name -> game.MsgPlayerStartConfirmation
-	19, // 28: game.Message.teleportPlayer:type_name -> game.MsgTeleportPlayer
-	13, // 29: game.Message.moveAck:type_name -> game.MsgMoveAck
-	14, // 30: game.Message.skillUpdateServer:type_name -> game.MsgSkillUpdateServer
-	15, // 31: game.Message.skillUpdateClient:type_name -> game.MsgSkillUpdateClient
-	11, // 32: game.Message.GeneralLightLevel:type_name -> game.MsgGeneralLightLevel
-	6,  // 33: game.Message.characterSelection:type_name -> game.MsgCharacterSelection
-	17, // 34: game.Message.playMusic:type_name -> game.MsgPlayMusic
-	22, // 35: game.Message.warmode:type_name -> game.MsgWarmode
-	20, // 36: game.Message.updateObject:type_name -> game.MsgUpdateObject
-	12, // 37: game.Message.mapChange:type_name -> game.MsgMapChange
-	5,  // 38: game.Message.applyWorldPatches:type_name -> game.MsgApplyWorldPatches
-	9,  // 39: game.Message.extendedStats:type_name -> game.MsgExtendedStats
-	3,  // 40: game.StreamPackage.type:type_name -> game.MsgType
-	23, // 41: game.StreamPackage.body:type_name -> game.Message
-	36, // 42: game.MsgExtendedStats.MsgExtendedStats_Dead.id:type_name -> common.ObjectId
-	36, // 43: game.MsgExtendedStats.MsgExtendedStats_AttributeLock.id:type_name -> common.ObjectId
-	4,  // 44: game.MsgHealthBar.Values.type:type_name -> game.MsgHealthBar.Values.Type
-	1,  // 45: game.MsgSkillUpdateServer.MsgSkillUpdateSkills.status:type_name -> game.MsgSkillUpdateStatus
-	30, // 46: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.level3:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3
-	31, // 47: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.level4:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4
-	32, // 48: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.level5:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5
-	33, // 49: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.level6:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6
-	34, // 50: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6.level7:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6.MsgStatWindowInfoLevel7
-	24, // 51: game.GameService.openGameStream:input_type -> game.StreamPackage
-	24, // 52: game.GameService.openGameStream:output_type -> game.StreamPackage
-	52, // [52:53] is the sub-list for method output_type
-	51, // [51:52] is the sub-list for method input_type
-	51, // [51:51] is the sub-list for extension type_name
-	51, // [51:51] is the sub-list for extension extendee
-	0,  // [0:51] is the sub-list for field type_name
+	39, // 17: game.MsgTeleportPlayer.coordinates:type_name -> common.Coordinate
+	36, // 18: game.MsgTeleportPlayer.direction:type_name -> common.ObjectDirection
+	37, // 19: game.MsgUpdateObject.id:type_name -> common.ObjectId
+	38, // 20: game.MsgUpdateObject.notorietyFlags:type_name -> common.Notoriety
+	22, // 21: game.MsgUpdateObject.items:type_name -> game.MsgUpdateObjectItems
+	37, // 22: game.MsgOpenPaperDoll.id:type_name -> common.ObjectId
+	37, // 23: game.MsgUpdateObjectItems.id:type_name -> common.ObjectId
+	7,  // 24: game.Message.clientMoveRequest:type_name -> game.MsgClientMoveRequest
+	8,  // 25: game.Message.clientDoubleClick:type_name -> game.MsgClientDoubleClick
+	10, // 26: game.Message.healthBar:type_name -> game.MsgHealthBar
+	18, // 27: game.Message.statWindowInfo:type_name -> game.MsgStatWindowInfo
+	16, // 28: game.Message.playerStartConfirmation:type_name -> game.MsgPlayerStartConfirmation
+	19, // 29: game.Message.teleportPlayer:type_name -> game.MsgTeleportPlayer
+	13, // 30: game.Message.moveAck:type_name -> game.MsgMoveAck
+	14, // 31: game.Message.skillUpdateServer:type_name -> game.MsgSkillUpdateServer
+	15, // 32: game.Message.skillUpdateClient:type_name -> game.MsgSkillUpdateClient
+	11, // 33: game.Message.GeneralLightLevel:type_name -> game.MsgGeneralLightLevel
+	6,  // 34: game.Message.characterSelection:type_name -> game.MsgCharacterSelection
+	17, // 35: game.Message.playMusic:type_name -> game.MsgPlayMusic
+	23, // 36: game.Message.warmode:type_name -> game.MsgWarmode
+	20, // 37: game.Message.updateObject:type_name -> game.MsgUpdateObject
+	21, // 38: game.Message.openPaperDoll:type_name -> game.MsgOpenPaperDoll
+	12, // 39: game.Message.mapChange:type_name -> game.MsgMapChange
+	5,  // 40: game.Message.applyWorldPatches:type_name -> game.MsgApplyWorldPatches
+	9,  // 41: game.Message.extendedStats:type_name -> game.MsgExtendedStats
+	3,  // 42: game.StreamPackage.type:type_name -> game.MsgType
+	24, // 43: game.StreamPackage.body:type_name -> game.Message
+	37, // 44: game.MsgExtendedStats.MsgExtendedStats_Dead.id:type_name -> common.ObjectId
+	37, // 45: game.MsgExtendedStats.MsgExtendedStats_AttributeLock.id:type_name -> common.ObjectId
+	4,  // 46: game.MsgHealthBar.Values.type:type_name -> game.MsgHealthBar.Values.Type
+	1,  // 47: game.MsgSkillUpdateServer.MsgSkillUpdateSkills.status:type_name -> game.MsgSkillUpdateStatus
+	31, // 48: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.level3:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3
+	32, // 49: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.level4:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4
+	33, // 50: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.level5:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5
+	34, // 51: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.level6:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6
+	35, // 52: game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6.level7:type_name -> game.MsgStatWindowInfo.MsgStatWindowInfoLevel2.MsgStatWindowInfoLevel3.MsgStatWindowInfoLevel4.MsgStatWindowInfoLevel5.MsgStatWindowInfoLevel6.MsgStatWindowInfoLevel7
+	25, // 53: game.GameService.openGameStream:input_type -> game.StreamPackage
+	25, // 54: game.GameService.openGameStream:output_type -> game.StreamPackage
+	54, // [54:55] is the sub-list for method output_type
+	53, // [53:54] is the sub-list for method input_type
+	53, // [53:53] is the sub-list for extension type_name
+	53, // [53:53] is the sub-list for extension extendee
+	0,  // [0:53] is the sub-list for field type_name
 }
 
 func init() { file_yamul_backend_game_proto_init() }
@@ -3454,7 +3549,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgUpdateObjectItems); i {
+			switch v := v.(*MsgOpenPaperDoll); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3466,7 +3561,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgWarmode); i {
+			switch v := v.(*MsgUpdateObjectItems); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3478,7 +3573,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Message); i {
+			switch v := v.(*MsgWarmode); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3490,7 +3585,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*StreamPackage); i {
+			switch v := v.(*Message); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3502,7 +3597,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgExtendedStats_MsgExtendedStats_Dead); i {
+			switch v := v.(*StreamPackage); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3514,7 +3609,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgExtendedStats_MsgExtendedStats_AttributeLock); i {
+			switch v := v.(*MsgExtendedStats_MsgExtendedStats_Dead); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3526,7 +3621,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgHealthBar_Values); i {
+			switch v := v.(*MsgExtendedStats_MsgExtendedStats_AttributeLock); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3538,7 +3633,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgSkillUpdateServer_MsgSkillUpdateSkills); i {
+			switch v := v.(*MsgHealthBar_Values); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3550,7 +3645,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgStatWindowInfo_MsgStatWindowInfoLevel2); i {
+			switch v := v.(*MsgSkillUpdateServer_MsgSkillUpdateSkills); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3562,7 +3657,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3); i {
+			switch v := v.(*MsgStatWindowInfo_MsgStatWindowInfoLevel2); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3574,7 +3669,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4); i {
+			switch v := v.(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3586,7 +3681,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5); i {
+			switch v := v.(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3598,7 +3693,7 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6); i {
+			switch v := v.(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3610,6 +3705,18 @@ func file_yamul_backend_game_proto_init() {
 			}
 		}
 		file_yamul_backend_game_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_yamul_backend_game_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*MsgStatWindowInfo_MsgStatWindowInfoLevel2_MsgStatWindowInfoLevel3_MsgStatWindowInfoLevel4_MsgStatWindowInfoLevel5_MsgStatWindowInfoLevel6_MsgStatWindowInfoLevel7); i {
 			case 0:
 				return &v.state
@@ -3626,7 +3733,7 @@ func file_yamul_backend_game_proto_init() {
 		(*MsgExtendedStats_Dead)(nil),
 		(*MsgExtendedStats_Lock)(nil),
 	}
-	file_yamul_backend_game_proto_msgTypes[18].OneofWrappers = []interface{}{
+	file_yamul_backend_game_proto_msgTypes[19].OneofWrappers = []interface{}{
 		(*Message_ClientMoveRequest)(nil),
 		(*Message_ClientDoubleClick)(nil),
 		(*Message_HealthBar)(nil),
@@ -3641,6 +3748,7 @@ func file_yamul_backend_game_proto_init() {
 		(*Message_PlayMusic)(nil),
 		(*Message_Warmode)(nil),
 		(*Message_UpdateObject)(nil),
+		(*Message_OpenPaperDoll)(nil),
 		(*Message_MapChange)(nil),
 		(*Message_ApplyWorldPatches)(nil),
 		(*Message_ExtendedStats)(nil),
@@ -3651,7 +3759,7 @@ func file_yamul_backend_game_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_yamul_backend_game_proto_rawDesc,
 			NumEnums:      5,
-			NumMessages:   30,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -17,6 +17,7 @@ class InMemoryInitRepositories(
     fun init() {
         val playerCharacterObject = GameObject(
             name = "John Doe",
+            isCharacter = true,
             parentId = null,
             graphicId = GraphicId.BodyHumanMale,
             hue = Hues.Character.hue,
