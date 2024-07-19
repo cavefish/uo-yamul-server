@@ -44,7 +44,7 @@ class GameStreamObserver(
 
     override fun send(msgType: MsgType, f: (Message.Builder) -> Unit) {
         val body = StreamPackage.newBuilder().setType(msgType).setBody(Message.newBuilder().apply(f)).build()
-        Logger.debug(body)
+        // Logger.debug(body)
         outputStream.onNext(body)
     }
 }

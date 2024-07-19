@@ -5,4 +5,5 @@ import io.grpc.Context
 
 object Constants {
     val AUTH_CONTEXT_LOGGED_USER: Context.Key<LoggedUser> = Context.key("AUTH_CONTEXT_LOGGED_USER")
+    const val MULTIMA_PATH = "MULTIMA_PATH"
 }

@@ -26,7 +26,6 @@ import dev.cavefish.yamul.backend.game.controller.domain.LoggedUser
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRealtimeLocalization
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRepository
 import dev.cavefish.yamul.backend.game.controller.infra.UserCharacterRepository
-import dev.cavefish.yamul.backend.game.controller.infra.mul.HueMulRepository
 import dev.cavefish.yamul.backend.game.controller.mappers.CharacterSkillUpdateMapper
 import dev.cavefish.yamul.backend.game.controller.mappers.CharacterStatWindowMapper
 import dev.cavefish.yamul.backend.game.controller.senders.PlayerStartConfirmationSender
@@ -41,7 +40,6 @@ class OnCharacterSelectedProcessor(
     private val gameObjectRealtimeLocalization: GameObjectRealtimeLocalization,
     private val characterStatWindowMapper: CharacterStatWindowMapper,
     private val characterSkillUpdateMapper: CharacterSkillUpdateMapper,
-    private val hueMulRepository: HueMulRepository,
 ) : MessageProcessor<MsgCharacterSelection>(MsgType.TypeCharacterSelection, Message::getCharacterSelection) {
 
     @SuppressWarnings("MaxLineLength", "MagicNumber", "LongMethod") // TODO remove exceptions
@@ -83,7 +81,7 @@ class OnCharacterSelectedProcessor(
                 MsgUpdateObject.newBuilder()
                     .setId(createObjectId(gameObject.id))
                     .setGraphicId(gameObject.graphicId.id)
-                    .setHue(hueMulRepository.map(gameObject.hue))
+                    .setHue(gameObject.hue.toUInt16().toInt())
                     .addAllFlags(gameObject.flags.map { f -> Flags.forNumber(f.id) })
                     .addAllNotorietyFlags(gameObject.notoriety.map { n-> Notoriety.forNumber(n.id) })
                     .addAllItems(gameObject.items.map { item ->
@@ -125,7 +123,7 @@ class OnCharacterSelectedProcessor(
 
     private fun createItem(id: Int, graphicId: GraphicId, hue: Hue, layer: Int): MsgUpdateObjectItems.Builder =
         MsgUpdateObjectItems.newBuilder().setId(createObjectId(id)).setGraphicId(graphicId.id)
-            .setHue(hueMulRepository.map(hue)).setLayer(layer)
+            .setHue(hue.toUInt16().toInt()).setLayer(layer)
 
 
     private fun createHealthBar(objectId: Int): MsgHealthBar.Builder = MsgHealthBar.newBuilder()
@@ -143,7 +141,7 @@ class OnCharacterSelectedProcessor(
             .setId(createObjectId(state.characterObject.id))
             .setCoordinates(createPlayerObjectCoordinates(state))
             .setGraphicId(state.characterObject.graphicId.id)
-            .setHue(hueMulRepository.map(state.characterObject.hue))
+            .setHue(state.characterObject.hue.toUInt16().toInt())
             .addAllStatusValue(state.characterObject.flags.map { f -> f.id })
 
     private fun createPlayerObjectCoordinates(state: GameState): Coordinate.Builder =

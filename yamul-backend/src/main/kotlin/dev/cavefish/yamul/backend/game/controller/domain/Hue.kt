@@ -1,30 +1,23 @@
 package dev.cavefish.yamul.backend.game.controller.domain
 
-import dev.cavefish.yamul.backend.game.controller.domain.Hue.Companion.P99
-import dev.cavefish.yamul.backend.game.controller.domain.Hue.Companion.P00
+@SuppressWarnings("MagicNumber")
+data class Hue(val group: UInt, val entry: UInt) {
 
-data class Hue(val red: UInt, val green: UInt, val blue: UInt) {
-
-    @SuppressWarnings("MagicNumber")
-    fun toUInt16():UInt { // TODO move this to the HueMulRepository
-        val newR = (red shr 3) and 0b11111u
-        val newG = (green shr 3) and 0b11111u
-        val newB = (blue shr 3) and 0b11111u
-        return (newR shl 10) or (newG shl 5) or (newB) or 0b0_00000_00000_00000u
+    fun toUInt16():UInt {
+        return (group shl 3) or (entry and 0b111u)
     }
 
     companion object {
-        const val P99:UInt = 0b11111_000u
-        const val P00:UInt = 0b00000_000u
+        fun fromHex(hex: UInt): Hue = Hue(hex shr 3, hex and 0b111u)
     }
 }
 
 @SuppressWarnings("MagicNumber")
 enum class Hues(val hue: Hue) {
-    Red(Hue(P99, P00, P00)),
-    Green(Hue(P00, P99, P00)),
-    Blue(Hue(P00, P00, P99)),
-    White(Hue(P99, P99, P99)),
-    Black(Hue(P00, P00, P00)),
-    Character(Hue(P00, P99, 0b01010_000u)),
+    Red(Hue.fromHex(0x641u)),
+    Green(Hue.fromHex(0x0579u)),
+    Blue(Hue.fromHex(0x0515u)),
+    White(Hue.fromHex(0x07f6u)),
+    Black(Hue.fromHex(0x0497u)),
+    Character(Hue.fromHex(0x03eau)),
 }
