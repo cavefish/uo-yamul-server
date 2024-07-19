@@ -11,18 +11,18 @@ class HueTest {
 
     @ParameterizedTest
     @MethodSource
-    fun toInt16(expected: Int, value: Hue) {
-        assertThat(value.toInt16()).isEqualTo(expected)
+    fun toUInt16(expected: Int, value: Hue) {
+        assertThat(value.toUInt16()).isEqualTo(expected)
     }
 
     companion object {
         @JvmStatic
-        private fun toInt16(): Stream<Arguments> = Stream.of(
-            Arguments.of(0b1_00000_00000_00000, Hue(red = 0, green = 0, blue = 0)),
-            Arguments.of(0b1_11111_00000_00000, Hue(red = 255, green = 0, blue = 0)),
-            Arguments.of(0b1_00000_11111_00000, Hue(red = 0, green = 255, blue = 0)),
-            Arguments.of(0b1_00000_00000_11111, Hue(red = 0, green = 0, blue = 255)),
-            Arguments.of(0b1_11111_11111_11111, Hue(red = 255, green = 255, blue = 255)),
+        private fun toUInt16(): Stream<Arguments> = Stream.of(
+            Arguments.of(0b1_00000_00000_00000, Hue(red = 0u, green = 0u, blue = 0u)),
+            Arguments.of(0b1_11111_00000_00000, Hue(red = 255u, green = 0u, blue = 0u)),
+            Arguments.of(0b1_00000_11111_00000, Hue(red = 0u, green = 255u, blue = 0u)),
+            Arguments.of(0b1_00000_00000_11111, Hue(red = 0u, green = 0u, blue = 255u)),
+            Arguments.of(0b1_11111_11111_11111, Hue(red = 255u, green = 255u, blue = 255u)),
         )
     }
 }
