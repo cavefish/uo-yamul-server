@@ -72,7 +72,7 @@ class OnCharacterSelectedProcessor(
         wrapper.send(MsgType.TypePlayMusic) { it.setPlayMusic(MsgPlayMusic.newBuilder().setMusicId(0x1E)) }
         wrapper.send(MsgType.TypeMapChange) {
             it.setMapChange(
-                MsgMapChange.newBuilder().setMapId(1)
+                MsgMapChange.newBuilder().setMapId(coordinates.mapId)
             )
         }
         val gameObject = nextState.characterObject

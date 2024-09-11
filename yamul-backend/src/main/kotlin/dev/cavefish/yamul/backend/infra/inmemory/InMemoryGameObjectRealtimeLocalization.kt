@@ -10,6 +10,7 @@ class InMemoryGameObjectRealtimeLocalization: GameObjectRealtimeLocalization {
     override fun getCoordinates(id: ObjectId): Coordinates = Coordinates(
         x = 6787,
         y = 2181,
-        z = 0
+        z = 0,
+        mapId = 1,
     )
 }

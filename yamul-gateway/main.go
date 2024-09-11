@@ -12,7 +12,7 @@ import (
 
 const (
 	SERVER_PORT = "2593"
-	CONN_TYPE   = "tcp"
+	CONN_TYPE   = "tcp4"
 )
 
 var listenerWg sync.WaitGroup
