@@ -24,6 +24,7 @@ func Setup() {
 	setHandler(0x91, gameServerLogin)
 	setHandler(0x9b, helpRequest)
 	setHandler(0xa0, serverSelected)
+	setHandler(0xad, unicodeSpeechRequestHandler)
 	setHandler(0xb5, openChatWindow)
 	setHandler(0xbd, receiveClientVersion)
 	setHandler(0xbf, receiveGenericCommand)

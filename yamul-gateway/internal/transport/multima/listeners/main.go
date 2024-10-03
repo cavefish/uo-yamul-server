@@ -6,15 +6,16 @@ import (
 )
 
 var (
-	OnClientDoubleClick = createHandler[uint32]("OnClientDoubleClick")
-	OnClientMoveRequest = createHandler[commands.ClientMoveRequest]("OnClientMoveRequest")
-	OnClientViewRange   = createHandler[byte]("OnClientViewRange")
-	OnGameLoginRequest  = createHandler[commands.GameLoginRequest]("OnGameLoginRequest")
-	OnLoginRequest      = createHandler[commands.LoginRequestCommand]("OnLoginRequest")
-	OnClientMoveAck     = createHandler[commands.MoveAck]("OnClientMoveAck")
-	OnOpenChatWindow    = createHandler[string]("OnOpenChatWindow")
-	OnPreLogin          = createHandler[commands.PreLogin]("OnPreLogin")
-	OnShardSelected     = createHandler[commands.ShardSelected]("OnShardSelected")
+	OnClientDoubleClick    = createHandler[uint32]("OnClientDoubleClick")
+	OnClientMoveAck        = createHandler[commands.MoveAck]("OnClientMoveAck")
+	OnClientMoveRequest    = createHandler[commands.ClientMoveRequest]("OnClientMoveRequest")
+	OnClientViewRange      = createHandler[byte]("OnClientViewRange")
+	OnGameLoginRequest     = createHandler[commands.GameLoginRequest]("OnGameLoginRequest")
+	OnLoginRequest         = createHandler[commands.LoginRequestCommand]("OnLoginRequest")
+	OnOpenChatWindow       = createHandler[string]("OnOpenChatWindow")
+	OnPreLogin             = createHandler[commands.PreLogin]("OnPreLogin")
+	OnShardSelected        = createHandler[commands.ShardSelected]("OnShardSelected")
+	OnUnicodeSpeechRequest = createHandler[commands.UnicodeSpeechSelected]("OnUnicodeSpeechRequest")
 )
 
 type CommandEvent[T any] struct {
