@@ -33,6 +33,7 @@ func Setup() {
 	messages.RegisterProcessor(services.MsgType_TypePlayerStartConfirmation, gameEvents.OnPlayerStartConfirmation)
 	messages.RegisterProcessor(services.MsgType_TypePlayMusic, gameEvents.OnPlayMusic)
 	messages.RegisterProcessor(services.MsgType_TypeStatWindowInfo, gameEvents.StatWindowInfo)
+	messages.RegisterProcessor(services.MsgType_TypeSystemSendText, gameEvents.SystemSendText)
 	messages.RegisterProcessor(services.MsgType_TypeTeleportPlayer, gameEvents.OnTeleportPlayer)
 	messages.RegisterProcessor(services.MsgType_TypeUpdateObject, gameEvents.OnUpdateObject)
 	messages.RegisterProcessor(services.MsgType_TypeWarmode, gameEvents.WarMode)

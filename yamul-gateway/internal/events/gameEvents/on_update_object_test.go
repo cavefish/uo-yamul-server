@@ -68,8 +68,8 @@ func Test_toCommandUpdateObject1(t *testing.T) {
 					ZLoc:           5,
 					Direction:      6,
 					Hue:            7,
-					Flags:          8,
-					NotorietyFlags: 9,
+					Flags:          []services.Flags{8},
+					NotorietyFlags: []services.Notoriety{9},
 				},
 			},
 			want: commands.UpdateObject{
@@ -97,8 +97,8 @@ func Test_toCommandUpdateObject1(t *testing.T) {
 					ZLoc:           0xFF,
 					Direction:      0xFF,
 					Hue:            math.MaxUint16,
-					Flags:          0xFF,
-					NotorietyFlags: 0xFF,
+					Flags:          []services.Flags{0xFF},
+					NotorietyFlags: []services.Notoriety{0xFF},
 				},
 			},
 			want: commands.UpdateObject{

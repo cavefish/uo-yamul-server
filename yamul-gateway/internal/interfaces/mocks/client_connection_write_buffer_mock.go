@@ -148,6 +148,11 @@ func (c *ClientConnectionWriteBufferMock) AssertSentBuffer(expected []byte) {
 	c.assert.EqualValues(expected, c.buffer[0:c.usedBufferLength])
 }
 
+func (c *ClientConnectionWriteBufferMock) AssertDeclaredLength(lengthPosition uint16) {
+	var expectedLength = uint16(c.buffer[lengthPosition])<<8 | uint16(c.buffer[lengthPosition+1])
+	c.assert.EqualValues(expectedLength, uint16(c.usedBufferLength))
+}
+
 func CreateClientConnectionWriteBufferMock(t *testing.T) *ClientConnectionWriteBufferMock {
 	result := &ClientConnectionWriteBufferMock{
 		assert:           assert.New(t),

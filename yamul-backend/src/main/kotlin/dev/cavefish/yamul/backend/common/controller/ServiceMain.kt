@@ -12,6 +12,8 @@ import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.scheduling.annotation.EnableAsync
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.tinylog.kotlin.Logger
 import javax.annotation.PostConstruct
 
@@ -20,6 +22,8 @@ const val CHARACTER_SERVICE_PORT = 8088
 const val GAME_SERVICE_PORT = 8089
 
 @SpringBootApplication
+@EnableScheduling
+@EnableAsync
 @ComponentScan(basePackages = ["dev.cavefish.yamul.backend"])
 class ServiceMain @Autowired constructor(
     val loginServiceController: LoginServiceController,
@@ -31,6 +35,8 @@ class ServiceMain @Autowired constructor(
 
     @PostConstruct
     fun runServices() {
+        initMemoryRepositories.init()
+
         val loginServer = ServerBuilder.forPort(LOGIN_SERVICE_PORT).addService(loginServiceController).build()
         loginServer.start()
         Logger.info("Running Login server on port {0}", LOGIN_SERVICE_PORT)
@@ -45,13 +51,8 @@ class ServiceMain @Autowired constructor(
                 .build()
         gameServer.start()
         Logger.info("Running Game server on port {0}", GAME_SERVICE_PORT)
-
-        initMemoryRepositories.init()
-
+        
         Logger.info("Running ...")
-        loginServer.awaitTermination()
-        characterServer.awaitTermination()
-        gameServer.awaitTermination()
     }
 
 }
@@ -60,5 +61,6 @@ fun main(args: Array<String>) {
     runApplication<ServiceMain>(*args) {
         setBannerMode(Banner.Mode.OFF)
         webApplicationType = WebApplicationType.NONE
+        setLazyInitialization(false)
     }
 }

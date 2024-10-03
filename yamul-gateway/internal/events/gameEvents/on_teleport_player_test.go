@@ -21,7 +21,7 @@ func Test_toCommandTeleportPlayer(t *testing.T) {
 			name: "base case",
 			args: args{player: &services.MsgTeleportPlayer{
 				Id:     &services.ObjectId{Value: 0},
-				Status: []services.MsgTeleportPlayer_PlayerStatus{},
+				Status: []services.Flags{},
 				Coordinates: &services.Coordinate{
 					XLoc: 0,
 					YLoc: 0,
@@ -42,8 +42,8 @@ func Test_toCommandTeleportPlayer(t *testing.T) {
 			name: "with some values",
 			args: args{player: &services.MsgTeleportPlayer{
 				Id: &services.ObjectId{Value: 1},
-				Status: []services.MsgTeleportPlayer_PlayerStatus{
-					services.MsgTeleportPlayer_PlayerStatus_normal,
+				Status: []services.Flags{
+					services.Flags_normal,
 				},
 				Coordinates: &services.Coordinate{
 					XLoc: 2,
@@ -65,11 +65,11 @@ func Test_toCommandTeleportPlayer(t *testing.T) {
 			name: "with upper limit values values",
 			args: args{player: &services.MsgTeleportPlayer{
 				Id: &services.ObjectId{Value: 100},
-				Status: []services.MsgTeleportPlayer_PlayerStatus{
-					services.MsgTeleportPlayer_PlayerStatus_normal,
-					services.MsgTeleportPlayer_PlayerStatus_poisoned,
-					services.MsgTeleportPlayer_PlayerStatus_warMode,
-					services.MsgTeleportPlayer_PlayerStatus_canAlterPaperDoll,
+				Status: []services.Flags{
+					services.Flags_normal,
+					services.Flags_poisoned,
+					services.Flags_warMode,
+					services.Flags_canAlterPaperDoll,
 				},
 				Coordinates: &services.Coordinate{
 					XLoc: math.MaxUint16,
@@ -91,7 +91,7 @@ func Test_toCommandTeleportPlayer(t *testing.T) {
 			name: "with lower limit values",
 			args: args{player: &services.MsgTeleportPlayer{
 				Id:     &services.ObjectId{Value: 0},
-				Status: []services.MsgTeleportPlayer_PlayerStatus{},
+				Status: []services.Flags{},
 				Coordinates: &services.Coordinate{
 					XLoc: 0,
 					YLoc: 0,

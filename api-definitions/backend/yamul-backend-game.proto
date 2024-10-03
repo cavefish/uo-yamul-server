@@ -183,6 +183,26 @@ message MsgStatWindowInfo{
 
 }
 
+message MsgSystemSendText {
+  common.ObjectId id = 1; // empty = system message
+  uint32 model = 2; // ignore is system message
+  MsgSystemSendText_Type type = 3;
+  uint32 hue = 4;
+  uint32 font = 5;
+  string name = 6;
+  string body = 7;
+}
+
+enum MsgSystemSendText_Type {
+  normal = 0;
+  broadcast = 1;
+  emote = 2;
+  system = 3;
+  message = 4;
+  whisper = 5;
+  yell = 6;
+}
+
 message MsgTeleportPlayer {
   common.ObjectId id = 1;
   uint32 graphicId = 2;
@@ -226,9 +246,10 @@ enum MsgType {
   TypeUndefined = 0; // TODO this is a valid value on UO packet ids
   TypeClientMoveRequest = 0x0200;
   TypeClientDoubleClick = 0x0600;
-  TypeHealthBar = 0x1700;
   TypeStatWindowInfo = 0x1100;
+  TypeHealthBar = 0x1700;
   TypePlayerStartConfirmation = 0x1b00;
+  TypeSystemSendText = 0x1C00;
   TypeTeleportPlayer = 0x2000;
   TypeMoveAck = 0x2200;
   TypeSkillUpdateServer = 0x3A00;
@@ -249,9 +270,10 @@ message Message {
   oneof msg {
     MsgClientMoveRequest clientMoveRequest = 0x0200;
     MsgClientDoubleClick clientDoubleClick = 0x0600;
-    MsgHealthBar healthBar = 0x1700;
     MsgStatWindowInfo statWindowInfo = 0x1100;
+    MsgHealthBar healthBar = 0x1700;
     MsgPlayerStartConfirmation playerStartConfirmation = 0x1b00;
+    MsgSystemSendText systemSendText = 0x1C00;
     MsgTeleportPlayer teleportPlayer = 0x2000;
     MsgMoveAck moveAck = 0x2200;
     MsgSkillUpdateServer skillUpdateServer = 0x3A00;
