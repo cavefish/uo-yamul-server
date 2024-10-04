@@ -63,3 +63,32 @@ message Coordinate {
   uint32 yLoc = 6;
   int32 zLoc = 9;
 }
+
+enum MessageType {
+  MessageType_normal = 0;
+  MessageType_broadcast = 1;
+  MessageType_emote = 2;
+  MessageType_system = 3;
+  MessageType_label = 6;
+  MessageType_focus = 7;
+  MessageType_whisper = 8;
+  MessageType_yell = 9;
+  MessageType_spell = 10;
+  MessageType_guild = 13;
+  MessageType_alliance = 14;
+  MessageType_command = 15;
+  MessageType_encoded = 0xC0;
+}
+
+enum Fonts {
+  Font_bold = 0;
+  Font_shadow = 1;
+  Font_bold_shadow = 2;
+  Font_normal = 3;
+  Font_gothic = 4;
+  Font_italic = 5;
+  Font_small_dark = 6;
+  Font_colorful = 7;
+  Font_runes_only_capital_letters = 8;
+  Font_small_light = 9;
+}

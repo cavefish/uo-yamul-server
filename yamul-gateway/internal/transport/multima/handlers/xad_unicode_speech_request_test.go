@@ -128,6 +128,22 @@ func Test_unicodeSpeechRequestReadBuffer(t *testing.T) {
 				Text:     ".help",
 			},
 		},
+		{
+			name: "real case with unicode",
+			args: []byte{
+				0x00, 0x14, 0x0d, 0x00, 0x44, 0x00, 0x03, 0x49,
+				0x56, 0x4c, 0x00, 0x00, 0x61, 0x00, 0x73, 0x00,
+				0x64, 0x00, 0x00,
+			},
+			want: commands.UnicodeSpeechSelected{
+				Mode:     0x0d,
+				Hue:      0x0044,
+				Font:     0x0003,
+				Language: "IVL\x00",
+				Keywords: nil,
+				Text:     "asd",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

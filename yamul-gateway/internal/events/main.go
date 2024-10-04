@@ -17,6 +17,7 @@ func Setup() {
 	listeners.OnOpenChatWindow.SetListener(clientEvents.OnOpenChatWindow)
 	listeners.OnPreLogin.SetListener(clientEvents.OnCharacterPreLogin)
 	listeners.OnShardSelected.SetListener(clientEvents.OnShardSelected)
+	listeners.OnUnicodeSpeechRequest.SetListener(clientEvents.OnUnicodeSpeechRequest)
 
 	messages.RegisterProcessor(services.MsgType_TypeUndefined, messages.UnimplementedProcessor)
 

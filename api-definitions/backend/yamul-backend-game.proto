@@ -186,21 +186,11 @@ message MsgStatWindowInfo{
 message MsgSystemSendText {
   common.ObjectId id = 1; // empty = system message
   uint32 model = 2; // ignore is system message
-  MsgSystemSendText_Type type = 3;
+  common.MessageType type = 3;
   uint32 hue = 4;
-  uint32 font = 5;
+  common.Fonts font = 5;
   string name = 6;
   string body = 7;
-}
-
-enum MsgSystemSendText_Type {
-  normal = 0;
-  broadcast = 1;
-  emote = 2;
-  system = 3;
-  message = 4;
-  whisper = 5;
-  yell = 6;
 }
 
 message MsgTeleportPlayer {
@@ -229,6 +219,15 @@ message MsgOpenPaperDoll{
   common.ObjectId id = 1;
   string name = 2;
   repeated common.Flags flags = 3;
+}
+
+message MsgUnicodeSpeechSelected {
+  common.MessageType mode = 1;
+  uint32 hue = 2;
+  common.Fonts font = 3;
+  string language = 4;
+  repeated uint32 keywords = 5;
+  string text = 6;
 }
 
 message MsgUpdateObjectItems {
@@ -261,6 +260,7 @@ enum MsgType {
   TypeWarmode = 0x7200;
   TypeUpdateObject = 0x7800;
   TypeOpenPaperDoll = 0x8800;
+  TypeUnicodeSpeechSelected = 0xAD00;
   TypeMapChange = 0xBF08;
   TypeApplyWorldPatches = 0xBF18;
   TypeExtendedStats = 0xBF19;
@@ -284,6 +284,7 @@ message Message {
     MsgWarmode warmode = 0x7200;
     MsgUpdateObject updateObject = 0x7800;
     MsgOpenPaperDoll openPaperDoll = 0x8800;
+    MsgUnicodeSpeechSelected unicodeSpeechSelected = 0xAD00;
     MsgMapChange mapChange = 0xBF08;
     MsgApplyWorldPatches applyWorldPatches = 0xBF18;
     MsgExtendedStats extendedStats = 0xBF19;

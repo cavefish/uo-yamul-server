@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 class PublicClockCronService(
     private val gameStreamEventCoordinator: GameStreamEventCoordinator,
 ){
-    @Scheduled(fixedRate = 1000 * 1)
+    @Scheduled(fixedRate = 1000 * 10)
     fun tick() {
         gameStreamEventCoordinator.notify(GameEventSendMessage("Hello world! It is ${LocalDateTime.now()}"))
     }

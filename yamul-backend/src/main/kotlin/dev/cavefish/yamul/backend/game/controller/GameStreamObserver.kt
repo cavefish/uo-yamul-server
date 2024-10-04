@@ -50,16 +50,18 @@ class GameStreamObserver(
                 Logger.error(errr)
             }
         }
+        onCompleted()
     }
 
     override fun onCompleted() {
         gameStreamEventCoordinator.unsubscribe(this)
+        gameStateRegister.set(null)
         outputStream.onCompleted()
         Logger.info("Game stream closed")
     }
 
     private fun unimplementedMessage(message: StreamPackage) {
-        TODO("Unimplemented message type %s".format(message.type.name))
+        Logger.error("Unimplemented message type {}", message.type.name)
     }
 
     override fun send(msgType: MsgType, f: (Message.Builder) -> Unit) {
@@ -71,6 +73,9 @@ class GameStreamObserver(
     override fun onEvent(event: GameEvent) {
         if (!event.appliesTo(gameStateRegister.get())) return
         Logger.debug("Processing event: {}", event)
-        event(this.gameStateRegister.get(), this)
+        this.gameStateRegister.getAndUpdate {
+            if(it!=null) event(it, this)
+            it
+        }
     }
 }
