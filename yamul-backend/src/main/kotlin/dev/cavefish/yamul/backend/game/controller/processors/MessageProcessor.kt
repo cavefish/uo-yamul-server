@@ -3,9 +3,8 @@ package dev.cavefish.yamul.backend.game.controller.processors
 import dev.cavefish.yamul.backend.game.api.Message
 import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.api.StreamPackage
-import dev.cavefish.yamul.backend.game.controller.domain.GameState
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.State
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
-import dev.cavefish.yamul.backend.game.controller.domain.LoggedUser
 import org.tinylog.kotlin.Logger
 
 abstract class MessageProcessor<T>(
@@ -14,21 +13,19 @@ abstract class MessageProcessor<T>(
 ) {
     protected abstract fun process(
         payload: T,
-        currentState: GameState?,
-        loggedUser: LoggedUser,
+        state: State,
         wrapper: GameStreamWrapper
-    ): GameState?
+    ): State
 
     fun getType() = msgType
 
     fun process(
         payload: StreamPackage,
-        state: GameState?,
-        loggedUser: LoggedUser,
+        state: State,
         wrapper: GameStreamWrapper
-    ): GameState? {
+    ): State {
         val obj = payloadGetter(payload.body)
         Logger.debug(obj)
-        return process(obj, state, loggedUser, wrapper)
+        return process(obj, state, wrapper)
     }
 }

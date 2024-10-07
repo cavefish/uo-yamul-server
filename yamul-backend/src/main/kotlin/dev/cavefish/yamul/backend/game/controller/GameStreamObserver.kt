@@ -5,10 +5,15 @@ import dev.cavefish.yamul.backend.Constants
 import dev.cavefish.yamul.backend.game.api.Message
 import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.api.StreamPackage
-import dev.cavefish.yamul.backend.game.controller.domain.GameState
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.State
 import dev.cavefish.yamul.backend.game.controller.domain.gameevents.GameEvent
 import dev.cavefish.yamul.backend.game.controller.domain.gameevents.GameStreamEventCoordinator
 import dev.cavefish.yamul.backend.game.controller.domain.gameevents.GameStreamEventObserver
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateClosesConnection
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateError
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateInitial
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateLoggedOut
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateProperty
 import dev.cavefish.yamul.backend.game.controller.processors.MessageProcessor
 import io.grpc.StatusRuntimeException
 import io.grpc.stub.StreamObserver
@@ -21,26 +26,43 @@ class GameStreamObserver(
     private val gameStreamEventCoordinator: GameStreamEventCoordinator
 ) : StreamObserver<StreamPackage>, GameStreamWrapper, GameStreamEventObserver {
 
-    private var gameStateRegister: AtomicReference<GameState> = AtomicReference()
+    private var stateRegister: AtomicReference<State> = AtomicReference()
 
     override fun onNext(message: StreamPackage?) {
+        if (stateRegister.get() == null) {
+            stateRegister.getAndUpdate {
+                it ?: StateInitial(Constants.AUTH_CONTEXT_LOGGED_USER.get())
+            }
+        }
         if (message == null) return
         val messageProcessor = processors[message.type]
         if (messageProcessor == null) {
             unimplementedMessage(message)
             return
         }
-        gameStateRegister.getAndUpdate { oldState ->
-            val nextState =
-                messageProcessor.process(message, oldState, Constants.AUTH_CONTEXT_LOGGED_USER.get(), this)
-            if (nextState != null && oldState == null) {
-                gameStreamEventCoordinator.subscribe(this)
-            }
-            if (nextState == null) {
-                gameStreamEventCoordinator.unsubscribe(this)
-            }
+        stateRegister.getAndUpdate { oldState ->
+            val nextState = messageProcessor.process(message, oldState, this)
+            onStateChange(oldState, nextState)
             nextState
         }
+    }
+
+    private fun <T:State> onStateChange(
+        from: State,
+        to: T
+    ):T {
+        if (to.hasWonProperty(from, StateProperty.RECEIVE_EVENTS)) {
+            gameStreamEventCoordinator.subscribe(this)
+        }
+        if (to.hasLostProperty(from, StateProperty.RECEIVE_EVENTS)) {
+            gameStreamEventCoordinator.unsubscribe(this)
+        }
+        if (to is StateError) Logger.error(to.errorDescription)
+        if (to is StateClosesConnection) {
+            outputStream.onCompleted()
+            Logger.info("Game stream closed")
+        }
+        return to
     }
 
     override fun onError(errr: Throwable?) {
@@ -50,14 +72,15 @@ class GameStreamObserver(
                 Logger.error(errr)
             }
         }
-        onCompleted()
+        stateRegister.getAndUpdate {
+            onStateChange(it, StateError(errr.toString()))
+        }
     }
 
     override fun onCompleted() {
-        gameStreamEventCoordinator.unsubscribe(this)
-        gameStateRegister.set(null)
-        outputStream.onCompleted()
-        Logger.info("Game stream closed")
+        stateRegister.getAndUpdate {
+            onStateChange(it, StateLoggedOut)
+        }
     }
 
     private fun unimplementedMessage(message: StreamPackage) {
@@ -71,11 +94,10 @@ class GameStreamObserver(
     }
 
     override fun onEvent(event: GameEvent) {
-        if (!event.appliesTo(gameStateRegister.get())) return
+        val state = stateRegister.get()
+        if (!state.hasProperty(StateProperty.RECEIVE_EVENTS)) return
+        if (!event.appliesTo(state)) return
         Logger.debug("Processing event: {}", event)
-        this.gameStateRegister.getAndUpdate {
-            if(it!=null) event(it, this)
-            it
-        }
+        event(state, this)
     }
 }

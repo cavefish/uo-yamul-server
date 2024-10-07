@@ -19,10 +19,12 @@ import dev.cavefish.yamul.backend.game.api.MsgUpdateObjectItems
 import dev.cavefish.yamul.backend.game.api.MsgWarmode
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
-import dev.cavefish.yamul.backend.game.controller.domain.GameState
 import dev.cavefish.yamul.backend.game.controller.domain.GraphicId
 import dev.cavefish.yamul.backend.game.controller.domain.Hue
-import dev.cavefish.yamul.backend.game.controller.domain.LoggedUser
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.State
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateErrorRequiresLoggedIn
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateHasCharacter
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateLoggedIn
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRealtimeLocalization
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRepository
 import dev.cavefish.yamul.backend.game.controller.infra.UserCharacterRepository
@@ -43,13 +45,9 @@ class OnCharacterSelectedProcessor(
 ) : MessageProcessor<MsgCharacterSelection>(MsgType.TypeCharacterSelection, Message::getCharacterSelection) {
 
     @SuppressWarnings("MaxLineLength", "MagicNumber", "LongMethod") // TODO remove exceptions
-    override fun process(
-        payload: MsgCharacterSelection,
-        currentState: GameState?,
-        loggedUser: LoggedUser,
-        wrapper: GameStreamWrapper
-    ): GameState {
-        val character = userCharacterRepository.getCharacterByOrder(loggedUser, payload.slot)!!
+    override fun process(payload: MsgCharacterSelection, state: State, wrapper: GameStreamWrapper): State {
+        if (state !is StateLoggedIn) return StateErrorRequiresLoggedIn
+        val character = userCharacterRepository.getCharacterByOrder(state.getLoggedUser(), payload.slot)!!
         val characterAsObject = gameObjectRepository.getById(character.objectId)!!
         val coordinatesOnRepo = gameObjectRealtimeLocalization.getCoordinates(character.objectId)
         val coordinates = if (coordinatesOnRepo != null) coordinatesOnRepo else {
@@ -60,7 +58,7 @@ class OnCharacterSelectedProcessor(
                 z = 0
             )
         }
-        val nextState = GameState(
+        val nextState = state.assignCharacter(
             characterObject = characterAsObject,
             coordinates = coordinates
         )
@@ -136,7 +134,7 @@ class OnCharacterSelectedProcessor(
         )
 
 
-    private fun createTeleportPlayer(state: GameState): MsgTeleportPlayer.Builder =
+    private fun createTeleportPlayer(state: StateHasCharacter): MsgTeleportPlayer.Builder =
         MsgTeleportPlayer.newBuilder()
             .setId(createObjectId(state.characterObject.id))
             .setCoordinates(createPlayerObjectCoordinates(state))
@@ -144,7 +142,7 @@ class OnCharacterSelectedProcessor(
             .setHue(state.characterObject.hue.toUInt16().toInt())
             .addAllStatusValue(state.characterObject.flags.map { f -> f.id })
 
-    private fun createPlayerObjectCoordinates(state: GameState): Coordinate.Builder =
+    private fun createPlayerObjectCoordinates(state: StateHasCharacter): Coordinate.Builder =
         Coordinate.newBuilder().setXLoc(state.coordinates.x).setYLoc(state.coordinates.y).setZLoc(state.coordinates.z)
 
     private fun createObjectId(objectId: Int): ObjectId.Builder = ObjectId.newBuilder().setValue(objectId)

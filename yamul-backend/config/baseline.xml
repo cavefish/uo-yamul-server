@@ -8,6 +8,7 @@
     <ID>ExplicitItLambdaParameter:GameStreamObserver.kt$GameStreamObserver${ it -> if (!event.appliesTo(it)) { it } Logger.debug("Processing event", event) it }</ID>
     <ID>MaxLineLength:GameEventFilter.kt$GameEventFilter$// TODO add extra operator to discriminate for clusters. E.g: passing a ClusterState be able to guess if the filter will apply</ID>
     <ID>MagicNumber:GameEventSendMessage.kt$GameEventSendMessage$0x02B2</ID>
+    <ID>MaxLineLength:GameStreamObserver.kt$GameStreamObserver$if</ID>
   </ManuallySuppressedIssues>
   <CurrentIssues/>
 </SmellBaseline>

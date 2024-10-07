@@ -5,11 +5,11 @@ import dev.cavefish.yamul.backend.common.api.MessageType
 import dev.cavefish.yamul.backend.game.api.MsgSystemSendText
 import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
-import dev.cavefish.yamul.backend.game.controller.domain.GameState
+import dev.cavefish.yamul.backend.game.controller.domain.gamestate.State
 
 data class GameEventSendMessage(val message: String, override val filter: GameEventFilter = GameEventFilter.ANY) :
     GameEvent(filter) {
-    override fun invoke(state: GameState, streamWrapper: GameStreamWrapper) {
+    override fun invoke(state: State, streamWrapper: GameStreamWrapper) {
         streamWrapper.send(MsgType.TypeSystemSendText) {
             it.setSystemSendText(
                 MsgSystemSendText.newBuilder()
