@@ -1,5 +1,6 @@
 package dev.cavefish.yamul.backend.services.global
 
+import dev.cavefish.yamul.backend.game.controller.domain.UserMessageType
 import dev.cavefish.yamul.backend.game.controller.domain.gameevents.GameEventSendMessage
 import dev.cavefish.yamul.backend.game.controller.domain.gameevents.GameStreamEventCoordinator
 import org.springframework.scheduling.annotation.Scheduled
@@ -12,6 +13,10 @@ class PublicClockCronService(
 ){
     @Scheduled(fixedRate = 1000 * 10)
     fun tick() {
-        gameStreamEventCoordinator.notify(GameEventSendMessage("Hello world! It is ${LocalDateTime.now()}"))
+        gameStreamEventCoordinator.notify(GameEventSendMessage(
+            "Hello world! It is ${LocalDateTime.now()}",
+            type = UserMessageType.System,
+            null
+        ))
     }
 }

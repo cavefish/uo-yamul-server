@@ -6,4 +6,8 @@ import org.springframework.stereotype.Service
 @Service
 class ObjectIdMapper {
     fun create(value: Int): ObjectId.Builder = ObjectId.newBuilder().setValue(value)
+
+    companion object {
+        val INSTANCE = ObjectIdMapper()
+    }
 }
