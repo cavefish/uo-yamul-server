@@ -20,7 +20,7 @@ class OnClientDoubleClick(
     private val openPaperDollMapper: OpenPaperDollMapper,
 ) :
     MessageProcessor<MsgClientDoubleClick>(MsgType.TypeClientDoubleClick, Message::getClientDoubleClick) {
-    override fun process(payload: MsgClientDoubleClick, state: State, wrapper: GameStreamWrapper): State {
+    override suspend fun process(payload: MsgClientDoubleClick, state: State, wrapper: GameStreamWrapper): State {
         if (state !is StateHasCharacter) return StateErrorRequiresCharacter
         Logger.debug("Received onClientDoubleClick payload: $payload")
 

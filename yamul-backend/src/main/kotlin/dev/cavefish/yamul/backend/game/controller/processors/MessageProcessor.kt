@@ -5,13 +5,14 @@ import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.api.StreamPackage
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.State
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
+import kotlinx.coroutines.runBlocking
 import org.tinylog.kotlin.Logger
 
 abstract class MessageProcessor<T>(
     private val msgType: MsgType,
     private val payloadGetter: (Message) -> T
 ) {
-    protected abstract fun process(
+    protected abstract suspend fun process(
         payload: T,
         state: State,
         wrapper: GameStreamWrapper
@@ -19,13 +20,13 @@ abstract class MessageProcessor<T>(
 
     fun getType() = msgType
 
-    fun process(
+    fun processStreamPackage(
         payload: StreamPackage,
         state: State,
         wrapper: GameStreamWrapper
-    ): State {
+    ): State = runBlocking {
         val obj = payloadGetter(payload.body)
         Logger.debug(obj)
-        return process(obj, state, wrapper)
+        return@runBlocking process(obj, state, wrapper)
     }
 }

@@ -25,7 +25,7 @@ import dev.cavefish.yamul.backend.game.controller.domain.gamestate.State
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateErrorRequiresLoggedIn
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateHasCharacter
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateLoggedIn
-import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRealtimeLocalization
+import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRealtimePosition
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRepository
 import dev.cavefish.yamul.backend.game.controller.infra.UserCharacterRepository
 import dev.cavefish.yamul.backend.game.controller.mappers.CharacterSkillUpdateMapper
@@ -39,17 +39,17 @@ class OnCharacterSelectedProcessor(
     private val playerStartConfirmationSender: PlayerStartConfirmationSender,
     private val userCharacterRepository: UserCharacterRepository,
     private val gameObjectRepository: GameObjectRepository,
-    private val gameObjectRealtimeLocalization: GameObjectRealtimeLocalization,
+    private val gameObjectRealtimePosition: GameObjectRealtimePosition,
     private val characterStatWindowMapper: CharacterStatWindowMapper,
     private val characterSkillUpdateMapper: CharacterSkillUpdateMapper,
 ) : MessageProcessor<MsgCharacterSelection>(MsgType.TypeCharacterSelection, Message::getCharacterSelection) {
 
     @SuppressWarnings("MaxLineLength", "MagicNumber", "LongMethod") // TODO remove exceptions
-    override fun process(payload: MsgCharacterSelection, state: State, wrapper: GameStreamWrapper): State {
+    override suspend fun process(payload: MsgCharacterSelection, state: State, wrapper: GameStreamWrapper): State {
         if (state !is StateLoggedIn) return StateErrorRequiresLoggedIn
         val character = userCharacterRepository.getCharacterByOrder(state.getLoggedUser(), payload.slot)!!
         val characterAsObject = gameObjectRepository.getById(character.objectId)!!
-        val coordinatesOnRepo = gameObjectRealtimeLocalization.getCoordinates(character.objectId)
+        val coordinatesOnRepo = gameObjectRealtimePosition.getCoordinates(character.objectId)
         val coordinates = if (coordinatesOnRepo != null) coordinatesOnRepo else {
             Logger.error("GameObject ${character.objectId} is not synchronized")
             Coordinates(

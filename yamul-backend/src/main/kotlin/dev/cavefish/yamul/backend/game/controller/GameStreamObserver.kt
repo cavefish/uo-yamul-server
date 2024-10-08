@@ -17,6 +17,7 @@ import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateProperty
 import dev.cavefish.yamul.backend.game.controller.processors.MessageProcessor
 import io.grpc.StatusRuntimeException
 import io.grpc.stub.StreamObserver
+import kotlinx.coroutines.runBlocking
 import org.tinylog.kotlin.Logger
 import java.util.concurrent.atomic.AtomicReference
 
@@ -41,9 +42,9 @@ class GameStreamObserver(
             return
         }
         stateRegister.getAndUpdate { oldState ->
-            val nextState = messageProcessor.process(message, oldState, this)
-            onStateChange(oldState, nextState)
-            nextState
+            messageProcessor.processStreamPackage(message, oldState, this).also {
+                onStateChange(oldState, it)
+            }
         }
     }
 

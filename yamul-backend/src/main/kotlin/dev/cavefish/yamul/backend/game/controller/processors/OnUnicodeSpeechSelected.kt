@@ -18,7 +18,7 @@ class OnUnicodeSpeechSelected(
     MsgType.TypeUnicodeSpeechSelected, Message::getUnicodeSpeechSelected
 ) {
 
-    override fun process(payload: MsgUnicodeSpeechSelected, state: State, wrapper: GameStreamWrapper): State {
+    override suspend fun process(payload: MsgUnicodeSpeechSelected, state: State, wrapper: GameStreamWrapper): State {
         if (state is StateHasCharacter) messageCoordinator.onUserMessage(
             UserMessage(
                 originObject = state.characterObject,

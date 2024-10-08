@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 class OnMoveRequestProcessor : MessageProcessor<MsgClientMoveRequest>(
     MsgType.TypeClientMoveRequest, Message::getClientMoveRequest
 ) {
-    override fun process(payload: MsgClientMoveRequest, state: State, wrapper: GameStreamWrapper): State {
+    override suspend fun process(payload: MsgClientMoveRequest, state: State, wrapper: GameStreamWrapper): State {
         // TODO implement movement persistence and assertions
         wrapper.send(MsgType.TypeMoveAck) {
             it.setMoveAck(
