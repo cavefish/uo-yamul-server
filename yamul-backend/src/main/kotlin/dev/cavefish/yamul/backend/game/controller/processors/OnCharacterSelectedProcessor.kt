@@ -1,29 +1,21 @@
 package dev.cavefish.yamul.backend.game.controller.processors
 
-import dev.cavefish.yamul.backend.common.api.Coordinate
 import dev.cavefish.yamul.backend.common.api.Flags
 import dev.cavefish.yamul.backend.common.api.Notoriety
-import dev.cavefish.yamul.backend.common.api.ObjectId
 import dev.cavefish.yamul.backend.game.api.Message
 import dev.cavefish.yamul.backend.game.api.MsgApplyWorldPatches
 import dev.cavefish.yamul.backend.game.api.MsgCharacterSelection
 import dev.cavefish.yamul.backend.game.api.MsgExtendedStats
 import dev.cavefish.yamul.backend.game.api.MsgGeneralLightLevel
-import dev.cavefish.yamul.backend.game.api.MsgHealthBar
 import dev.cavefish.yamul.backend.game.api.MsgMapChange
 import dev.cavefish.yamul.backend.game.api.MsgPlayMusic
-import dev.cavefish.yamul.backend.game.api.MsgTeleportPlayer
 import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.api.MsgUpdateObject
-import dev.cavefish.yamul.backend.game.api.MsgUpdateObjectItems
 import dev.cavefish.yamul.backend.game.api.MsgWarmode
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
-import dev.cavefish.yamul.backend.game.controller.domain.GraphicId
-import dev.cavefish.yamul.backend.game.controller.domain.Hue
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.State
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateErrorRequiresLoggedIn
-import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateHasCharacter
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateLoggedIn
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRealtimePosition
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRepository
@@ -81,9 +73,9 @@ class OnCharacterSelectedProcessor(
                     .setGraphicId(gameObject.graphicId.id)
                     .setHue(gameObject.hue.toUInt16().toInt())
                     .addAllFlags(gameObject.flags.map { f -> Flags.forNumber(f.id) })
-                    .addAllNotorietyFlags(gameObject.notoriety.map { n-> Notoriety.forNumber(n.id) })
+                    .addAllNotorietyFlags(gameObject.notoriety.map { n -> Notoriety.forNumber(n.id) })
                     .addAllItems(gameObject.items.map { item ->
-                        createItem(
+                        createMsgUpdateObjectItems(
                             item.id,
                             item.graphicId,
                             item.hue,
@@ -92,8 +84,8 @@ class OnCharacterSelectedProcessor(
                     })
             )
         }
-        wrapper.send(MsgType.TypeHealthBar) { it.setHealthBar(createHealthBar(nextState.characterObject.id)) }
-        wrapper.send(MsgType.TypeTeleportPlayer) { it.setTeleportPlayer(createTeleportPlayer(nextState)) }
+        wrapper.send(MsgType.TypeHealthBar) { it.setHealthBar(createMsgHealthBar(nextState.characterObject.id)) }
+        wrapper.send(MsgType.TypeTeleportPlayer) { it.setTeleportPlayer(createMsgTeleportPlayer(nextState)) }
         wrapper.send(MsgType.TypeGeneralLightLevel) {
             it.setGeneralLightLevel(
                 MsgGeneralLightLevel.newBuilder().setLevel(0x0)
@@ -119,31 +111,4 @@ class OnCharacterSelectedProcessor(
     }
 
 
-    private fun createItem(id: Int, graphicId: GraphicId, hue: Hue, layer: Int): MsgUpdateObjectItems.Builder =
-        MsgUpdateObjectItems.newBuilder().setId(createObjectId(id)).setGraphicId(graphicId.id)
-            .setHue(hue.toUInt16().toInt()).setLayer(layer)
-
-
-    private fun createHealthBar(objectId: Int): MsgHealthBar.Builder = MsgHealthBar.newBuilder()
-        .setId(createObjectId(objectId))
-        .addValues(
-            MsgHealthBar.Values.newBuilder().setTypeValue(MsgHealthBar.Values.Type.GREEN_VALUE).setEnabled(false)
-        )
-        .addValues(
-            MsgHealthBar.Values.newBuilder().setTypeValue(MsgHealthBar.Values.Type.YELLOW_VALUE).setEnabled(false)
-        )
-
-
-    private fun createTeleportPlayer(state: StateHasCharacter): MsgTeleportPlayer.Builder =
-        MsgTeleportPlayer.newBuilder()
-            .setId(createObjectId(state.characterObject.id))
-            .setCoordinates(createPlayerObjectCoordinates(state))
-            .setGraphicId(state.characterObject.graphicId.id)
-            .setHue(state.characterObject.hue.toUInt16().toInt())
-            .addAllStatusValue(state.characterObject.flags.map { f -> f.id })
-
-    private fun createPlayerObjectCoordinates(state: StateHasCharacter): Coordinate.Builder =
-        Coordinate.newBuilder().setXLoc(state.coordinates.x).setYLoc(state.coordinates.y).setZLoc(state.coordinates.z)
-
-    private fun createObjectId(objectId: Int): ObjectId.Builder = ObjectId.newBuilder().setValue(objectId)
 }

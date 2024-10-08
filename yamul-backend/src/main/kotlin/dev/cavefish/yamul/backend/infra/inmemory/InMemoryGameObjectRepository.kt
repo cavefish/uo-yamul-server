@@ -41,6 +41,12 @@ class InMemoryGameObjectRepository(
         return id
     }
 
+    override fun updateObject(id: ObjectId, updateAction: (GameObject) -> GameObject): GameObject {
+        return database.compute(id) { _, obj ->
+            updateAction(obj!!)
+        }!!
+    }
+
     private companion object {
         val childrenIndex = ConcurrentHashMap<ObjectId, ConcurrentLinkedQueue<ObjectId>>()
         val database = ConcurrentHashMap<ObjectId, GameObject>()

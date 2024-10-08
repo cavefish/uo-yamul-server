@@ -7,6 +7,7 @@ data class GameObject(
     val isAutomata: Boolean = false,
     val parentId: ObjectId?,
     val graphicId: GraphicId,
+    val facing: MovementDirection = MovementDirection.North,
     val layer: Int = 0,
     val hue: Hue,
     val flags: List<Flags> = emptyList(),

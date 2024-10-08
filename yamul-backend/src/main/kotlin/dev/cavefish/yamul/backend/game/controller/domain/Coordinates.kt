@@ -8,4 +8,9 @@ data class Coordinates(
 ) {
     fun collidesWith(coordinates: Coordinates): Boolean =
         x == coordinates.x && y == coordinates.y && mapId == coordinates.mapId
+
+    fun applyMovement(movement: MovementVector): Coordinates = this.copy(
+        x = movement.x + x,
+        y = movement.y + y,
+    )
 }
