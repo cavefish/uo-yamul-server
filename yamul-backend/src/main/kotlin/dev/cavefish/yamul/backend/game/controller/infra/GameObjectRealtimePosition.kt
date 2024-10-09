@@ -1,12 +1,11 @@
 package dev.cavefish.yamul.backend.game.controller.infra
 
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
-import dev.cavefish.yamul.backend.game.controller.domain.MovementVector
 import dev.cavefish.yamul.backend.game.controller.domain.ObjectId
 
 interface GameObjectRealtimePosition {
     suspend fun getCoordinates(id: ObjectId): Coordinates?
     suspend fun registerNewCoordinates(id: ObjectId, coordinates: Coordinates): Boolean
     suspend fun areCoordinatesEmpty(coordinates: Coordinates): Boolean
-    suspend fun updatePosition(id: ObjectId, movement: MovementVector): Coordinates?
+    suspend fun updatePosition(id: ObjectId, movement: (Coordinates) -> Coordinates): Coordinates?
 }

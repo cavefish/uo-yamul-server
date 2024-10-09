@@ -1,7 +1,6 @@
 package dev.cavefish.yamul.backend.infra.inmemory
 
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
-import dev.cavefish.yamul.backend.game.controller.domain.MovementVector
 import dev.cavefish.yamul.backend.game.controller.domain.ObjectId
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRealtimePosition
 import org.springframework.stereotype.Repository
@@ -26,15 +25,16 @@ class InMemoryGameObjectRealtimePosition : GameObjectRealtimePosition {
         return allCoordinates.values.none(coordinates::collidesWith)
     }
 
-    override suspend fun updatePosition(id: ObjectId, movement: MovementVector): Coordinates? = mutex.withLock {
-        val oldCoordinate = allCoordinates[id]
-        val nextCoordinate = oldCoordinate!!.applyMovement(movement)
-        if (allCoordinates.values.any {
-                it != oldCoordinate && nextCoordinate.collidesWith(it)
-            }) return null
-        allCoordinates[id] = nextCoordinate
-        return@withLock nextCoordinate
-    }
+    override suspend fun updatePosition(id: ObjectId, movement: (Coordinates) -> Coordinates): Coordinates? =
+        mutex.withLock {
+            val oldCoordinate = allCoordinates[id]
+            val nextCoordinate = movement(oldCoordinate!!)
+            if (allCoordinates.values.any {
+                    it != oldCoordinate && nextCoordinate.collidesWith(it)
+                }) return null
+            allCoordinates[id] = nextCoordinate
+            return@withLock nextCoordinate
+        }
 
     private companion object {
         val allCoordinates = ConcurrentHashMap<ObjectId, Coordinates>()

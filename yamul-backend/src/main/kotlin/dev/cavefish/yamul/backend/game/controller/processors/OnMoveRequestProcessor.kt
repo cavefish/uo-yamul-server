@@ -4,9 +4,9 @@ import dev.cavefish.yamul.backend.common.api.Notoriety
 import dev.cavefish.yamul.backend.game.api.Message
 import dev.cavefish.yamul.backend.game.api.MsgClientMoveRequest
 import dev.cavefish.yamul.backend.game.api.MsgMoveAck
-import dev.cavefish.yamul.backend.game.api.MsgTeleportPlayer
 import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
+import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 import dev.cavefish.yamul.backend.game.controller.domain.MovementDirection
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.State
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateError
@@ -14,6 +14,7 @@ import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateErrorReq
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateHasCharacter
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRealtimePosition
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRepository
+import dev.cavefish.yamul.backend.game.controller.infra.mul.MulBlockAltitudeRepository
 import org.springframework.stereotype.Component
 import org.tinylog.kotlin.Logger
 
@@ -22,7 +23,8 @@ private const val RESYNC_SEQUENCE = 250
 @Component
 class OnMoveRequestProcessor(
     private val gameObjectRepository: GameObjectRepository,
-    private val gameObjectRealtimePosition: GameObjectRealtimePosition
+    private val gameObjectRealtimePosition: GameObjectRealtimePosition,
+    private val mulBlockAltitudeRepository: MulBlockAltitudeRepository
 ) : MessageProcessor<MsgClientMoveRequest>(
     MsgType.TypeClientMoveRequest, Message::getClientMoveRequest
 ) {
@@ -33,7 +35,13 @@ class OnMoveRequestProcessor(
 
         val newCoordinates = if (state.characterObject.facing == movementFacing) {
             val updatedValue =
-                gameObjectRealtimePosition.updatePosition(state.characterObject.id, movementFacing.movement)
+                gameObjectRealtimePosition.updatePosition(state.characterObject.id) {
+                    correctPositionAttitude(
+                        it.applyMovement(
+                            movementFacing.movement
+                        )
+                    )
+                }
             if (updatedValue == null) {
                 Logger.warn("Character collision")
                 wrapper.send(MsgType.TypeTeleportPlayer) {
@@ -54,8 +62,6 @@ class OnMoveRequestProcessor(
 
         val nextState = state.copy(characterObject = updatedCharacterObject, coordinates = newCoordinates)
 
-
-
         if (payload.sequence == RESYNC_SEQUENCE) {
             wrapper.send(MsgType.TypeTeleportPlayer) {
                 it.setTeleportPlayer(
@@ -72,6 +78,12 @@ class OnMoveRequestProcessor(
         }
 
         return nextState
+    }
+
+    private fun correctPositionAttitude(cell: Coordinates): Coordinates {
+        val blockAltitudeData = mulBlockAltitudeRepository.getBlockAltitudeData(cell)
+        val altitude = blockAltitudeData.getCellAttitude(cell)
+        return if (altitude == cell.z) cell else cell.copy(z = altitude)
     }
 
 }

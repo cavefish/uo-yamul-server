@@ -26,7 +26,7 @@ data class StateInitial(private val loggedUser: LoggedUser) : StateLoggedIn(
 data class StateHasCharacter(
     private val loggedUser: LoggedUser,
     val characterObject: GameObject,
-    val coordinates: Coordinates = Coordinates()
+    val coordinates: Coordinates
 ) : StateLoggedIn(
     loggedUser,
     properties = listOf(StateProperty.RECEIVE_EVENTS)
