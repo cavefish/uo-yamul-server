@@ -11,6 +11,7 @@ import dev.cavefish.yamul.backend.game.controller.domain.Hues
 import dev.cavefish.yamul.backend.game.controller.domain.Notoriety
 import dev.cavefish.yamul.backend.game.controller.domain.ObjectId
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRepository
+import dev.cavefish.yamul.backend.game.controller.infra.mul.MulBlockAltitudeRepository
 import kotlinx.coroutines.runBlocking
 import org.springframework.boot.context.event.ApplicationStartedEvent
 import org.springframework.context.event.EventListener
@@ -24,57 +25,56 @@ import org.tinylog.kotlin.Logger
 @EnableAsync
 class InMemoryInitRepositories(
     private val objectRepository: GameObjectRepository,
-    private val realtimePosition: InMemoryGameObjectRealtimePosition
+    private val realtimePosition: InMemoryGameObjectRealtimePosition,
+    private val mulBlockAltitudeRepository: MulBlockAltitudeRepository,
 ) {
     @Async
     @EventListener(ApplicationStartedEvent::class)
-    fun init() = runBlocking {
-        Logger.info("Initializing repositories")
+    fun init() {
 
-        InMemoryUserCharacterRepository.database["admin" to 0] = registerGameCharacter(
-            GameObject(
-                name = "John Doe",
-                isCharacter = true,
-                parentId = null,
-                graphicId = GraphicId.BodyHumanMale,
-                hue = Hues.Character.hue,
-                flags = listOf(Flags.Normal, Flags.CanAlterPaperDoll),
-                notoriety = listOf(Notoriety.Gray, Notoriety.Criminal),
-            ),
-            Coordinates(
-                x = 6787,
-                y = 2181,
-                z = 0,
-                mapId = 1,
-            ),
-            treeOf(
+        runBlocking {
+            Logger.info("Initializing repositories")
+
+            InMemoryUserCharacterRepository.database["admin" to 0] = registerGameCharacter(
                 GameObject(
+                    name = "John Doe",
+                    isCharacter = true,
                     parentId = null,
-                    graphicId = GraphicId.Backpack,
-                    layer = 0x15,
-                    hue = Hues.Blue.hue,
+                    graphicId = GraphicId.BodyHumanMale,
+                    hue = Hues.Character.hue,
+                    flags = listOf(Flags.Normal, Flags.CanAlterPaperDoll),
+                    notoriety = listOf(Notoriety.Gray, Notoriety.Criminal),
+                ),
+                mulBlockAltitudeRepository.correctPositionAltitude(feluccaFortIslandCenter),
+                treeOf(
+                    GameObject(
+                        parentId = null,
+                        graphicId = GraphicId.Backpack,
+                        layer = 0x15,
+                        hue = Hues.Blue.hue,
+                    )
+                ),
+                treeOf(
+                    GameObject(
+                        parentId = null,
+                        graphicId = GraphicId.HairShort,
+                        layer = 0x0B,
+                        hue = Hues.Black.hue,
+                    )
+                ),
+                treeOf(
+                    GameObject(
+                        parentId = null,
+                        graphicId = GraphicId.RobeGm,
+                        layer = 0x16,
+                        hue = Hues.White.hue,
+                    )
                 )
-            ),
-            treeOf(
-                GameObject(
-                    parentId = null,
-                    graphicId = GraphicId.HairShort,
-                    layer = 0x0B,
-                    hue = Hues.Black.hue,
-                )
-            ),
-            treeOf(
-                GameObject(
-                    parentId = null,
-                    graphicId = GraphicId.RobeGm,
-                    layer = 0x16,
-                    hue = Hues.White.hue,
-                )
+
             )
 
-        )
-
-        Logger.info("Repositories initialized")
+            Logger.info("Repositories initialized")
+        }
     }
 
     private suspend fun registerGameCharacter(
@@ -96,5 +96,20 @@ class InMemoryInitRepositories(
     private fun registerGameObjectTree(parentId: ObjectId, objectTree: GameObjectTree) {
         val newObjectId = objectRepository.registerNewObject(objectTree.value.copy(parentId = parentId))
         objectTree.children.forEach { child -> registerGameObjectTree(newObjectId, child) }
+    }
+
+    companion object {
+        val feluccaStrangeTownOutOfBoundsCenter = Coordinates(
+            x = 6787,
+            y = 2181,
+            z = 0,
+            mapId = 1,
+        )
+        val feluccaFortIslandCenter = Coordinates(
+            x = 2980,
+            y = 3436,
+            z = 15,
+            mapId = 1,
+        )
     }
 }

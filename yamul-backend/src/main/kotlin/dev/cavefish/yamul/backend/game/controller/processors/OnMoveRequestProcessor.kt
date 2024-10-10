@@ -6,7 +6,6 @@ import dev.cavefish.yamul.backend.game.api.MsgClientMoveRequest
 import dev.cavefish.yamul.backend.game.api.MsgMoveAck
 import dev.cavefish.yamul.backend.game.api.MsgType
 import dev.cavefish.yamul.backend.game.controller.GameStreamWrapper
-import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 import dev.cavefish.yamul.backend.game.controller.domain.MovementDirection
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.State
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateError
@@ -36,7 +35,7 @@ class OnMoveRequestProcessor(
         val newCoordinates = if (state.characterObject.facing == movementFacing) {
             val updatedValue =
                 gameObjectRealtimePosition.updatePosition(state.characterObject.id) {
-                    correctPositionAttitude(
+                    mulBlockAltitudeRepository.correctPositionAltitude(
                         it.applyMovement(
                             movementFacing.movement
                         )
@@ -78,12 +77,6 @@ class OnMoveRequestProcessor(
         }
 
         return nextState
-    }
-
-    private fun correctPositionAttitude(cell: Coordinates): Coordinates {
-        val blockAltitudeData = mulBlockAltitudeRepository.getBlockAltitudeData(cell)
-        val altitude = blockAltitudeData.getCellAttitude(cell)
-        return if (altitude == cell.z) cell else cell.copy(z = altitude)
     }
 
 }
