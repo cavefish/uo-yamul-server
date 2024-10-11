@@ -11,9 +11,10 @@ import dev.cavefish.yamul.backend.game.controller.domain.Hues
 import dev.cavefish.yamul.backend.game.controller.domain.Notoriety
 import dev.cavefish.yamul.backend.game.controller.domain.ObjectId
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRepository
-import dev.cavefish.yamul.backend.game.controller.infra.mul.MulBlockAltitudeRepository
+import dev.cavefish.yamul.backend.game.controller.infra.mul.MulMapBlockRepository
 import kotlinx.coroutines.runBlocking
 import org.springframework.boot.context.event.ApplicationStartedEvent
+import org.springframework.context.annotation.Profile
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.EnableAsync
@@ -23,10 +24,11 @@ import org.tinylog.kotlin.Logger
 @SuppressWarnings("MagicNumber")
 @Service
 @EnableAsync
+@Profile("dev")
 class InMemoryInitRepositories(
     private val objectRepository: GameObjectRepository,
     private val realtimePosition: InMemoryGameObjectRealtimePosition,
-    private val mulBlockAltitudeRepository: MulBlockAltitudeRepository,
+    private val mulMapBlockRepository: MulMapBlockRepository,
 ) {
     @Async
     @EventListener(ApplicationStartedEvent::class)
@@ -45,7 +47,7 @@ class InMemoryInitRepositories(
                     flags = listOf(Flags.Normal, Flags.CanAlterPaperDoll),
                     notoriety = listOf(Notoriety.Gray, Notoriety.Criminal),
                 ),
-                mulBlockAltitudeRepository.correctPositionAltitude(feluccaFortIslandCenter),
+                mulMapBlockRepository.correctPositionAltitude(feluccaFortIslandCenter),
                 treeOf(
                     GameObject(
                         parentId = null,

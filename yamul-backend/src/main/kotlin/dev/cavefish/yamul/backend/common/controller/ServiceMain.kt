@@ -11,6 +11,7 @@ import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.tinylog.kotlin.Logger
@@ -24,6 +25,7 @@ const val GAME_SERVICE_PORT = 8089
 @EnableScheduling
 @EnableAsync
 @ComponentScan(basePackages = ["dev.cavefish.yamul.backend"])
+@Profile(value = ["dev", "live"])
 class ServiceMain @Autowired constructor(
     val loginServiceController: LoginServiceController,
     val characterServiceController: CharacterServiceController,

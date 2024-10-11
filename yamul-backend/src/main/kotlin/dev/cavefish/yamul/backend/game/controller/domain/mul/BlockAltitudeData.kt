@@ -25,4 +25,9 @@ data class BlockAltitudeData(val origin: Coordinates, val values: Array<Array<In
         return values[difference.x][difference.y]
     }
 
+    override fun toString(): String {
+        return "BlockAltitudeData(origin=$origin, values=[${values.joinToString { it.contentToString() }}])"
+    }
+
+
 }

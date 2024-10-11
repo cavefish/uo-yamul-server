@@ -13,7 +13,7 @@ import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateErrorReq
 import dev.cavefish.yamul.backend.game.controller.domain.gamestate.StateHasCharacter
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRealtimePosition
 import dev.cavefish.yamul.backend.game.controller.infra.GameObjectRepository
-import dev.cavefish.yamul.backend.game.controller.infra.mul.MulBlockAltitudeRepository
+import dev.cavefish.yamul.backend.game.controller.infra.mul.MulMapBlockRepository
 import org.springframework.stereotype.Component
 import org.tinylog.kotlin.Logger
 
@@ -23,7 +23,7 @@ private const val RESYNC_SEQUENCE = 250
 class OnMoveRequestProcessor(
     private val gameObjectRepository: GameObjectRepository,
     private val gameObjectRealtimePosition: GameObjectRealtimePosition,
-    private val mulBlockAltitudeRepository: MulBlockAltitudeRepository
+    private val mulMapBlockRepository: MulMapBlockRepository
 ) : MessageProcessor<MsgClientMoveRequest>(
     MsgType.TypeClientMoveRequest, Message::getClientMoveRequest
 ) {
@@ -35,7 +35,7 @@ class OnMoveRequestProcessor(
         val newCoordinates = if (state.characterObject.facing == movementFacing) {
             val updatedValue =
                 gameObjectRealtimePosition.updatePosition(state.characterObject.id) {
-                    mulBlockAltitudeRepository.correctPositionAltitude(
+                    mulMapBlockRepository.correctPositionAltitude(
                         it.applyMovement(
                             movementFacing.movement
                         )

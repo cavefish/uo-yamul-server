@@ -40,6 +40,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
 
     testImplementation(kotlin("test"))
+    testImplementation("org.assertj:assertj-core:3.11.1")
+
 
     implementation("org.tinylog:tinylog-api-kotlin:2.7.0")
     runtimeOnly("org.tinylog:tinylog-impl:2.7.0")
