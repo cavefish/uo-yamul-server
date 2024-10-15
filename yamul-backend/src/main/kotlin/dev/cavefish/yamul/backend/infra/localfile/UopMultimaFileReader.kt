@@ -14,7 +14,7 @@ private const val TABLE_HEADER_SIZE = 12L
 private const val ENTRY_HEADER_SIZE = 34L
 
 @SuppressWarnings("TooManyFunctions")
-class UopFileReader(private val filename: String) : AutoCloseable {
+class UopMultimaFileReader(private val filename: String) : MultimaFileReader {
 
     private val channel: FileChannel
     private val file: RandomAccessFile
@@ -23,7 +23,7 @@ class UopFileReader(private val filename: String) : AutoCloseable {
     private val mutex = ReentrantLock()
 
     init {
-        val fileLocation = LocalMulFileLocation.getFileLocation("$filename.uop")
+        val fileLocation = LocalMulFileLocation.getFileLocation(filename)
         file = RandomAccessFile(fileLocation, "r")
         channel = file.channel
         header = readUopHeader()
@@ -64,7 +64,7 @@ class UopFileReader(private val filename: String) : AutoCloseable {
         return "UopFileReader($filename)"
     }
 
-    fun getBytes(offset: Long, size: Int): ByteArray? {
+    override fun getBytes(offset: Long, size: Int): ByteArray? {
         val result = ByteArray(size)
         var idx = 0
         while (idx < size) {

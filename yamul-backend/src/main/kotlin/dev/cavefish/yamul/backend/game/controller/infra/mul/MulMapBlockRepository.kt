@@ -10,7 +10,7 @@ abstract class MulMapBlockRepository {
     open fun correctPositionAltitude(cell: Coordinates): Coordinates {
         val blockAltitudeData = getBlockAltitudeData(cell)
         Logger.debug(blockAltitudeData.toString())
-        val altitude = blockAltitudeData.getCellAttitude(cell) + 1
+        val altitude = blockAltitudeData.getCellAttitude(cell)
         return if (altitude == cell.z) cell else cell.copy(z = altitude)
     }
 }

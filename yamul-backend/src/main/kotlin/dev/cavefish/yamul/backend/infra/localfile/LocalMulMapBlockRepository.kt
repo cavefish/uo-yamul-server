@@ -7,7 +7,6 @@ import dev.cavefish.yamul.backend.infra.localfile.MulBlockHelper.getBlockId
 import org.springframework.stereotype.Repository
 import org.tinylog.kotlin.Logger
 import java.util.concurrent.ConcurrentHashMap
-import javax.annotation.PreDestroy
 
 private const val BLOCK_WIDTH = 8
 
@@ -16,7 +15,9 @@ private const val BLOCK_DATA_SIZE = 4 + 3 * BLOCK_WIDTH * BLOCK_WIDTH
 
 @Repository
 @Suppress("MagicNumber")
-class LocalMulMapBlockRepository : MulMapBlockRepository() {
+class LocalMulMapBlockRepository(
+    val multimaFileRepository: MultimaFileRepository
+) : MulMapBlockRepository(), AutoCloseable {
 
 //    override fun correctPositionAltitude(cell: Coordinates): Coordinates {
 //        val correctedCoordinates = super.correctPositionAltitude(cell)
@@ -38,9 +39,9 @@ class LocalMulMapBlockRepository : MulMapBlockRepository() {
             Logger.error("Block $offset of map $mapId is out-of-bounds")
             return result
         }
-        for (i in 0..<BLOCK_WIDTH) {
-            for (j in 0..<BLOCK_WIDTH) {
-                result[i][j] = blockBytes.get(4 + 2 + 3 * (i * BLOCK_WIDTH + j)).toInt()
+        for (x in 0..<BLOCK_WIDTH) {
+            for (y in 0..<BLOCK_WIDTH) {
+                result[x][y] = blockBytes[4 + 2 + 3 * (x + BLOCK_WIDTH * y)].toInt()
             }
         }
         Logger.debug(
@@ -54,8 +55,8 @@ class LocalMulMapBlockRepository : MulMapBlockRepository() {
     private fun getBlockBytes(mapFile: Int, offset: Int): ByteArray? {
         val file = files.computeIfAbsent(mapFile) {
             return@computeIfAbsent when (mapFile) {
-                0, 1, 2, 5 -> UopFileReader("map${mapFile}LegacyMUL")
-                else -> UopFileReader("map${mapFile}LegacyMUL")
+                0, 1, 2, 5 -> multimaFileRepository.getReaderFor("map${mapFile}LegacyMUL.uop")
+                else -> multimaFileRepository.getReaderFor("map${mapFile}LegacyMUL.uop")
             }
         }
 
@@ -64,15 +65,13 @@ class LocalMulMapBlockRepository : MulMapBlockRepository() {
         return rawData
     }
 
+    override fun close() {
+        Logger.debug("Closing MUL files")
+        files.values.forEach { it.close() }
+        files.clear()
+    }
+
     companion object {
-
-        @PreDestroy
-        fun onDestroy() {
-            Logger.debug("Closing MUL files")
-            files.values.forEach { it.close() }
-        }
-
-        private val files = ConcurrentHashMap<Int, UopFileReader>()
-
+        private val files = ConcurrentHashMap<Int, MultimaFileReader>()
     }
 }
