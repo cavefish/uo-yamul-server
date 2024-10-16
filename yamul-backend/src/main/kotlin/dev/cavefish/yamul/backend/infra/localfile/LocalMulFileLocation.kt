@@ -10,8 +10,8 @@ object LocalMulFileLocation {
     }
 
     fun getFileLocation(name: String): String? {
-        assert(name.endsWith(".mul") || name.endsWith("LegacyMUL.uop"))
-        assert(!name.contains("/") && !name.contains("\\"))
+        assert(name.endsWith(".mul") || name.endsWith("LegacyMUL.uop")) {"Invalid filename: $name"}
+        assert(name.contains(Regex("\\w+"))) {"Filename must contain valid characters"}
         val basePath = getBasePath()
         val baseDirectory = File(basePath)
         if (!baseDirectory.exists() && !baseDirectory.isDirectory) return null

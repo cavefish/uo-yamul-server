@@ -21,6 +21,10 @@ class PlainMultimaFileReader(private val filename: String) : MultimaFileReader {
         return result
     }
 
+    override fun getSize(): Long {
+        return channel.size()
+    }
+
     override fun close() {
         channel.close()
         file.close()

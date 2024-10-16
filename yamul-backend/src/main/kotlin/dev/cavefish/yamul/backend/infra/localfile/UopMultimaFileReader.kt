@@ -1,6 +1,8 @@
 package dev.cavefish.yamul.backend.infra.localfile
 
+import com.google.common.annotations.VisibleForTesting
 import java.io.RandomAccessFile
+import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.util.*
@@ -18,8 +20,10 @@ class UopMultimaFileReader(private val filename: String) : MultimaFileReader {
 
     private val channel: FileChannel
     private val file: RandomAccessFile
-    private val header: UopFileHeader
-    private val tables: TreeMap<Long, UopFileTable> = TreeMap()
+    @VisibleForTesting
+    val header: UopFileHeader
+    @VisibleForTesting
+    val tables: TreeMap<Long, UopFileTable> = TreeMap()
     private val mutex = ReentrantLock()
 
     init {
@@ -43,21 +47,22 @@ class UopMultimaFileReader(private val filename: String) : MultimaFileReader {
 
     private fun readUopHeader(): UopFileHeader {
         val buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, FILE_HEADER_SIZE)
-        val header = readInt(buffer)
-        val version = readInt(buffer)
-        val timestamp = readInt(buffer)
-        val firstTablePosition = readLong(buffer)
-        return UopFileHeader(
-            header = header,
-            version = version,
-            timestamp = timestamp,
-            firstTablePosition = firstTablePosition
+            .order(ByteOrder.LITTLE_ENDIAN)
+        val uopFileHeader = UopFileHeader(
+            header = buffer.int,
+            version = buffer.int,
+            timestamp = buffer.int,
+            firstTablePosition = buffer.long
         )
+        return uopFileHeader
     }
 
     override fun close() {
-        channel.close()
-        file.close()
+        mutex.withLock {
+            tables.clear()
+            channel.close()
+            file.close()
+        }
     }
 
     override fun toString(): String {
@@ -72,6 +77,10 @@ class UopMultimaFileReader(private val filename: String) : MultimaFileReader {
             idx += fillBuffer(result, idx, offset + idx, size - idx, table)
         }
         return result
+    }
+
+    override fun getSize(): Long {
+        return tables.lastEntry().value.entries.lastEntry().value.decompressedDataOffset
     }
 
     private fun fillBuffer(target: ByteArray, targetOffset: Int, offset: Long, size: Int, table: UopFileTable): Int {
@@ -108,14 +117,15 @@ class UopMultimaFileReader(private val filename: String) : MultimaFileReader {
     private fun loadTableAtOffset(dataOffset: Long, tablePosition: Long): UopFileTable? {
         if (tablePosition <= 0L) return null
         val headerByteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, tablePosition, TABLE_HEADER_SIZE)
-        val numberOfEntries = readInt(headerByteBuffer)
-        val nextTablePosition = readLong(headerByteBuffer)
+            .order(ByteOrder.LITTLE_ENDIAN)
+        val numberOfEntries = headerByteBuffer.getInt()
+        val nextTablePosition = headerByteBuffer.getLong()
         val entries = TreeMap<Long, UopFileEntry>()
 
         var nextEntryOffset = dataOffset
         for (i in 0..<numberOfEntries) {
             val entry = loadEntry(nextEntryOffset, tablePosition + TABLE_HEADER_SIZE + i * ENTRY_HEADER_SIZE)
-            entries.put(nextEntryOffset, entry)
+            entries[nextEntryOffset] = entry
             nextEntryOffset += entry.decompressedSize
         }
 
@@ -130,50 +140,20 @@ class UopMultimaFileReader(private val filename: String) : MultimaFileReader {
 
     private fun loadEntry(dataOffset: Long, entryOffset: Long): UopFileEntry {
         val byteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, entryOffset, ENTRY_HEADER_SIZE)
+            .order(ByteOrder.LITTLE_ENDIAN)
 
-        val compressedDataOffset = readLong(byteBuffer)
-        val headerLength = readInt(byteBuffer)
-        val size = readInt(byteBuffer)
-        val decompressedSize = readInt(byteBuffer)
-        val filenameHash = readLong(byteBuffer)
-        val hash = readInt(byteBuffer)
-        val compressionMethod = readShort(byteBuffer)
-
-        assert(compressionMethod.toInt() == 0)
-
-        return UopFileEntry(
+        val result = UopFileEntry(
             decompressedDataOffset = dataOffset,
-            compressedDataOffset = compressedDataOffset,
-            headerLength = headerLength,
-            size = size,
-            decompressedSize = decompressedSize,
-            filenameHash = filenameHash,
-            hash = hash,
-            compressionMethod = compressionMethod,
+            compressedDataOffset = byteBuffer.long,
+            headerLength = byteBuffer.int,
+            size = byteBuffer.int,
+            decompressedSize = byteBuffer.int,
+            filenameHash = byteBuffer.long,
+            hash = byteBuffer.int,
+            compressionMethod = byteBuffer.short,
         )
-    }
-
-    @SuppressWarnings("MagicNumber")
-    private fun readShort(buffer: MappedByteBuffer): Short {
-        val byte1 = buffer.get().toInt()
-        val byte0 = buffer.get().toInt()
-        return (byte0 shl 8 or byte1).toShort()
-    }
-
-    @SuppressWarnings("MagicNumber")
-    private fun readInt(buffer: MappedByteBuffer): Int {
-        val byte3 = buffer.get().toInt() and 0xFF
-        val byte2 = buffer.get().toInt() and 0xFF
-        val byte1 = buffer.get().toInt() and 0xFF
-        val byte0 = buffer.get().toInt() and 0xFF
-        return (byte0 shl 24) or (byte1 shl 16) or (byte2 shl 8) or (byte3)
-    }
-
-    @SuppressWarnings("MagicNumber")
-    private fun readLong(byteBuffer: MappedByteBuffer): Long {
-        val byte47 = readInt(byteBuffer).toLong()
-        val byte03 = readInt(byteBuffer).toLong()
-        return byte03 shl 32 or byte47
+        assert(result.compressionMethod == 0.toShort())
+        return result
     }
 
     data class UopFileHeader(
@@ -181,13 +161,25 @@ class UopMultimaFileReader(private val filename: String) : MultimaFileReader {
         val version: Int,
         val timestamp: Int,
         val firstTablePosition: Long
-    )
+    ) {
+        init {
+            assert(header>=0)
+            assert(version>=0)
+            assert(firstTablePosition>0)
+        }
+    }
 
     data class UopFileTable(
         val numberOfEntries: Int,
         val nextTablePosition: Long,
         val entries: TreeMap<Long, UopFileEntry>,
     ) {
+
+        init {
+            assert(numberOfEntries>=0)
+            assert(nextTablePosition>=0)
+        }
+
         fun getEntryFor(offset: Long): UopFileEntry? {
             val entry = entries.floorEntry(offset).value
             if (!entry.containsDecompressedPosition(offset)) return null

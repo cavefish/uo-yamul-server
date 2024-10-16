@@ -3,6 +3,7 @@ package dev.cavefish.yamul.backend.infra.localfile
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 import dev.cavefish.yamul.backend.game.controller.domain.mul.BlockAltitudeData
 import dev.cavefish.yamul.backend.game.controller.infra.mul.MulMapBlockRepository
+import dev.cavefish.yamul.backend.game.controller.infra.mul.MulTileDataRepository
 import dev.cavefish.yamul.backend.infra.localfile.MulBlockHelper.getBlockId
 import org.springframework.stereotype.Repository
 import org.tinylog.kotlin.Logger
@@ -16,24 +17,19 @@ private const val BLOCK_DATA_SIZE = 4 + 3 * BLOCK_WIDTH * BLOCK_WIDTH
 @Repository
 @Suppress("MagicNumber")
 class LocalMulMapBlockRepository(
-    val multimaFileRepository: MultimaFileRepository
+    val multimaFileRepository: MultimaFileRepository,
 ) : MulMapBlockRepository(), AutoCloseable {
-
-//    override fun correctPositionAltitude(cell: Coordinates): Coordinates {
-//        val correctedCoordinates = super.correctPositionAltitude(cell)
-//        Logger.warn("Bugged behaviour. Returning a z value of 127. Result from mapFile: $correctedCoordinates")
-//        return cell.copy(z=127)
-//    }
 
     override fun getBlockAltitudeData(position: Coordinates): BlockAltitudeData {
         val origin = position.toBlockOrigin()
         val blockAltitudeData = BlockAltitudeData(origin, getAltitudeData(origin.mapId, getBlockId(origin)))
+        Logger.debug(blockAltitudeData.toString())
         return blockAltitudeData
     }
 
     // TODO add cache
-    private fun getAltitudeData(mapId: Int, offset: Int): Array<Array<Int>> {
-        val result = Array(BLOCK_WIDTH) { Array(BLOCK_WIDTH) { 0 } }
+    private fun getAltitudeData(mapId: Int, offset: Int): Array<Array<Pair<Int, Int>>> {
+        val result = Array(BLOCK_WIDTH) { Array(BLOCK_WIDTH) { 0 to 0 } }
         val blockBytes = getBlockBytes(mapId, offset)
         if (blockBytes == null) {
             Logger.error("Block $offset of map $mapId is out-of-bounds")
@@ -41,7 +37,11 @@ class LocalMulMapBlockRepository(
         }
         for (x in 0..<BLOCK_WIDTH) {
             for (y in 0..<BLOCK_WIDTH) {
-                result[x][y] = blockBytes[4 + 2 + 3 * (x + BLOCK_WIDTH * y)].toInt()
+                val inBlockOffset = 3 * (x + BLOCK_WIDTH * y)
+                val tileId =
+                    ((blockBytes[inBlockOffset].toInt() shl 8) or blockBytes[1 + inBlockOffset].toInt()) and 0xFFFF
+                val z = blockBytes[2 + inBlockOffset].toInt()
+                result[x][y] = tileId to z
             }
         }
         Logger.debug(
@@ -55,7 +55,7 @@ class LocalMulMapBlockRepository(
     private fun getBlockBytes(mapFile: Int, offset: Int): ByteArray? {
         val file = files.computeIfAbsent(mapFile) {
             return@computeIfAbsent when (mapFile) {
-                0, 1, 2, 5 -> multimaFileRepository.getReaderFor("map${mapFile}LegacyMUL.uop")
+                0, 1, 2, 5 -> multimaFileRepository.getReaderFor("map${mapFile}xLegacyMUL.uop")
                 else -> multimaFileRepository.getReaderFor("map${mapFile}LegacyMUL.uop")
             }
         }

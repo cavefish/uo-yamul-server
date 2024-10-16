@@ -26,7 +26,8 @@ private const val STATIC_TILE_GROUP_SIZE = STATIC_TILE_GROUP_HEADER + 32 * STATI
 class LocalMulTileDataRepository : MulTileDataRepository, DisposableBean {
 
     override fun getLandTileData(id: Int): LandTileData? {
-        val tileGroup = id shr 5
+        assert(id < 0x4000)
+        val tileGroup = id ushr 5
         val subGroupId = id and 0x1F
 
         val position =
@@ -42,7 +43,7 @@ class LocalMulTileDataRepository : MulTileDataRepository, DisposableBean {
     }
 
     override fun getStaticTileData(id: Int): StaticTileData? {
-        val tileGroup = id shr 5
+        val tileGroup = id ushr 5
         val subGroupId = id and 0x1F
 
         val position =

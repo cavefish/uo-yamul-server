@@ -3,7 +3,8 @@ package dev.cavefish.yamul.backend.game.controller.domain.mul
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 
 
-data class BlockAltitudeData(val origin: Coordinates, val values: Array<Array<Int>>) {
+@OptIn(ExperimentalStdlibApi::class)
+data class BlockAltitudeData(val origin: Coordinates, val values: Array<Array<Pair<Int, Int>>>) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -22,11 +23,27 @@ data class BlockAltitudeData(val origin: Coordinates, val values: Array<Array<In
 
     fun getCellAttitude(coordinate: Coordinates): Int {
         val difference = coordinate.difference(origin)
-        return values[difference.x][difference.y]
+        return values[difference.x][difference.y].second
     }
 
     override fun toString(): String {
-        return "BlockAltitudeData(origin=$origin, values=[${values.joinToString { it.contentToString() }}])"
+        val valuesAsString =
+            values.joinToString {
+                it.joinToString { it2 ->
+                    "${it2.first.toShort().toHexString(numberFormat)}:${it2.second.toByte().toHexString(numberFormat)}"
+                }
+            }
+        return "BlockAltitudeData(origin=$origin, values=[$valuesAsString])"
+    }
+
+    companion object {
+        val numberFormat = HexFormat {
+            upperCase = true
+            number {
+                removeLeadingZeros = false
+                prefix = "0x"
+            }
+        }
     }
 
 

@@ -47,7 +47,7 @@ class InMemoryInitRepositories(
                     flags = listOf(Flags.Normal, Flags.CanAlterPaperDoll),
                     notoriety = listOf(Notoriety.Gray, Notoriety.Criminal),
                 ),
-                mulMapBlockRepository.correctPositionAltitude(feluccaFortIslandCenter),
+                mulMapBlockRepository.correctPositionAltitude(feluccaStrangeTownOutOfBoundsCenter),
                 treeOf(
                     GameObject(
                         parentId = null,

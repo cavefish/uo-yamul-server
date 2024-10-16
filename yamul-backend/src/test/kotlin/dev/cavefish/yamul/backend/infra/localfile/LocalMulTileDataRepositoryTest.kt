@@ -73,7 +73,7 @@ class LocalMulTileDataRepositoryTest : IntegrationTest() {
                 textureId = 0,
                 flags = 0x0
             ),
-        )
+        ),
     )
 
     @ParameterizedTest
