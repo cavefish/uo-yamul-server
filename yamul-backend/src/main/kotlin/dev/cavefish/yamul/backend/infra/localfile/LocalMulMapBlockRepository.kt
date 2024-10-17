@@ -3,7 +3,6 @@ package dev.cavefish.yamul.backend.infra.localfile
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 import dev.cavefish.yamul.backend.game.controller.domain.mul.BlockAltitudeData
 import dev.cavefish.yamul.backend.game.controller.infra.mul.MulMapBlockRepository
-import dev.cavefish.yamul.backend.game.controller.infra.mul.MulTileDataRepository
 import dev.cavefish.yamul.backend.infra.localfile.MulBlockHelper.getBlockId
 import org.springframework.stereotype.Repository
 import org.tinylog.kotlin.Logger
@@ -44,20 +43,21 @@ class LocalMulMapBlockRepository(
                 result[x][y] = tileId to z
             }
         }
-        Logger.debug(
-            "mapId=$mapId, offset=$offset, result:\n ${
-                result.joinToString("\n") { it.contentToString() }
-            }]"
-        )
         return result
     }
 
+    @SuppressWarnings("TooGenericExceptionThrown")
     private fun getBlockBytes(mapFile: Int, offset: Int): ByteArray? {
         val file = files.computeIfAbsent(mapFile) {
-            return@computeIfAbsent when (mapFile) {
-                0, 1, 2, 5 -> multimaFileRepository.getReaderFor("map${mapFile}xLegacyMUL.uop")
-                else -> multimaFileRepository.getReaderFor("map${mapFile}LegacyMUL.uop")
-            }
+            return@computeIfAbsent multimaFileRepository.getReaderFor(when (mapFile) {
+                0 -> MultimaFileRepository.MulFile.Map0
+                1 -> MultimaFileRepository.MulFile.Map1
+                2 -> MultimaFileRepository.MulFile.Map2
+                3 -> MultimaFileRepository.MulFile.Map3
+                4 -> MultimaFileRepository.MulFile.Map4
+                5 -> MultimaFileRepository.MulFile.Map5
+                else -> throw Exception("Unknown mapFile=$mapFile")
+            })
         }
 
         val rawDataPosition = (offset * BLOCK_DATA_SIZE).toLong()

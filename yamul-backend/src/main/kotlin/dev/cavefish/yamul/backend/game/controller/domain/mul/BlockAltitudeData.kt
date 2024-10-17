@@ -1,9 +1,9 @@
 package dev.cavefish.yamul.backend.game.controller.domain.mul
 
+import dev.cavefish.yamul.backend.Constants
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 
 
-@OptIn(ExperimentalStdlibApi::class)
 data class BlockAltitudeData(val origin: Coordinates, val values: Array<Array<Pair<Int, Int>>>) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -28,22 +28,14 @@ data class BlockAltitudeData(val origin: Coordinates, val values: Array<Array<Pa
 
     override fun toString(): String {
         val valuesAsString =
-            values.joinToString {
-                it.joinToString { it2 ->
-                    "${it2.first.toShort().toHexString(numberFormat)}:${it2.second.toByte().toHexString(numberFormat)}"
+            values.joinToString("\n\t") {
+                it.joinToString(", ") { it2 ->
+                    "${ Constants.toHexFormat(it2.first.toShort())}:${
+                        Constants.toHexFormat(it2.second.toByte())
+                    }"
                 }
             }
-        return "BlockAltitudeData(origin=$origin, values=[$valuesAsString])"
-    }
-
-    companion object {
-        val numberFormat = HexFormat {
-            upperCase = true
-            number {
-                removeLeadingZeros = false
-                prefix = "0x"
-            }
-        }
+        return "BlockAltitudeData(origin=$origin, values=[\n\t$valuesAsString\n])"
     }
 
 
