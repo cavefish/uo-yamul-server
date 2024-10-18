@@ -105,6 +105,11 @@ class UopMultimaFileReader(
         return result
     }
 
+    override fun getBuffer(offset: Long, size: Long): ByteBuffer? {
+        val bytes = getBytes(offset, size.toInt()) ?: return null
+        return ByteBuffer.wrap(bytes)
+    }
+
     private fun getEntryFor(dataOffset: Long): UopFileEntry? {
         val subFileId = (dataOffset / this.bytesPerSubFile).toInt()
         val hash = this.subFileHashes[subFileId]

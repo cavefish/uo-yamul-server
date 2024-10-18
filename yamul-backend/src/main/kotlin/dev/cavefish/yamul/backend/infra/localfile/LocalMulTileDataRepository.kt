@@ -5,9 +5,7 @@ import dev.cavefish.yamul.backend.game.controller.domain.mul.StaticTileData
 import dev.cavefish.yamul.backend.game.controller.infra.mul.MulTileDataRepository
 import org.springframework.beans.factory.DisposableBean
 import org.springframework.stereotype.Repository
-import java.io.RandomAccessFile
 import java.nio.ByteOrder
-import java.nio.channels.FileChannel
 
 private const val LAND_TILE_DATA_SIZE = 30L
 
@@ -23,7 +21,12 @@ private const val STATIC_TILE_GROUP_SIZE = STATIC_TILE_GROUP_HEADER + 32 * STATI
 
 @Repository
 @SuppressWarnings("MagicNumber")
-class LocalMulTileDataRepository : MulTileDataRepository, DisposableBean {
+class LocalMulTileDataRepository(
+    fileRepository: MultimaFileRepository
+) : MulTileDataRepository, DisposableBean {
+
+    private val fileReader: MultimaFileReader =
+        fileRepository.getReaderFor(MultimaFileRepository.PlainMulFileProperties("tiledata.mul"))
 
     override fun getLandTileData(id: Int): LandTileData? {
         assert(id < 0x4000)
@@ -33,7 +36,7 @@ class LocalMulTileDataRepository : MulTileDataRepository, DisposableBean {
         val position =
             LAND_TILE_GROUP_HEADER_SIZE + tileGroup * LAND_TILE_GROUP_DATA_SIZE + subGroupId * LAND_TILE_DATA_SIZE
         val byteBuffer =
-            channel.map(FileChannel.MapMode.READ_ONLY, position, LAND_TILE_DATA_SIZE).order(ByteOrder.LITTLE_ENDIAN)
+            fileReader.getBuffer(position, LAND_TILE_DATA_SIZE)?.order(ByteOrder.LITTLE_ENDIAN) ?: return null
 
         return LandTileData(
             flags = byteBuffer.long,
@@ -52,7 +55,7 @@ class LocalMulTileDataRepository : MulTileDataRepository, DisposableBean {
                     tileGroup * STATIC_TILE_GROUP_SIZE +
                     subGroupId * STATIC_TILE_DATA_SIZE
         val byteBuffer =
-            channel.map(FileChannel.MapMode.READ_ONLY, position, STATIC_TILE_DATA_SIZE).order(ByteOrder.LITTLE_ENDIAN)
+            fileReader.getBuffer(position, STATIC_TILE_DATA_SIZE)?.order(ByteOrder.LITTLE_ENDIAN) ?: return null
 
         return StaticTileData(
             id = id,
@@ -69,19 +72,6 @@ class LocalMulTileDataRepository : MulTileDataRepository, DisposableBean {
     }
 
     override fun destroy() {
-        channel.close()
-        file.close()
-    }
-
-    companion object {
-        private val channel: FileChannel
-        private val file: RandomAccessFile
-
-        init {
-            // TODO refactor to use file repository
-            val fileLocation = LocalMulFileLocation.getFileLocation("tiledata.mul")!!
-            file = RandomAccessFile(fileLocation, "r")
-            channel = file.channel!!
-        }
+        fileReader.close()
     }
 }

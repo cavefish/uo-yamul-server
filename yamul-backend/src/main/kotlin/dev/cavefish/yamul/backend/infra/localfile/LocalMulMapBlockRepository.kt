@@ -7,11 +7,13 @@ import dev.cavefish.yamul.backend.infra.localfile.MulMapHelper.getBlockId
 import dev.cavefish.yamul.backend.infra.localfile.MulMapHelper.mapProperties
 import org.springframework.stereotype.Repository
 import org.tinylog.kotlin.Logger
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.util.concurrent.ConcurrentHashMap
 
 private const val BLOCK_WIDTH = 8
 
-private const val BLOCK_DATA_SIZE = 4 + 3 * BLOCK_WIDTH * BLOCK_WIDTH
+private const val BLOCK_DATA_SIZE: Long = 4L + 3 * BLOCK_WIDTH * BLOCK_WIDTH
 
 
 @Repository
@@ -28,35 +30,32 @@ class LocalMulMapBlockRepository(
     }
 
     // TODO add cache
-    private fun getAltitudeData(mapId: Int, offset: Int): Array<Array<Pair<Int, Int>>> {
-        val result = Array(BLOCK_WIDTH) { Array(BLOCK_WIDTH) { 0 to 0 } }
-        val blockBytes = getBlockBytes(mapId, offset)
+    private fun getAltitudeData(mapId: Int, offset: Int): Array<Array<Pair<Short, Byte>>> {
+        val zeroShort: Short = 0
+        val result: Array<Array<Pair<Short, Byte>>> = Array(BLOCK_WIDTH) { Array(BLOCK_WIDTH) { zeroShort to 0 } }
+        val blockBytes = getBlockBuffer(mapId, offset)?.order(ByteOrder.LITTLE_ENDIAN)
         if (blockBytes == null) {
             Logger.error("Block $offset of map $mapId is out-of-bounds")
             return result
         }
-        for (x in 0..<BLOCK_WIDTH) {
-            for (y in 0..<BLOCK_WIDTH) {
-                val inBlockOffset = 3 * (x + BLOCK_WIDTH * y)
-                val tileId =
-                    ((blockBytes[4 + inBlockOffset].toInt() shl 8) or
-                            blockBytes[4 + 1 + inBlockOffset].toInt()) and 0xFFFF
-                val z = blockBytes[4 + 2 + inBlockOffset].toInt()
+        for (y in 0..<BLOCK_WIDTH) {
+            for (x in 0..<BLOCK_WIDTH) {
+                val tileId = blockBytes.getShort()
+                val z = blockBytes.get()
                 result[x][y] = tileId to z
             }
         }
+        // val header = blockBytes.getInt()
         return result
     }
 
-    @SuppressWarnings("TooGenericExceptionThrown")
-    private fun getBlockBytes(mapFile: Int, offset: Int): ByteArray? {
+    private fun getBlockBuffer(mapFile: Int, offset: Int): ByteBuffer? {
         val file = files.computeIfAbsent(mapFile) {
             return@computeIfAbsent multimaFileRepository.getReaderFor(mapProperties[mapFile].mapFile)
         }
 
-        val rawDataPosition = (offset * BLOCK_DATA_SIZE).toLong()
-        val rawData = file.getBytes(rawDataPosition, BLOCK_DATA_SIZE)
-        return rawData
+        val rawDataPosition = (offset * BLOCK_DATA_SIZE)
+        return file.getBuffer(rawDataPosition, BLOCK_DATA_SIZE)
     }
 
     override fun close() {

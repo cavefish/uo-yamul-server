@@ -16,9 +16,10 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.nio.ByteBuffer
 import java.util.stream.Stream
 
-private const val BLOCK_SIZE = 196
+private const val BLOCK_SIZE = 196L
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LocalMulMapBlockRepositoryTest : IntegrationTest() {
@@ -43,13 +44,15 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
     fun correctPositionAltitude(coordinates: Coordinates, blockFilePosition: Long, bytes: ByteArray?) {
         // Given
         whenever(multimaFileRepository.getReaderFor(any())).thenReturn(fileReader)
-        whenever(fileReader.getBytes(blockFilePosition * BLOCK_SIZE, BLOCK_SIZE)).thenReturn(bytes)
+        whenever(fileReader.getBuffer(blockFilePosition * BLOCK_SIZE, BLOCK_SIZE)).thenReturn(
+            if (bytes != null) ByteBuffer.wrap(bytes) else null
+        )
 
         // When
         val result = repository.correctPositionAltitude(coordinates.copy(z = 300))
 
         // Then
-        verify(fileReader).getBytes(blockFilePosition * BLOCK_SIZE, BLOCK_SIZE)
+        verify(fileReader).getBuffer(blockFilePosition * BLOCK_SIZE, BLOCK_SIZE)
         softly.assertThat(result).isEqualTo(coordinates)
 
         verify(fileReader, never()).close()
@@ -67,7 +70,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(6, 0, 0)
+            createBlockArray(2, 0, 0)
         ),
         Arguments.of(
             Coordinates(
@@ -87,7 +90,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(6, 0)
+            createBlockArray(2, 0)
         ),
         Arguments.of(
             Coordinates(
@@ -97,7 +100,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(6, -1, 100)
+            createBlockArray(2, -1, 100)
         ),
         Arguments.of(
             Coordinates(
@@ -107,7 +110,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(6 + 3, 123)
+            createBlockArray(2 + 3, 123)
         ),
         Arguments.of(
             Coordinates(
@@ -117,7 +120,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(6 + 8 * 3, 123)
+            createBlockArray(2 + 8 * 3, 123)
         ),
         Arguments.of(
             Coordinates(
@@ -127,7 +130,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             1L,
-            createBlockArray(6, -1)
+            createBlockArray(2, -1)
         ),
         createRandomArguments(),
         createRandomArguments(),
@@ -145,19 +148,20 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
         val blockY = fixture.createIntRange(0, 100)
         return Arguments.of(
             Coordinates(
-                x = subX + blockX*8,
-                y = subY + blockY*8,
+                x = subX + blockX * 8,
+                y = subY + blockY * 8,
                 z = expectedValueZ.toInt(),
                 mapId = mapIdToUse
             ),
-            blockX*mapBlockHeights[mapIdToUse]!! + blockY,
-            createBlockArray(6 + 3 * (subX + subY * 8), expectedValueZ)
+            blockX * mapBlockHeights[mapIdToUse]!! + blockY,
+            createBlockArray(2 + 3 * (subX + subY * 8), expectedValueZ)
         )
     }
 
-    private fun createBlockArray(position: Int, value: Byte, default: Byte? = null): ByteArray = ByteArray(BLOCK_SIZE) {
-        if (it == position) value else default ?: fixture.createDifferent(Byte::class.java, value)
-    }
+    private fun createBlockArray(position: Int, value: Byte, default: Byte? = null): ByteArray =
+        ByteArray(BLOCK_SIZE.toInt()) {
+            if (it == position) value else default ?: fixture.createDifferent(Byte::class.java, value)
+        }
 
     companion object {
         val mapBlockHeights = mapOf(

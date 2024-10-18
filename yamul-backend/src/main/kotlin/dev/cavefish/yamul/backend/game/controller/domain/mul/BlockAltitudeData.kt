@@ -4,7 +4,7 @@ import dev.cavefish.yamul.backend.Constants
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 
 
-data class BlockAltitudeData(val origin: Coordinates, val values: Array<Array<Pair<Int, Int>>>) {
+data class BlockAltitudeData(val origin: Coordinates, val values: Array<Array<Pair<Short, Byte>>>) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -23,15 +23,15 @@ data class BlockAltitudeData(val origin: Coordinates, val values: Array<Array<Pa
 
     fun getCellAttitude(coordinate: Coordinates): Int {
         val difference = coordinate.difference(origin)
-        return values[difference.x][difference.y].second
+        return values[difference.x][difference.y].second.toInt()
     }
 
     override fun toString(): String {
         val valuesAsString =
             values.joinToString("\n\t") {
                 it.joinToString(", ") { it2 ->
-                    "${ Constants.toHexFormat(it2.first.toShort())}:${
-                        Constants.toHexFormat(it2.second.toByte())
+                    "${ Constants.toHexFormat(it2.first)}:${
+                        Constants.toHexFormat(it2.second)
                     }"
                 }
             }
