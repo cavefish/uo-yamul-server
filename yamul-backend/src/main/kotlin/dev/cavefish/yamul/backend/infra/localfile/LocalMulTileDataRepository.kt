@@ -78,6 +78,7 @@ class LocalMulTileDataRepository : MulTileDataRepository, DisposableBean {
         private val file: RandomAccessFile
 
         init {
+            // TODO refactor to use file repository
             val fileLocation = LocalMulFileLocation.getFileLocation("tiledata.mul")!!
             file = RandomAccessFile(fileLocation, "r")
             channel = file.channel!!

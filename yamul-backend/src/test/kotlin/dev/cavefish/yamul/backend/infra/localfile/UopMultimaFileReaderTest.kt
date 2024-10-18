@@ -1,7 +1,8 @@
 package dev.cavefish.yamul.backend.infra.localfile
 
 import dev.cavefish.yamul.IntegrationTest
-import dev.cavefish.yamul.backend.infra.localfile.MultimaFileRepository.MulFile.Map0
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import kotlin.test.Test
 
@@ -10,9 +11,12 @@ class UopMultimaFileReaderTest : IntegrationTest() {
     @Autowired
     lateinit var multimaFileRepository: MultimaFileRepository
 
+    private fun createReader(mapId: Int) =
+        (multimaFileRepository.getReaderFor(MulMapHelper.mapProperties[mapId].mapFile) as UopMultimaFileReader)
+
     @Test
     fun readMap0FirstBlock() {
-        (multimaFileRepository.getReaderFor(Map0) as UopMultimaFileReader).use { reader ->
+        createReader(0).use { reader ->
             val expectedFirstBlock = byteArrayOf(0, 0, 0, 0, 0xA8.toByte(), 0, 0xFB.toByte(), 0xA8.toByte())
 
             // Before Reading
@@ -29,10 +33,13 @@ class UopMultimaFileReaderTest : IntegrationTest() {
         }
     }
 
-    @Test
-    fun readMap0LastBlock() {
-        (multimaFileRepository.getReaderFor(Map0) as UopMultimaFileReader).use { reader ->
-            val lastBlock0 = 196L * (7168 * 4096) / 64
+    @ParameterizedTest
+    @ValueSource(ints = [0])
+    fun readMap0LastBlock(mapId: Int) {
+        val map = MulMapHelper.mapProperties[mapId]
+        softly.assertThat(map.id).isEqualTo(mapId)
+        createReader(map.id).use { reader ->
+            val lastBlock0 = 196L * (map.height * map.width) / 64
             val result = reader.getBytes(lastBlock0, 196)
             softly.assertThat(result).isNotNull().hasSize(196)
         }
@@ -40,7 +47,7 @@ class UopMultimaFileReaderTest : IntegrationTest() {
 
     @Test
     fun readMap0LastBlockInExcess() {
-        (multimaFileRepository.getReaderFor(Map0) as UopMultimaFileReader).use { reader ->
+        createReader(0).use { reader ->
             val lastBlock0 = 196L * (7168 * 4096) / 64
             val result = reader.getBytes(lastBlock0, 196 + 1)
             softly.assertThat(result).isNotNull().hasSize(196 + 1)
@@ -50,7 +57,7 @@ class UopMultimaFileReaderTest : IntegrationTest() {
 
     @Test
     fun readMap0AfterLastBlock() {
-        (multimaFileRepository.getReaderFor(Map0) as UopMultimaFileReader).use { reader ->
+        createReader(0).use { reader ->
             val result = reader.getBytes(89_915_588L + 1L, 1)
             softly.assertThat(result).isNull()
         }

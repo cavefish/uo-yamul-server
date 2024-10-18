@@ -10,12 +10,12 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MulBlockHelperTest : UnitTest() {
+class MulMapHelperTest : UnitTest() {
 
     @ParameterizedTest
     @MethodSource
     fun getBlock(expectedBlock: Long, coordinates: Coordinates) {
-        val blockId = MulBlockHelper.getBlockId(coordinates)
+        val blockId = MulMapHelper.getBlockId(coordinates)
         softly.assertThat(blockId).isEqualTo(expectedBlock)
     }
 

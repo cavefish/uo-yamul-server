@@ -67,7 +67,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(2, 0, 0)
+            createBlockArray(6, 0, 0)
         ),
         Arguments.of(
             Coordinates(
@@ -87,7 +87,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(2, 0)
+            createBlockArray(6, 0)
         ),
         Arguments.of(
             Coordinates(
@@ -97,7 +97,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(2, -1, 100)
+            createBlockArray(6, -1, 100)
         ),
         Arguments.of(
             Coordinates(
@@ -107,7 +107,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(2 + 3, 123)
+            createBlockArray(6 + 3, 123)
         ),
         Arguments.of(
             Coordinates(
@@ -117,7 +117,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(2 + 8 * 3, 123)
+            createBlockArray(6 + 8 * 3, 123)
         ),
         Arguments.of(
             Coordinates(
@@ -127,7 +127,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             1L,
-            createBlockArray(2, -1)
+            createBlockArray(6, -1)
         ),
         createRandomArguments(),
         createRandomArguments(),
@@ -151,7 +151,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = mapIdToUse
             ),
             blockX*mapBlockHeights[mapIdToUse]!! + blockY,
-            createBlockArray(2 + 3 * (subX + subY * 8), expectedValueZ)
+            createBlockArray(6 + 3 * (subX + subY * 8), expectedValueZ)
         )
     }
 

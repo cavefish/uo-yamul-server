@@ -3,7 +3,8 @@ package dev.cavefish.yamul.backend.infra.localfile
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 import dev.cavefish.yamul.backend.game.controller.domain.mul.BlockAltitudeData
 import dev.cavefish.yamul.backend.game.controller.infra.mul.MulMapBlockRepository
-import dev.cavefish.yamul.backend.infra.localfile.MulBlockHelper.getBlockId
+import dev.cavefish.yamul.backend.infra.localfile.MulMapHelper.getBlockId
+import dev.cavefish.yamul.backend.infra.localfile.MulMapHelper.mapProperties
 import org.springframework.stereotype.Repository
 import org.tinylog.kotlin.Logger
 import java.util.concurrent.ConcurrentHashMap
@@ -38,8 +39,9 @@ class LocalMulMapBlockRepository(
             for (y in 0..<BLOCK_WIDTH) {
                 val inBlockOffset = 3 * (x + BLOCK_WIDTH * y)
                 val tileId =
-                    ((blockBytes[inBlockOffset].toInt() shl 8) or blockBytes[1 + inBlockOffset].toInt()) and 0xFFFF
-                val z = blockBytes[2 + inBlockOffset].toInt()
+                    ((blockBytes[4 + inBlockOffset].toInt() shl 8) or
+                            blockBytes[4 + 1 + inBlockOffset].toInt()) and 0xFFFF
+                val z = blockBytes[4 + 2 + inBlockOffset].toInt()
                 result[x][y] = tileId to z
             }
         }
@@ -49,15 +51,7 @@ class LocalMulMapBlockRepository(
     @SuppressWarnings("TooGenericExceptionThrown")
     private fun getBlockBytes(mapFile: Int, offset: Int): ByteArray? {
         val file = files.computeIfAbsent(mapFile) {
-            return@computeIfAbsent multimaFileRepository.getReaderFor(when (mapFile) {
-                0 -> MultimaFileRepository.MulFile.Map0
-                1 -> MultimaFileRepository.MulFile.Map1
-                2 -> MultimaFileRepository.MulFile.Map2
-                3 -> MultimaFileRepository.MulFile.Map3
-                4 -> MultimaFileRepository.MulFile.Map4
-                5 -> MultimaFileRepository.MulFile.Map5
-                else -> throw Exception("Unknown mapFile=$mapFile")
-            })
+            return@computeIfAbsent multimaFileRepository.getReaderFor(mapProperties[mapFile].mapFile)
         }
 
         val rawDataPosition = (offset * BLOCK_DATA_SIZE).toLong()
