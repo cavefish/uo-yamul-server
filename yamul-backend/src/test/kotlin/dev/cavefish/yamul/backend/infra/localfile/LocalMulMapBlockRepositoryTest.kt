@@ -12,7 +12,6 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.kotlin.any
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -25,7 +24,10 @@ private const val BLOCK_SIZE = 196L
 class LocalMulMapBlockRepositoryTest : IntegrationTest() {
 
     @Mock
-    lateinit var fileReader: MultimaFileReader
+    lateinit var mapFileReader: MultimaFileReader
+
+    @Mock
+    lateinit var staticsFileReader: MultimaFileReader
 
     @Mock
     lateinit var multimaFileRepository: MultimaFileRepository
@@ -36,28 +38,51 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
     @BeforeEach
     override fun beforeEach() {
         super.beforeEach()
-        Mockito.clearInvocations(fileReader, multimaFileRepository)
+        Mockito.clearInvocations(mapFileReader, staticsFileReader, multimaFileRepository)
     }
 
     @ParameterizedTest
     @MethodSource
-    fun correctPositionAltitude(coordinates: Coordinates, blockFilePosition: Long, bytes: ByteArray?) {
+    fun correctPositionAltitude(
+        coordinates: Coordinates,
+        blockFilePosition: Long,
+        mapBytes: ByteArray?,
+        staticsBytes: ByteArray?
+    ) {
+        val mapByteBuffer = if (mapBytes != null) ByteBuffer.wrap(mapBytes) else null
+        val staticsBuffer = if (staticsBytes != null) ByteBuffer.wrap(staticsBytes) else null
+
         // Given
-        whenever(multimaFileRepository.getReaderFor(any())).thenReturn(fileReader)
-        whenever(fileReader.getBuffer(blockFilePosition * BLOCK_SIZE, BLOCK_SIZE)).thenReturn(
-            if (bytes != null) ByteBuffer.wrap(bytes) else null
-        )
+        whenever(multimaFileRepository.getReaderFor(MulMapHelper.mapProperties[coordinates.mapId].mapFile))
+            .thenReturn(mapFileReader)
+        whenever(multimaFileRepository.getReaderFor(MulMapHelper.mapProperties[coordinates.mapId].staticsFile))
+            .thenReturn(staticsFileReader)
+        whenever(mapFileReader.getBuffer(blockFilePosition * BLOCK_SIZE, BLOCK_SIZE))
+            .thenReturn(mapByteBuffer)
+        whenever(staticsFileReader.getBuffer(blockFilePosition))
+            .thenReturn(staticsBuffer)
 
         // When
         val result = repository.correctPositionAltitude(coordinates.copy(z = 300))
 
         // Then
-        verify(fileReader).getBuffer(blockFilePosition * BLOCK_SIZE, BLOCK_SIZE)
         softly.assertThat(result).isEqualTo(coordinates)
+        verify(multimaFileRepository).getReaderFor(MulMapHelper.mapProperties[coordinates.mapId].mapFile)
+        verify(multimaFileRepository).getReaderFor(MulMapHelper.mapProperties[coordinates.mapId].staticsFile)
+        verify(mapFileReader).getBuffer(blockFilePosition * BLOCK_SIZE, BLOCK_SIZE)
+        if (mapByteBuffer != null) softly.assertThat(mapByteBuffer.remaining())
+            .describedAs("Only the footer remains").isLessThanOrEqualTo(4)
+        if (staticsBuffer != null) softly.assertThat(staticsBuffer.remaining())
+            .describedAs("The buffer is fully consumed").isEqualTo(0)
+        verify(staticsFileReader).getBuffer(blockFilePosition, null)
+        verify(mapFileReader, never()).close()
+        verify(staticsFileReader, never()).close()
 
-        verify(fileReader, never()).close()
+        // and When Close
         repository.close()
-        verify(fileReader).close()
+        // Then
+        verify(mapFileReader).close()
+        verify(staticsFileReader).close()
     }
 
     @SuppressWarnings("LongMethod")
@@ -70,16 +95,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(2, 0, 0)
-        ),
-        Arguments.of(
-            Coordinates(
-                x = 0,
-                y = 0,
-                z = 0,
-                mapId = 0
-            ),
-            0L,
+            createBlockArray(2, 0, 0),
             null
         ),
         Arguments.of(
@@ -90,7 +106,70 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(2, 0)
+            null,
+            null
+        ),
+        Arguments.of(
+            Coordinates(
+                x = 0,
+                y = 0,
+                z = 0,
+                mapId = 0
+            ),
+            0L,
+            createBlockArray(2, 0),
+            null
+        ),
+        Arguments.of(
+            Coordinates(
+                x = 0,
+                y = 0,
+                z = 1,
+                mapId = 0
+            ),
+            0L,
+            createBlockArray(2, 0),
+            byteArrayOf(
+                0xFF.toByte(), 0xFF.toByte(), 0, 0, 1, 0xFF.toByte(), 0xFF.toByte(),
+            )
+        ),
+        Arguments.of(
+            Coordinates(
+                x = 0,
+                y = 0,
+                z = 0,
+                mapId = 0
+            ),
+            0L,
+            createBlockArray(2, 0),
+            byteArrayOf(
+                0xFF.toByte(), 0xFF.toByte(), 1, 1, 10, 0xFF.toByte(), 0xFF.toByte(),
+            )
+        ),
+        Arguments.of(
+            Coordinates(
+                x = 0,
+                y = 0,
+                z = 12,
+                mapId = 0
+            ),
+            0L,
+            createBlockArray(2, 0),
+            byteArrayOf(
+                0xFF.toByte(), 0xFF.toByte(), 0, 0, 1, 0xFF.toByte(), 0xFF.toByte(),
+                0xFF.toByte(), 0xFF.toByte(), 0, 0, 12, 0xFF.toByte(), 0xFF.toByte(),
+            )
+        ),
+        Arguments.of(
+            Coordinates(
+                x = 0,
+                y = 0,
+                z = 0,
+                mapId = 0
+            ),
+            0L,
+            createBlockArray(2, 0),
+            null
         ),
         Arguments.of(
             Coordinates(
@@ -100,7 +179,8 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(2, -1, 100)
+            createBlockArray(2, -1, 100),
+            null
         ),
         Arguments.of(
             Coordinates(
@@ -110,7 +190,8 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(2 + 3, 123)
+            createBlockArray(2 + 3, 123),
+            null
         ),
         Arguments.of(
             Coordinates(
@@ -120,7 +201,8 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             0L,
-            createBlockArray(2 + 8 * 3, 123)
+            createBlockArray(2 + 8 * 3, 123),
+            null
         ),
         Arguments.of(
             Coordinates(
@@ -130,7 +212,8 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = 0
             ),
             1L,
-            createBlockArray(2, -1)
+            createBlockArray(2, -1),
+            null
         ),
         createRandomArguments(),
         createRandomArguments(),
@@ -154,7 +237,8 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
                 mapId = mapIdToUse
             ),
             blockX * mapBlockHeights[mapIdToUse]!! + blockY,
-            createBlockArray(2 + 3 * (subX + subY * 8), expectedValueZ)
+            createBlockArray(2 + 3 * (subX + subY * 8), expectedValueZ),
+            null // TODO create random statics
         )
     }
 

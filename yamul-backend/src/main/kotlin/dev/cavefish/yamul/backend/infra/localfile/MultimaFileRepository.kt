@@ -15,7 +15,10 @@ class MultimaFileRepository {
                 UOP_MAPFILE_PAGE_BLOCK_SIZE,
                 properties.maxSubFiles,
             ) { properties.subFileTemplate.format(it) }
-            is IndexedFileProperties -> TODO()
+            is IndexedFileProperties -> IndexedMultimaFileReader(
+                properties.idxFilename,
+                properties.baseFilename
+            )
         }
     }
 
