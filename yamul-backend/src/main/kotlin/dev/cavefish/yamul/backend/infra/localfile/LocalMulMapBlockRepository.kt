@@ -25,7 +25,7 @@ class LocalMulMapBlockRepository(
     override fun getBlockAltitudeData(position: Coordinates): BlockAltitudeData {
         val origin = position.toBlockOrigin()
         val blockId = getBlockId(origin)
-        val blockAltitudeData = BlockAltitudeData(
+        val blockAltitudeData = BlockAltitudeData.create(
             origin = origin,
             mapValues = getAltitudeData(origin.mapId, blockId),
             staticCells = getStaticCells(origin.mapId, blockId),

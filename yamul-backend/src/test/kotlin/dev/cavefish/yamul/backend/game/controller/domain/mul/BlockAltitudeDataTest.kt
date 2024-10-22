@@ -1,6 +1,5 @@
 package dev.cavefish.yamul.backend.game.controller.domain.mul
 
-import com.google.common.collect.Table.Cell
 import dev.cavefish.yamul.UnitTest
 import dev.cavefish.yamul.backend.createIntRange
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
@@ -48,13 +47,13 @@ class BlockAltitudeDataTest : UnitTest() {
             0,
             10,
             createBlockAltitudeData(0, 0, -1, listOf(2, 4)),
-            4
+            5
         ),
-        createComplexCase(-1, 10, 10, 2, 4),
-        createComplexCase(1, 0, 0, 2, 4),
-        createComplexCase(3, 2, 0, 2, 4),
-        createComplexCase(4, 4, 0, 2, 4),
-        createComplexCase(5, 4, 0, 2, 4),
+        createComplexCase(-1, 11, 10, 2, 4),
+        createComplexCase(1, 1, 0, 2, 4),
+        createComplexCase(3, 3, 0, 2, 4),
+        createComplexCase(4, 5, 0, 2, 4),
+        createComplexCase(55, 5, 0, 2, 4),
     )
 
     private fun createComplexCase(currentZ: Int, expectedZ: Byte, mapZ: Byte, vararg values: Int): Arguments? {
@@ -91,7 +90,7 @@ class BlockAltitudeDataTest : UnitTest() {
         val mapValues: Array<Array<Pair<Short, Byte>>> =
             Array(8) { Array(8) { fixture.create(Short::class.java) to fixture.create(Byte::class.java) } }
         mapValues[dx][dy] = fixture.create(Short::class.java) to zValueOnMap
-        val altitudeData = BlockAltitudeData(
+        val altitudeData = BlockAltitudeData.create(
             origin = Coordinates(
                 x = 8 * fixture.createIntRange(0, 100),
                 y = 8 * fixture.createIntRange(0, 100),
@@ -123,7 +122,7 @@ class BlockAltitudeDataTest : UnitTest() {
                 z = it
             )
         })
-        val altitudeData = BlockAltitudeData(
+        val altitudeData = BlockAltitudeData.create(
             origin = Coordinates(
                 x = 8 * fixture.createIntRange(0, 100),
                 y = 8 * fixture.createIntRange(0, 100),
