@@ -1,11 +1,16 @@
 package dev.cavefish.yamul.backend.game.controller.domain.mul
 
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
+import dev.cavefish.yamul.backend.game.controller.infra.mul.MulTileDataRepository
 import dev.cavefish.yamul.backend.utils.toStringByRecursion
 
 sealed class BlockAltitudeData {
     abstract val origin: Coordinates
-    abstract fun getCellAttitude(coordinate: Coordinates): Int
+    abstract fun getCellAttitude(
+        coordinate: Coordinates,
+        bodyHeight: Int,
+        tileDataRepository: MulTileDataRepository
+    ): Int
 
     companion object {
         fun create(
@@ -33,7 +38,11 @@ private data class BlockAltitudeDataNoStatics(
     private val mapValues: Array<Array<Pair<Short, Byte>>>,
 ) : BlockAltitudeData() {
 
-    override fun getCellAttitude(coordinate: Coordinates): Int {
+    override fun getCellAttitude(
+        coordinate: Coordinates,
+        bodyHeight: Int,
+        tileDataRepository: MulTileDataRepository
+    ): Int {
         val difference = coordinate.difference(origin)
         return mapValues[difference.x][difference.y].second.toInt()
     }
@@ -69,28 +78,36 @@ private data class BlockAltitudeDataWithStatics(
         val groundZ: Byte,
         val tiles: Array<StaticCellData>,
     ) {
-        fun getCorrectedCellAltitude(originalZ: Int): Int {
+        fun getCorrectedCellAltitude(originalZ: Int, bodyHeight: Int, tileDataRepository: MulTileDataRepository): Int {
             var currentZ = originalZ
             if (originalZ < groundZ) {
-                currentZ = groundZ + 1
+                currentZ = groundZ.toInt()
             }
-            if (tiles.isEmpty()) return currentZ
+            if (tiles.isEmpty()) return groundZ + bodyHeight
             val topTile = tiles.size - 1
-            if (originalZ >= tiles[topTile].z) return tiles[topTile].z + 1 // Original is too high
+            if (originalZ >= bottomOfTile(topTile))
+                return topOfTile(tileDataRepository, topTile) + bodyHeight // Original is too high
             var lowTile = 0
             while (lowTile < topTile) {
-                if (tiles[lowTile].z > currentZ) break // This tile is over the head, so ignore the rest of tiles
-                if (tiles[lowTile].z == originalZ) {
-                    // Character is colliding a tile, so it bumps up
-                    currentZ++
-                }
-                if (tiles[lowTile + 1].z > originalZ) {
-                    // Character is under next tile, so it goes down
-                    currentZ = tiles[lowTile].z + 1
+                // This tile is over the head, so ignore the rest of tiles
+                if (bottomOfTile(lowTile) > currentZ + bodyHeight) break
+                // Character is colliding a tile, so it bumps up
+                if (topOfTile(tileDataRepository, lowTile) >= currentZ) {
+                    currentZ = topOfTile(tileDataRepository, lowTile)
                 }
                 lowTile++
             }
             return currentZ
+        }
+
+        private fun bottomOfTile(idx: Int): Int {
+            return tiles[idx].z
+        }
+
+        private fun topOfTile(tileDataRepository: MulTileDataRepository, idx: Int): Int {
+            val staticCellData = tiles[idx]
+            val tileData = tileDataRepository.getStaticTileData(staticCellData.objectId)!!
+            return (tileData.height).toInt() + staticCellData.z
         }
 
         override fun equals(other: Any?): Boolean {
@@ -120,10 +137,14 @@ private data class BlockAltitudeDataWithStatics(
         )
     }
 
-    override fun getCellAttitude(coordinate: Coordinates): Int {
+    override fun getCellAttitude(
+        coordinate: Coordinates,
+        bodyHeight: Int,
+        tileDataRepository: MulTileDataRepository
+    ): Int {
         val difference = coordinate.difference(origin)
         val cell = cells[difference.x][difference.y]
-        return cell.getCorrectedCellAltitude(coordinate.z)
+        return cell.getCorrectedCellAltitude(coordinate.z, bodyHeight, tileDataRepository)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -162,7 +183,7 @@ private data class BlockAltitudeDataWithStatics(
                         groundTile = mapValues[dx][dy].first,
                         groundZ = groundZ,
                         tiles = staticCells
-                            .filter { it.x == dx && it.y == dy && it.z >= groundZ}
+                            .filter { it.x == dx && it.y == dy && it.z >= groundZ }
                             .sortedBy { it.z }
                             .toTypedArray()
                     )

@@ -38,8 +38,8 @@ object MulMapHelper {
                 subFileTemplate = "build/map1legacymul/%08d.dat"
             ),
             staticsFile = IndexedFileProperties(
-                baseFilename = "statics1.mul",
-                idxFilename = "staidx1.mul"
+                baseFilename = "statics1x.mul",
+                idxFilename = "staidx1x.mul"
             )
         ),
         MapProperties(

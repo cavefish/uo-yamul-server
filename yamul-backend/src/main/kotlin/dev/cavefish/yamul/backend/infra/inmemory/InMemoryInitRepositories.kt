@@ -1,5 +1,6 @@
 package dev.cavefish.yamul.backend.infra.inmemory
 
+import dev.cavefish.yamul.backend.Constants.HUMAN_BODY_HEIGTH
 import dev.cavefish.yamul.backend.game.controller.domain.Character
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 import dev.cavefish.yamul.backend.game.controller.domain.Flags
@@ -47,7 +48,7 @@ class InMemoryInitRepositories(
                     flags = listOf(Flags.Normal, Flags.CanAlterPaperDoll),
                     notoriety = listOf(Notoriety.Gray, Notoriety.Criminal),
                 ),
-                mulMapBlockRepository.correctPositionAltitude(feluccaStrangeTownOutOfBoundsCenter),
+                mulMapBlockRepository.correctPositionAltitude(feluccaFortIslandCenter, HUMAN_BODY_HEIGTH),
                 treeOf(
                     GameObject(
                         parentId = null,
@@ -104,13 +105,13 @@ class InMemoryInitRepositories(
         val feluccaStrangeTownOutOfBoundsCenter = Coordinates(
             x = 6787,
             y = 2181,
-            z = 0,
+            z = 100,
             mapId = 1,
         )
         val feluccaFortIslandCenter = Coordinates(
             x = 2980,
             y = 3436,
-            z = 15,
+            z = 100,
             mapId = 1,
         )
     }

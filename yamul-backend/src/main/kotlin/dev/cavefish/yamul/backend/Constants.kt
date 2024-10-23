@@ -5,6 +5,7 @@ package dev.cavefish.yamul.backend
 import dev.cavefish.yamul.backend.game.controller.domain.LoggedUser
 import io.grpc.Context
 
+@SuppressWarnings("MagicNumber")
 object Constants {
     val AUTH_CONTEXT_LOGGED_USER: Context.Key<LoggedUser> = Context.key("AUTH_CONTEXT_LOGGED_USER")
     const val MULTIMA_PATH = "multima.mulfiles.dir"
@@ -23,4 +24,6 @@ object Constants {
     fun toHexFormat(input: Int) = input.toHexString(hexNumberFormat)
     fun toHexFormat(input: Byte) = input.toHexString(hexNumberFormat)
     fun toHexFormat(input: Short) = input.toHexString(hexNumberFormat)
+
+    val HUMAN_BODY_HEIGTH: Int = 10
 }

@@ -26,7 +26,6 @@ abstract class MessageProcessor<T>(
         wrapper: GameStreamWrapper
     ): State = runBlocking {
         val obj = payloadGetter(payload.body)
-        Logger.debug(obj)
         return@runBlocking process(obj, state, wrapper)
     }
 }

@@ -73,6 +73,14 @@ message MsgMoveAck {
   common.Notoriety notorietyFlags = 2;
 }
 
+message MsgMoveReject {
+  uint32 sequence = 1;
+  uint32 xLoc = 2;
+  uint32 yLoc = 3;
+  common.ObjectDirection direction = 4;
+  int32 zLoc = 5;
+}
+
 enum MsgSkillUpdateType {
   basic = 0x00;
   godView = 0x01;
@@ -250,6 +258,7 @@ enum MsgType {
   TypePlayerStartConfirmation = 0x1b00;
   TypeSystemSendText = 0x1C00;
   TypeTeleportPlayer = 0x2000;
+  TypeMoveReject = 0x2100;
   TypeMoveAck = 0x2200;
   TypeSkillUpdateServer = 0x3A00;
   TypeSkillUpdateClient = 0x3A01;
@@ -275,6 +284,7 @@ message Message {
     MsgPlayerStartConfirmation playerStartConfirmation = 0x1b00;
     MsgSystemSendText systemSendText = 0x1C00;
     MsgTeleportPlayer teleportPlayer = 0x2000;
+    MsgMoveReject moveReject = 0x2100;
     MsgMoveAck moveAck = 0x2200;
     MsgSkillUpdateServer skillUpdateServer = 0x3A00;
     MsgSkillUpdateClient skillUpdateClient = 0x3A01;

@@ -63,7 +63,7 @@ class LocalMulMapBlockRepositoryTest : IntegrationTest() {
             .thenReturn(staticsBuffer)
 
         // When
-        val result = repository.correctPositionAltitude(coordinates.copy(z = 300))
+        val result = repository.correctPositionAltitude(coordinates.copy(z = 300), 1)
 
         // Then
         softly.assertThat(result).isEqualTo(coordinates)

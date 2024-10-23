@@ -3,6 +3,7 @@ package dev.cavefish.yamul.backend.game.controller.domain.mul
 import dev.cavefish.yamul.UnitTest
 import dev.cavefish.yamul.backend.createIntRange
 import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
+import dev.cavefish.yamul.backend.game.controller.infra.mul.MulTileDataRepository
 import dev.cavefish.yamul.backend.randomize
 
 import org.assertj.core.api.Assertions.assertThat
@@ -10,6 +11,9 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -19,7 +23,18 @@ class BlockAltitudeDataTest : UnitTest() {
     @MethodSource
     fun getCellAttitude(dx: Int, dy: Int, initZ: Int, altitudeData: BlockAltitudeData, expectedZ: Int) {
         val origin = altitudeData.origin
-        val cellAttitude = altitudeData.getCellAttitude(origin.copy(x = origin.x + dx, y = origin.y + dy, z = initZ))
+        val tileDataRepository = mock<MulTileDataRepository>()
+        whenever(tileDataRepository.getStaticTileData(any())).then {
+            val id = it.arguments[0] as Int
+            return@then fixture.create(StaticTileData::class.java).copy(
+                id = id, height = 1u
+            )
+        }
+
+        val cellAttitude = altitudeData.getCellAttitude(
+            origin.copy(x = origin.x + dx, y = origin.y + dy, z = initZ), 1,
+            tileDataRepository
+        )
         assertThat(cellAttitude).isEqualTo(expectedZ)
     }
 

@@ -4,6 +4,7 @@ import dev.cavefish.yamul.backend.game.controller.domain.Coordinates
 import dev.cavefish.yamul.backend.game.controller.domain.mul.BlockAltitudeData
 import dev.cavefish.yamul.backend.game.controller.domain.mul.StaticCellData
 import dev.cavefish.yamul.backend.game.controller.infra.mul.MulMapBlockRepository
+import dev.cavefish.yamul.backend.game.controller.infra.mul.MulTileDataRepository
 import dev.cavefish.yamul.backend.infra.localfile.MulMapHelper.getBlockId
 import dev.cavefish.yamul.backend.infra.localfile.MulMapHelper.mapProperties
 import org.springframework.stereotype.Repository
@@ -20,7 +21,9 @@ private const val BLOCK_DATA_SIZE: Long = 4L + 3 * BLOCK_WIDTH * BLOCK_WIDTH
 @Suppress("MagicNumber")
 class LocalMulMapBlockRepository(
     val multimaFileRepository: MultimaFileRepository,
+    override val mulTileDataRepository: MulTileDataRepository,
 ) : MulMapBlockRepository(), AutoCloseable {
+
 
     override fun getBlockAltitudeData(position: Coordinates): BlockAltitudeData {
         val origin = position.toBlockOrigin()
@@ -30,7 +33,6 @@ class LocalMulMapBlockRepository(
             mapValues = getAltitudeData(origin.mapId, blockId),
             staticCells = getStaticCells(origin.mapId, blockId),
         )
-        Logger.debug(blockAltitudeData.toString())
         return blockAltitudeData
     }
 
