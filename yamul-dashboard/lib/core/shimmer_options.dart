@@ -1,0 +1,1 @@
+enum ShimmerOptions { none, yes }
