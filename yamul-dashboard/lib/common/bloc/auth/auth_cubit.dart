@@ -5,11 +5,10 @@ import 'package:uo_yamul_dashboard/domain/entities/login_info.dart';
 import '../../../domain/repository/auth.dart';
 import '../../../service_locator.dart';
 
-class AuthStateCubit extends Cubit<AuthState> {
-  AuthStateCubit(super.initialState);
+class AuthCubit extends Cubit<AuthState> {
+  AuthCubit(super.initialState);
 
   void init() async {
-    emit(AuthStateUnknown());
     await Future.delayed(const Duration(seconds: 1));
     refreshState();
   }

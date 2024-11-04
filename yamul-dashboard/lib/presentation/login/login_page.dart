@@ -1,40 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:uo_yamul_dashboard/common/widgets/app_scaffold/yamul_app_scaffold.dart';
+import 'package:uo_yamul_dashboard/presentation/warning_snackbar.dart';
 
-import '../../../common/bloc/button/button_state_cubit.dart';
-import '../../../common/widgets/button/yamul_button.dart';
-import '../../../data/models/auth_singin_params.dart';
-import '../../../domain/usecases/auth/login.dart';
-import '../../../service_locator.dart';
+import '../../common/bloc/button/button_state_cubit.dart';
+import '../../common/widgets/button/yamul_button.dart';
+import '../../data/models/auth_singin_params.dart';
+import '../../domain/usecases/auth/login.dart';
+import '../../service_locator.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, required this.title});
+class LoginPage extends StatelessWidget {
+  LoginPage({super.key});
 
-  final String title;
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-        centerTitle: true,
-      ),
-      body: YamulButton.createBloc(
+    return YamulAppScaffold(
+      showDrawer: false,
+      title: 'Login',
+      child: YamulButton.createBloc(
           child: _buildForm(context),
-          onSuccess: (state) => {},
-          onFailure: (state) => {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.errorMessage)))
-              }),
+          onSuccess: (state) => {Navigator.pushReplacementNamed(context, '/')},
+          onFailure: (state) => {showWarning(context, state.errorMessage)}),
     );
   }
 
