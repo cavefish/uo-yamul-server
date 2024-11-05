@@ -1,0 +1,23 @@
+syntax = "proto3";
+package dashboard.maps;
+import "yamul-dashboard-common.proto";
+
+option java_package = "dev.cavefish.yamul.dashboard.maps.api";
+option java_multiple_files = true;
+option java_generic_services = true;
+option java_generate_equals_and_hash = true;
+
+message GetMapsResponse {
+  repeated GetMapsResponseItem items = 1;
+}
+
+message GetMapsResponseItem {
+  uint32 index = 1;
+  string name = 2;
+}
+
+
+service DashboardMapsService {
+  // Maps
+  rpc getMaps (common.Empty) returns (maps.GetMapsResponseItem);
+}

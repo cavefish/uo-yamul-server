@@ -1,0 +1,12 @@
+services:
+  wiremock:
+    build:
+      dockerfile: Dockerfile
+      #context: wiremock
+    container_name: dashboard_wiremock
+    ports:
+      - "8090:8080"
+    volumes:
+      - ./wiremock/__files:/home/wiremock/__files
+      - ./wiremock/mappings:/home/wiremock/mappings
+    entrypoint: ["/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose"]

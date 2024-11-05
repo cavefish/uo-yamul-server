@@ -1,0 +1,14 @@
+{
+  "request": {
+    "urlPath": "/dashboard.login.DashboardLoginService/validateLogin",
+    "method": "POST"
+
+  },
+  "response": {
+    "status": 200,
+    "body": "{\n  \"value\": 1}",
+    "headers": {
+      "grpc-status-name": "OK"
+    }
+  }
+}

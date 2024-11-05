@@ -1,14 +1,9 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uo_yamul_dashboard/app_router.dart';
 import 'package:uo_yamul_dashboard/common/bloc/auth/auth_cubit.dart';
 import 'package:uo_yamul_dashboard/common/bloc/selected_app/loading_maps_cubit.dart';
-import 'package:uo_yamul_dashboard/presentation/maps/maps_page.dart';
 
-import 'presentation/home/home_page.dart';
-import 'presentation/loading_page.dart';
-import 'presentation/login/login_page.dart';
 import 'service_locator.dart';
 
 void main() {
