@@ -2,7 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:uo_yamul_dashboard/common/bloc/auth/auth_state.dart';
 import 'package:uo_yamul_dashboard/common/bloc/auth/auth_cubit.dart';
 import 'package:uo_yamul_dashboard/common/bloc/selected_app/loading_maps_cubit.dart';
-import 'package:uo_yamul_dashboard/common/bloc/selected_app/selected_app_state.dart';
+import 'package:uo_yamul_dashboard/common/bloc/selected_app/loading_maps_state.dart';
 import 'package:uo_yamul_dashboard/domain/usecases/maps/show_maps.dart';
 
 import 'data/repository/mock/auth_repository_mock.dart';

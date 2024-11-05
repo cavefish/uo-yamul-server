@@ -4,6 +4,8 @@ import 'package:uo_yamul_dashboard/common/widgets/wip/wip_widget.dart';
 
 
 class HomePage extends StatelessWidget {
+  static var routeName = '/';
+
   const HomePage({super.key});
 
   @override

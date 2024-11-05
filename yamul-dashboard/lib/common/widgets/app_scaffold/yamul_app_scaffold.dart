@@ -1,7 +1,13 @@
+import 'dart:developer';
+import 'package:auto_route/auto_route.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uo_yamul_dashboard/app_router.dart';
 import 'package:uo_yamul_dashboard/common/bloc/auth/auth_cubit.dart';
 import 'package:uo_yamul_dashboard/common/bloc/auth/auth_state.dart';
+import 'package:uo_yamul_dashboard/presentation/login/login_page.dart';
+import 'package:uo_yamul_dashboard/presentation/maps/maps_page.dart';
 
 import '../../../core/usecase/usecase.dart';
 import '../../../domain/usecases/auth/logout.dart';
@@ -17,20 +23,24 @@ class YamulAppScaffold extends StatelessWidget {
   // TODO convert into a service
   final List<YamulDrawerAction> actions = [
     YamulDrawerAction(
-        route: '/maps',
+        route: MapsPage.routeName,
         name: 'Maps',
         icon: Icons.map_outlined,
-        type: ShowMapsUsecase,
+        usecase: ShowMapsUsecase,
         params: null),
     YamulDrawerAction(
-        route: '/login',
+        route: LoginPage.routeName,
         name: 'Logout',
         icon: Icons.logout,
-        type: AuthLogoutUsecase,
+        usecase: AuthLogoutUsecase,
         params: null)
   ];
 
-  YamulAppScaffold({super.key, required this.title, required this.child, this.showDrawer = true});
+  YamulAppScaffold(
+      {super.key,
+      required this.title,
+      required this.child,
+      this.showDrawer = true});
 
   @override
   Widget build(BuildContext context) {
@@ -50,36 +60,21 @@ class YamulAppScaffold extends StatelessWidget {
 
   Drawer? _buildDrawer(BuildContext context) {
     if (!this.showDrawer) return null;
-    List<StatelessWidget> children = [];
+    List<Widget> children = [];
     children.add(_buildDrawerUserInfo(context));
     for (var action in actions) {
       children.add(_buildDrawerAction(context, action));
     }
     return Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: children,
-        ),
-      );
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: children,
+      ),
+    );
   }
 
-  ListTile _buildDrawerAction(BuildContext context, YamulDrawerAction action) {
-    var usecase = sl<UseCase<dynamic, dynamic>>(type: action.type);
-    return ListTile(
-      leading: Icon(action.icon),
-      title: Text(action.name),
-      onTap: () async {
-        var result = await usecase.call(action.params);
-        result.fold((err) {
-          showWarning(context, err);
-        }, (_) {
-          var route = action.route;
-          if (route != null) {
-            Navigator.pushReplacementNamed(context, route);
-          }
-        });
-      },
-    );
+  Widget _buildDrawerAction(BuildContext context, YamulDrawerAction action) {
+    return YamulDrawerListTile(selected: context.router.current.name == action.route, action: action);
   }
 
   DrawerHeader _buildDrawerUserInfo(BuildContext context) {
@@ -102,7 +97,7 @@ class YamulAppScaffold extends StatelessWidget {
 class YamulDrawerAction {
   final String name;
   final IconData icon;
-  final Type type;
+  final Type? usecase;
   final dynamic params;
   final String? route;
 
@@ -110,6 +105,44 @@ class YamulDrawerAction {
       {required this.route,
       required this.name,
       required this.icon,
-      required this.type,
+      required this.usecase,
       required this.params});
+}
+
+class YamulDrawerListTile extends StatelessWidget {
+  final bool selected;
+  final YamulDrawerAction action;
+
+  const YamulDrawerListTile({super.key, required this.selected, required this.action});
+
+  @override
+  Widget build(BuildContext context) {
+    var themeData = Theme.of(context);
+    return ListTile(
+      iconColor: themeData.primaryColor,
+      selectedTileColor: themeData.focusColor,
+      selected: selected,
+      leading: Icon(action.icon),
+      title: Text(action.name),
+      onTap: _createOnTap(context),
+    );
+  }
+
+  void Function() _createOnTap(BuildContext context) {
+    if (action.usecase == null) return () => _navigateTo(action.route, context);
+    var usecase = sl<UseCase<dynamic, dynamic>>(type: action.usecase);
+    return () async {
+      var result = await usecase.call(action.params);
+      result.fold((err) => showWarning(context, err),
+              (_) => _navigateTo(action.route, context));
+    };
+  }
+
+  void _navigateTo(String? route, BuildContext context) {
+    Navigator.pop(context);
+    if (route != null) {
+      context.router.replaceNamed(route);
+    }
+  }
+
 }

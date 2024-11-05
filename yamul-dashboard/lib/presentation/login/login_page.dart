@@ -1,6 +1,9 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:uo_yamul_dashboard/common/bloc/auth/auth_cubit.dart';
+import 'package:uo_yamul_dashboard/common/bloc/auth/auth_state.dart';
 import 'package:uo_yamul_dashboard/common/widgets/app_scaffold/yamul_app_scaffold.dart';
 import 'package:uo_yamul_dashboard/presentation/warning_snackbar.dart';
 
@@ -11,9 +14,13 @@ import '../../domain/usecases/auth/login.dart';
 import '../../service_locator.dart';
 
 class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+  final String redirectTo;
+  LoginPage({super.key, required this.redirectTo});
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  static const routeName = '/login';
+
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +29,7 @@ class LoginPage extends StatelessWidget {
       title: 'Login',
       child: YamulButton.createBloc(
           child: _buildForm(context),
-          onSuccess: (state) => {Navigator.pushReplacementNamed(context, '/')},
+          onSuccess: (state) => {Navigator.pop(context)},
           onFailure: (state) => {showWarning(context, state.errorMessage)}),
     );
   }
@@ -54,17 +61,24 @@ class LoginPage extends StatelessWidget {
               ),
               _buildPasswordField(passwordController),
               Builder(builder: (context) {
-                return YamulButton(
-                  onPressed: () {
-                    var currentState = _formKey.currentState;
-                    if (currentState == null) return;
-                    if (!currentState.validate()) return;
-                    context.read<ButtonStateCubit>().execute(
-                        usecase: sl<AuthLoginUsecase>(),
-                        params: AuthLoginParams(
-                            usernameController.text, passwordController.text));
+                return BlocListener<AuthCubit, AuthState>(
+                  listener: (BuildContext context, AuthState state) {
+                    if (state is AuthStateAuthenticated) {
+                      context.router.replaceNamed(this.redirectTo);
+                    }
                   },
-                  title: 'Submit',
+                  child: YamulButton(
+                    onPressed: () {
+                      var currentState = _formKey.currentState;
+                      if (currentState == null) return;
+                      if (!currentState.validate()) return;
+                      context.read<ButtonStateCubit>().execute(
+                          usecase: sl<AuthLoginUsecase>(),
+                          params: AuthLoginParams(
+                              usernameController.text, passwordController.text));
+                    },
+                    title: 'Submit',
+                  ),
                 );
               }),
             ],

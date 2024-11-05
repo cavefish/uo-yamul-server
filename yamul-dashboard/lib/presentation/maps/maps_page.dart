@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uo_yamul_dashboard/common/bloc/selected_app/loading_maps_cubit.dart';
-import 'package:uo_yamul_dashboard/common/bloc/selected_app/selected_app_state.dart';
+import 'package:uo_yamul_dashboard/common/bloc/selected_app/loading_maps_state.dart';
 import 'package:uo_yamul_dashboard/common/widgets/app_scaffold/yamul_app_scaffold.dart';
 import 'package:uo_yamul_dashboard/common/widgets/loading/loading_widget.dart';
 import 'package:uo_yamul_dashboard/presentation/maps/game_map_item.dart';
 
 class MapsPage extends StatefulWidget {
+  static var routeName = '/maps';
+
   const MapsPage({super.key});
 
   @override

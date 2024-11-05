@@ -4,7 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:uo_yamul_dashboard/common/bloc/auth/auth_cubit.dart';
 
 import '../../../common/bloc/selected_app/loading_maps_cubit.dart';
-import '../../../common/bloc/selected_app/selected_app_state.dart';
+import '../../../common/bloc/selected_app/loading_maps_state.dart';
 import '../../../core/usecase/usecase.dart';
 import '../../../data/models/auth_singin_params.dart';
 import '../../../service_locator.dart';
