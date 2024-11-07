@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,6 +65,7 @@ class LoginPage extends StatelessWidget {
                 return BlocListener<AuthCubit, AuthState>(
                   listener: (BuildContext context, AuthState state) {
                     if (state is AuthStateAuthenticated) {
+                      log('Redirecting to $redirectTo');
                       context.router.replaceNamed(this.redirectTo);
                     }
                   },

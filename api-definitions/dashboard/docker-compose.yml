@@ -1,12 +1,29 @@
+name: dashboard-wiremock
 services:
+  envoy:
+    image: envoyproxy/envoy:v1.31-latest
+    container_name: dashboard_envoy
+    ports:
+      - "8091:8091"
+    networks:
+      - envoymesh
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    entrypoint: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml --service-cluster proxy
+    depends_on:
+      - wiremock
   wiremock:
     build:
       dockerfile: Dockerfile
-      #context: wiremock
     container_name: dashboard_wiremock
     ports:
       - "8090:8080"
+    networks:
+      - envoymesh
     volumes:
       - ./wiremock/__files:/home/wiremock/__files
       - ./wiremock/mappings:/home/wiremock/mappings
-    entrypoint: ["/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose"]
+    healthcheck:
+      test: "curl localhost:8080/__admin"
+networks:
+  envoymesh: {}

@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/usecase/usecase.dart';
@@ -16,7 +19,8 @@ class ButtonStateCubit extends Cubit<ButtonState> {
       }, (data) {
         emit(ButtonSuccessState(data));
       });
-    } catch (e) {
+    } catch (e, st) {
+      debugPrintStack(stackTrace: st, label: e.toString(), maxFrames: 10);
       emit(ButtonFailureState('Unexpected exception: $e'));
     }
   }

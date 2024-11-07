@@ -40,12 +40,17 @@ class AppRouter extends RootStackRouter {
 
   Future<void> _loggedInGuard(
       NavigationResolver resolver, StackRouter router) async {
-    log('Checkin permissions');
-    if (resolver.routeName == LoginPage.routeName) return resolver.next();
+    if (resolver.routeName == LoginPage.routeName) {
+      // Avoids bug of login routing to itself
+      if (router.current.name == resolver.routeName) return;
+      return resolver.next();
+    }
+
+    log('[${resolver.routeName}] Checkin permissions');
     var loginInfo = await sl<AuthRepository>().getLoginInfo();
+    // TODO add some proper access control
     if (loginInfo != null) return resolver.next();
-    log('Cannot access to page ${resolver.routeName}. Redirecting to ${LoginPage.routeName}');
-    //router.pushNamed(resolver.routeName);
-    resolver.redirect(LoginPageRoute(redirectTo: resolver.routeName));
+    log('[${resolver.routeName}] Cannot access. Redirecting to ${LoginPage.routeName}');
+    router.popAndPush(LoginPageRoute(redirectTo: resolver.routeName));
   }
 }
